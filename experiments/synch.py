@@ -1,15 +1,14 @@
 import ray
-from parameter_servers.synchronous import ParameterServer
-from workers.traditional import DataWorker
+from parameter_servers.server_actor import ParameterServer
+from workers.worker_task import compute_gradients
 from models.test_model import ConvNet, get_data_loader, evaluate
 
-iterations = 20_000
+iterations = 200
 num_workers = 2
 
 def run_synch_experiment():
   ray.init(ignore_reinit_error=True)
   ps = ParameterServer.remote(1e-2)
-  workers = [DataWorker.remote() for i in range(num_workers)]
 
   model = ConvNet()
   test_loader = get_data_loader()[1]
@@ -17,7 +16,7 @@ def run_synch_experiment():
   print("Running synchronous parameter server training.")
   current_weights = ps.get_weights.remote()
   for i in range(iterations):
-      gradients = [worker.compute_gradients.remote(current_weights) for worker in workers]
+      gradients = [compute_gradients.remote(current_weights) for _ in range(num_workers)]
       # Calculate update after all gradients are available.
       current_weights = ps.apply_gradients.remote(*gradients)
 

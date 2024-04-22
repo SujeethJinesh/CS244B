@@ -15,6 +15,7 @@ class ParameterServer(object):
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
 
     # def apply_gradients(self, *gradients):
+    #     print(f"zipped grads: {[z for z in zip(*gradients)]}")
     #     summed_gradients = [
     #         np.stack(gradient_zip).sum(axis=0) for gradient_zip in zip(*gradients)
     #     ]
@@ -26,7 +27,7 @@ class ParameterServer(object):
     def apply_gradients(self, gradients):
         ready_gradients = ray.get(gradients)
         summed_gradients = [
-            np.stack(gradient_zip).sum(axis=0) for gradient_zip in zip(ready_gradients)
+            np.stack(gradient_zip).sum(axis=0) for gradient_zip in zip(*ready_gradients)
         ]
         self.optimizer.zero_grad()
         self.model.set_gradients(summed_gradients)
@@ -44,23 +45,17 @@ class ParameterServer(object):
       for i in range(iterations):
           gradients = [compute_gradients.remote(current_weights) for _ in range(num_workers)]
           # Calculate update after all gradients are available.
-          # ready_gradients = ray.get(gradients)
-          # print(f"grad updates {ready_gradients}")
-          # print(f"length of grad updates {len(ready_gradients)}")
-          current_weights = self.apply_gradients(*gradients)
+          current_weights = self.apply_gradients(gradients)
 
           if i % 10 == 0:
               # Evaluate the current model.
-              self.model.set_weights(ray.get(current_weights))
+              self.model.set_weights(current_weights)
               accuracy = evaluate(self.model, test_loader)
               print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
 
       print("Final accuracy is {:.1f}.".format(accuracy))
 
     def run_asynch_experiment(self):
-      # ray.init(ignore_reinit_error=True)
-      # ps = ParameterServer.remote(1e-2)
-
       model = ConvNet()
       test_loader = get_data_loader()[1]
 
@@ -76,13 +71,12 @@ class ParameterServer(object):
           gradients.remove(ready_gradient_id)
 
           # Compute and apply gradients.
-          ready_gradient = ray.get([ready_gradient_id])
-          current_weights = self.apply_gradients([ready_gradient])
+          current_weights = self.apply_gradients([ready_gradient_id])
           gradients.append(compute_gradients.remote(current_weights))
 
           if i % 10 == 0:
               # Evaluate the current model after every 10 updates.
-              model.set_weights(ray.get(current_weights))
+              model.set_weights(current_weights)
               accuracy = evaluate(model, test_loader)
               print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
 

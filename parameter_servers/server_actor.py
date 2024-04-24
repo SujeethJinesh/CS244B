@@ -2,6 +2,7 @@ import torch
 import numpy as np
 from models.test_model import ConvNet
 import ray
+import time
 from workers.worker_task import compute_gradients
 from models.test_model import ConvNet, get_data_loader, evaluate
 
@@ -70,3 +71,8 @@ class ParameterServer(object):
               print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
 
       print("Final accuracy is {:.1f}.".format(accuracy))
+
+    def exit(self, sleep_sec):
+        print("in exit method")
+        time.sleep(sleep_sec)
+        ray.actor.exit_actor()

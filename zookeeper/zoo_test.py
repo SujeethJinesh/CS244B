@@ -25,6 +25,7 @@ def recover_node(node_id, new_node_id, init_role):
 
     node2 = KazooChainNode(new_node_id, ["tail"])
     time.sleep(7)
+
     with print_lock:
         print("NODE ", new_node_id, "has role: ", node2.get_role())
         print("NODE ", new_node_id, "has prev node id: ", node2.get_prev_id())
@@ -42,6 +43,13 @@ def check_state_change(node_id, init_role):
         print("NODE ", node_id, "has role: ", node.get_role())
         print("NODE ", node_id, "has prev node id: ", node.get_prev_id())
         print("NODE ", node_id, "has next node id: ", node.get_next_id())
+    print("NODE ", node_id, "has role: ", node.get_role())
+    print("NODE ", node_id, "has prev node id: ", node.get_prev_id())
+    print("NODE ", node_id, "has next node id: ", node.get_next_id())
+    time.sleep(10)
+    print("NODE ", node_id, "has role: ", node.get_role())
+    print("NODE ", node_id, "has prev node id: ", node.get_prev_id())
+    print("NODE ", node_id, "has next node id: ", node.get_next_id())
     time.sleep(5)
     node.stop()
 

@@ -65,3 +65,18 @@ NODE  4  is created
 NODE  2 has role:  middle
 NODE  2 has prev node id:  1
 NODE  2 has next node id:  4
+
+Test Case: Recovery with only head
+NODE  1  is created
+NODE  3  is created
+NODE  2  is created
+NODE  1 has role:  head
+NODE  1 has prev node id:  -1
+NODE  1 has next node id:  2
+NODE  5  is created
+NODE  4  is created
+NODE  1 has role:  head
+NODE  1 has prev node id:  -1
+NODE  1 has next node id:  4
+NODE  4 has prev node id:  1
+NODE  5 has next node id:  -1

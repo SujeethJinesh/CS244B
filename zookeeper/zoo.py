@@ -102,11 +102,13 @@ class KazooChainNode(object):
     def set_head(self):
         self.head = True
         self.prev_id = -1
+        print("NODE ", self.node_id, " becomes head.")
 
     def set_tail(self):
         self.tail = True
         self.next_id = -1
         self.zk.get_children("/base", watch=self.handle_child_event)
+        print("NODE ", self.node_id, " becomes tail.")
 
     def get_role(self):
         role = ""

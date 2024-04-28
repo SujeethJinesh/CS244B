@@ -5,14 +5,16 @@ import ray
 import time
 from workers.worker_task import compute_gradients
 from models.test_model import ConvNet, get_data_loader, evaluate
+from zookeeper.zoo import KazooChainNode
 
 iterations = 200
 num_workers = 2
 
 @ray.remote
 class ParameterServer(object):
-    def __init__(self, lr):
+    def __init__(self, lr, node_id):
         self.model = ConvNet()
+        self.kazoo_client = KazooChainNode(node_id, [])
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
 
     def apply_gradients(self, gradients):

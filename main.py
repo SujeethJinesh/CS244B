@@ -53,6 +53,9 @@ def main():
 
   run_experiment_with_object_store_ckpointing()
   # ray.get(server_killer_ref)
+  # ray.get([ps.run_synch_experiment.remote()])
+  # ray.get([ps.run_asynch_experiment_with_chain_replication.remote()])
+
 
   # ps = ParameterServer.options(max_concurrency=2).remote(1e-2)
   # try: 

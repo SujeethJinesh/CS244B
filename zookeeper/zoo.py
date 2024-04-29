@@ -14,7 +14,7 @@ from kazoo.client import KazooClient
 # TODO: What to do for Training Worker clients?
 
 class KazooChainNode(object):
-    def __init__(self, node_id, init_role, hosts='127.0.0.1:2181'):
+    def __init__(self, node_id, init_role, event_callback, hosts='127.0.0.1:2181'):
         self.zk = KazooClient(hosts=hosts)
         self.zk.start()
         self.head = False
@@ -23,10 +23,17 @@ class KazooChainNode(object):
         self.node_id = -1
         self.next_id = -1
         self.setup_node(node_id, init_role)
+        self.event_callback = event_callback
 
     def handle_delete_event(self, event):
         print("event is", event)
-        if event.type=='DELETED':
+        if event.type=='CHANGED':
+            print("handle changed event")
+            node_id = int(event.path[6])
+            # print(self.zk.get("/base/" + str(node_id)))
+            self.event_callback(event)
+            print("after event callback")
+        elif event.type=='DELETED':
             # get node id
             if int(event.path[6]) < self.node_id:
                 # check if self is the new head

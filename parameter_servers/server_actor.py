@@ -6,6 +6,7 @@ import time
 import pickle
 from workers.worker_task import compute_gradients
 from models.test_model import ConvNet, get_data_loader, evaluate
+from zookeeper.zoo import KazooChainNode
 
 iterations = 200
 num_workers = 2
@@ -13,9 +14,10 @@ weight_update_frequency = 10
 
 @ray.remote
 class ParameterServer(object):
-    def __init__(self, lr):
+    def __init__(self, lr, node_id):
         self.model = ConvNet()
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
+        self.chain_node = KazooChainNode(node_id, [], self.retrieve_weights_from_zookeeper)
 
     def apply_gradients(self, gradients):
         grad = ray.get(gradients)
@@ -29,18 +31,26 @@ class ParameterServer(object):
 
     def get_weights(self):
         return self.model.get_weights()
-
+    
+    # TODO potentially race condition: retrieval weights not being triggered
     def store_weights_in_zookeeper(self, weights):
+      print("start storing weights")
       id_w = ray.put(weights)
       pickled_weight_id = pickle.dumps(id_w)
+      print(self.chain_node.node_id)
+      self.chain_node.zk.set("/base/" + str(self.chain_node.node_id), pickled_weight_id)
 
+         
       # TODO: store the value in zookeeper
       # zookeeper.put(pickled_weight_id)
 
     def retrieve_weights_from_zookeeper(self, event):
       # TODO: implement the following function
       # zid = get_ray_weight_id(event)
-      unpickled_id_w_string = pickle.loads(zid)
+      print("start retrieval")
+      node_id = event.path[6]
+      retrieved_data = self.chain_node.zk.get("/base/" + node_id)
+      unpickled_id_w_string = pickle.loads(retrieved_data[0])
       stored_weights = ray.get(unpickled_id_w_string)
       return stored_weights
 
@@ -53,8 +63,9 @@ class ParameterServer(object):
           gradients = [compute_gradients.remote(current_weights) for _ in range(num_workers)]
           # Calculate update after all gradients are available.
           current_weights = self.apply_gradients(gradients)
-
+          
           if i % weight_update_frequency == 0:
+              self.store_weights_in_zookeeper(current_weights)
               # Evaluate the current model.
               self.model.set_weights(current_weights)
               accuracy = evaluate(self.model, test_loader)

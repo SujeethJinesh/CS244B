@@ -62,25 +62,6 @@ class ParameterServer(object):
 
       print("Final accuracy is {:.1f}.".format(accuracy))
 
-    def run_synch_experiment_copy(self):
-      test_loader = get_data_loader()[1]
-
-      print("Running synchronous parameter server training.")
-      current_weights = self.get_weights()
-      for i in range(iterations):
-          gradients = [compute_gradients.remote(current_weights) for _ in range(num_workers)]
-          # Calculate update after all gradients are available.
-          current_weights = self.apply_gradients(gradients)
-
-          if i % weight_update_frequency == 0:
-            self.store_weights_in_zookeeper(current_weights)
-            # Evaluate the current model.
-            self.model.set_weights(current_weights)
-            accuracy = evaluate(self.model, test_loader)
-            print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
-
-      print("Final accuracy is {:.1f}.".format(accuracy))
-
     def run_asynch_experiment(self):
       test_loader = get_data_loader()[1]
 

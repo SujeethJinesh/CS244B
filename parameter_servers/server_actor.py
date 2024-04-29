@@ -12,9 +12,11 @@ num_workers = 2
 
 @ray.remote(max_restarts=0)
 class ParameterServer(object):
-    def __init__(self, lr):
+    def __init__(self, lr, model_saver):
         self.model = ConvNet()
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
+        self.model_saver = model_saver
+        self.start_iteration = 0
 
     def apply_gradients(self, gradients):
         grad = ray.get(gradients)
@@ -26,8 +28,11 @@ class ParameterServer(object):
         self.optimizer.step()
         return self.model.get_weights()
 
-    def set_weights(self, weights):
-        self.model.set_weights(weights)
+    def set_weights(self, weights, iteration_count):
+        if weights:
+          self.model.set_weights(weights)
+          self.model_saver.set_weights_iteration_count.remote(weights, iteration_count)
+          self.start_iteration = iteration_count
 
     def get_weights(self):
         return self.model.get_weights()
@@ -57,19 +62,16 @@ class ParameterServer(object):
 
       print("Running synchronous parameter server training.")
       current_weights = self.get_weights()
-      for i in range(iterations):
+      for i in range(self.start_iteration, iterations):
           gradients = [compute_gradients.remote(current_weights) for _ in range(num_workers)]
           # Calculate update after all gradients are available.
           current_weights = self.apply_gradients(gradients)
 
           if i % 10 == 0:
               # Evaluate the current model.
-              self.model.set_weights(current_weights)
+              self.set_weights(current_weights, i)
               accuracy = evaluate(self.model, test_loader)
               print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
-
-          if i == 50:
-            os._exit(0)
 
       print("Final accuracy is {:.1f}.".format(accuracy))
 
@@ -82,7 +84,7 @@ class ParameterServer(object):
       for _ in range(num_workers):
           gradients.append(compute_gradients.remote(current_weights))
 
-      for i in range(iterations * num_workers):
+      for i in range(self.start_iteration, iterations * num_workers):
           ready_gradient_list, _ = ray.wait(gradients)
           ready_gradient_id = ready_gradient_list[0]
           gradients.remove(ready_gradient_id)
@@ -93,7 +95,7 @@ class ParameterServer(object):
 
           if i % 10 == 0:
               # Evaluate the current model after every 10 updates.
-              self.model.set_weights(current_weights)
+              self.set_weights(current_weights, i)
               accuracy = evaluate(self.model, test_loader)
               print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
 

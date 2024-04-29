@@ -17,7 +17,8 @@ def main():
   ray.init(ignore_reinit_error=True)
   ps = ParameterServer.remote(1e-2)
   # ray.get([ps.run_asynch_experiment.remote()])
-  ray.get([ps.run_synch_experiment.remote()])
+  ray.get([ps.run_synch_experiment_copy.remote()])
+  # ray.get([ps.run_asynch_experiment_with_chain_replication.remote()])
 
   # ps = ParameterServer.options(max_concurrency=2).remote(1e-2)
   # try: 

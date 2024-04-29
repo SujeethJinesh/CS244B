@@ -3,13 +3,14 @@ import numpy as np
 from models.test_model import ConvNet
 import ray
 import time
+import os
 from workers.worker_task import compute_gradients
 from models.test_model import ConvNet, get_data_loader, evaluate
 
 iterations = 200
 num_workers = 2
 
-@ray.remote
+@ray.remote(max_restarts=0)
 class ParameterServer(object):
     def __init__(self, lr):
         self.model = ConvNet()
@@ -25,10 +26,33 @@ class ParameterServer(object):
         self.optimizer.step()
         return self.model.get_weights()
 
+    def set_weights(self, weights):
+        self.model.set_weights(weights)
+
     def get_weights(self):
         return self.model.get_weights()
 
-    def run_synch_experiment(self):
+    def save_ckpoint(self):
+      print('not implemented')
+      # with tempfile.TemporaryDirectory() as temp_checkpoint_dir:
+      #     checkpoint = None
+
+      #     # Only the global rank 0 worker saves and reports the checkpoint
+      #     if train.get_context().get_world_rank() == 0:
+      #         ...  # Save checkpoint to temp_checkpoint_dir
+
+      #         checkpoint = Checkpoint.from_directory(tmpdir)
+
+      #     train.report(metrics, checkpoint=checkpoint)
+
+    def run_training(self, synchronous=True):
+      if synchronous:
+        self.run_synch_training()
+      else:
+        self.run_asynch_training()
+
+
+    def run_synch_training(self):
       test_loader = get_data_loader()[1]
 
       print("Running synchronous parameter server training.")
@@ -44,9 +68,12 @@ class ParameterServer(object):
               accuracy = evaluate(self.model, test_loader)
               print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
 
+          if i == 50:
+            os._exit(0)
+
       print("Final accuracy is {:.1f}.".format(accuracy))
 
-    def run_asynch_experiment(self):
+    def run_asynch_training(self):
       test_loader = get_data_loader()[1]
 
       print("Running Asynchronous Parameter Server Training.")
@@ -75,4 +102,4 @@ class ParameterServer(object):
     def exit(self, sleep_sec):
         print("in exit method")
         time.sleep(sleep_sec)
-        ray.actor.exit_actor()
+        os._exit(0)

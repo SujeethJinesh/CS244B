@@ -13,11 +13,25 @@ num_workers = 2
 weight_update_frequency = 10
 
 @ray.remote
+class ModelSaver(object):
+    def __init__(self):
+        self.weight_reference = None
+
+    def set_weights(self, weights):
+        print('model saver saving weights')
+        return ray.put(weights)
+
+    def get_weights(self, ref):
+        return ray.get(ref)
+
+@ray.remote
 class ParameterServer(object):
-    def __init__(self, lr, node_id):
+    def __init__(self, lr, node_id, model_saver):
+        self.model_saver = model_saver
         self.model = ConvNet()
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
         self.chain_node = KazooChainNode(node_id, [], self.retrieve_weights_from_zookeeper)
+        time.sleep(10)
 
     def apply_gradients(self, gradients):
         grad = ray.get(gradients)
@@ -36,10 +50,10 @@ class ParameterServer(object):
     def store_weights_in_zookeeper(self, weights):
       print("start storing weights")
       id_w = ray.put(weights)
-      pickled_weight_id = pickle.dumps(id_w)
+      # id_w = self.model_saver.set_weights.remote(weights)
+      pickled_weight_id = ray.cloudpickle.dumps(id_w)
       print(self.chain_node.node_id)
       self.chain_node.zk.set("/base/" + str(self.chain_node.node_id), pickled_weight_id)
-
          
       # TODO: store the value in zookeeper
       # zookeeper.put(pickled_weight_id)
@@ -50,9 +64,13 @@ class ParameterServer(object):
       print("start retrieval")
       node_id = event.path[6]
       retrieved_data = self.chain_node.zk.get("/base/" + node_id)
-      unpickled_id_w_string = pickle.loads(retrieved_data[0])
-      stored_weights = ray.get(unpickled_id_w_string)
-      return stored_weights
+      unpickled_id_w_string = ray.cloudpickle.loads(retrieved_data[0])
+      new_weights = ray.get(unpickled_id_w_string)
+      # new_weights = self.model_saver.get_weights.remote(unpickled_id_w_string)
+      print("new weights are", new_weights)
+      self.model.set_weights.remote(new_weights)
+      print("backup recieve weights")
+      self.chain_node.zk.exists("/base/"+str(node_id), watch=self.chain_node.handle_delete_or_change_event)
 
     def run_synch_experiment(self):
       test_loader = get_data_loader()[1]
@@ -124,6 +142,10 @@ class ParameterServer(object):
               print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
 
       print("Final accuracy is {:.1f}.".format(accuracy))
+
+    def sleep(self, sleep_sec):
+        for i in range(10):
+            time.sleep(sleep_sec)
 
     def exit(self, sleep_sec):
         print("in exit method")

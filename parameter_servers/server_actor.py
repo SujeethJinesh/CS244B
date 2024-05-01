@@ -19,10 +19,15 @@ class ModelSaver(object):
 
     def set_weights(self, weights):
         print('model saver saving weights')
-        return ray.put(weights)
+        self.weight_reference = ray.put(weights)
+        return self.weight_reference
 
-    def get_weights(self, ref):
-        return ray.get(ref)
+    def get_weights(self):
+        print("enter get weights")
+        if self.weight_reference is not None:
+            print("weight reference is ", self.weight_reference)
+            print("type is ", type(self.weight_reference))
+            return ray.get(self.weight_reference)
 
 @ray.remote
 class ParameterServer(object):
@@ -50,7 +55,7 @@ class ParameterServer(object):
     def store_weights_in_zookeeper(self, weights):
       print("start storing weights")
       id_w = ray.put(weights)
-      # id_w = self.model_saver.set_weights.remote(weights)
+      #id_w = self.model_saver.set_weights.remote(weights)
       pickled_weight_id = ray.cloudpickle.dumps(id_w)
       print(self.chain_node.node_id)
       self.chain_node.zk.set("/base/" + str(self.chain_node.node_id), pickled_weight_id)
@@ -66,9 +71,9 @@ class ParameterServer(object):
       retrieved_data = self.chain_node.zk.get("/base/" + node_id)
       unpickled_id_w_string = ray.cloudpickle.loads(retrieved_data[0])
       new_weights = ray.get(unpickled_id_w_string)
-      # new_weights = self.model_saver.get_weights.remote(unpickled_id_w_string)
+      # new_weights = self.model_saver.get_weights.remote()
       print("new weights are", new_weights)
-      self.model.set_weights.remote(new_weights)
+      self.model.set_weights(new_weights)
       print("backup recieve weights")
       self.chain_node.zk.exists("/base/"+str(node_id), watch=self.chain_node.handle_delete_or_change_event)
 
@@ -144,8 +149,10 @@ class ParameterServer(object):
       print("Final accuracy is {:.1f}.".format(accuracy))
 
     def sleep(self, sleep_sec):
-        for i in range(10):
-            time.sleep(sleep_sec)
+        # for i in range(10):
+        #     time.sleep(sleep_sec)
+        while True:
+            pass
 
     def exit(self, sleep_sec):
         print("in exit method")

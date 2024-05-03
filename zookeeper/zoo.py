@@ -27,13 +27,10 @@ class KazooChainNode(object):
 
     def handle_delete_or_change_event(self, event):
         print("event is", event)
+        node_id = int(event.path[6])
         if event.type=='CHANGED':
             print("Node", str(self.node_id), "handle changed event")
-            node_id = int(event.path[6])
             # print(self.zk.get("/base/" + str(node_id)))
-            if node_id < self.node_id:
-                self.prev_node_change_callback(event)
-            print("after event callback")
             
         elif event.type=='DELETED':
             # get node id
@@ -43,6 +40,9 @@ class KazooChainNode(object):
             else:
                 # check if self is the new tail
                 self._get_smallest_larger
+        
+        self.prev_node_change_callback(event)
+        print("after event callback")
 
     def handle_child_event(self, event):
         print("event is", event)

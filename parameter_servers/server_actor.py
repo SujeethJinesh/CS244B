@@ -36,7 +36,7 @@ class ParameterServer(object):
         self.model = ConvNet()
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
         self.chain_node = KazooChainNode(node_id, [], self.retrieve_weights_from_zookeeper)
-        time.sleep(10)
+        time.sleep(2)
 
     def apply_gradients(self, gradients):
         grad = ray.get(gradients)
@@ -66,16 +66,15 @@ class ParameterServer(object):
     def retrieve_weights_from_zookeeper(self, event):
       # TODO: implement the following function
       # zid = get_ray_weight_id(event)
-      print("start retrieval")
       node_id = event.path[6]
-      retrieved_data = self.chain_node.zk.get("/base/" + node_id)
-      unpickled_id_w_string = ray.cloudpickle.loads(retrieved_data[0])
-      new_weights = ray.get(unpickled_id_w_string)
-      # new_weights = self.model_saver.get_weights.remote()
-      print("new weights are", new_weights)
-      self.model.set_weights(new_weights)
-      print("backup recieve weights")
-      self.chain_node.zk.exists("/base/"+str(node_id), watch=self.chain_node.handle_delete_or_change_event)
+      if event.type=='CHANGED' and node_id < self.chain_node.node_id:
+        retrieved_data = self.chain_node.zk.get("/base/" + node_id)
+        unpickled_id_w_string = ray.cloudpickle.loads(retrieved_data[0])
+        new_weights = ray.get(unpickled_id_w_string)
+        # new_weights = self.model_saver.get_weights.remote()
+        self.model.set_weights(new_weights)
+        print("backup recieve weights")
+        self.chain_node.zk.exists("/base/"+str(node_id), watch=self.chain_node.handle_delete_or_change_event)
 
     def run_synch_experiment(self):
       test_loader = get_data_loader()[1]

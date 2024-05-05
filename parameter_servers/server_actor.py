@@ -16,6 +16,7 @@ weight_update_frequency = 10
 class ParameterServer(object):
     def __init__(self, lr, node_id):
         self.model = ConvNet()
+        self.start_iteration = 0
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
         self.chain_node = KazooChainNode(node_id, [], self.retrieve_weights_from_zookeeper)
         time.sleep(2)
@@ -34,9 +35,9 @@ class ParameterServer(object):
         return self.model.get_weights()
     
     # TODO potentially race condition: retrieval weights not being triggered
-    def store_weights_in_zookeeper(self, weights):
+    def store_weights_in_zookeeper(self, weights, iteration):
       print("start storing weights")
-      id_w = ray.put(weights)
+      id_w = ray.put([weights, iteration + 1])
       #id_w = self.model_saver.set_weights.remote(weights)
       pickled_weight_id = ray.cloudpickle.dumps(id_w)
       print(self.chain_node.node_id)
@@ -52,9 +53,10 @@ class ParameterServer(object):
       if event.type=='CHANGED' and int(node_id) < self.chain_node.node_id:
         retrieved_data = self.chain_node.zk.get("/base/" + node_id)
         unpickled_id_w_string = ray.cloudpickle.loads(retrieved_data[0])
-        new_weights = ray.get(unpickled_id_w_string)
+        new_weights, iteration = ray.get(unpickled_id_w_string)
         self.model.set_weights(new_weights)
-        self.store_weights_in_zookeeper(new_weights)
+        self.start_iteration = iteration
+        self.store_weights_in_zookeeper(new_weights, iteration)
         print("backup recieve weights")
         self.chain_node.zk.exists("/base/"+str(node_id), watch=self.chain_node.handle_delete_or_change_event)
 
@@ -63,13 +65,13 @@ class ParameterServer(object):
 
       print("Running synchronous parameter server training.")
       current_weights = self.get_weights()
-      for i in range(iterations):
+      for i in range(self.start_iteration, iterations):
           gradients = [compute_gradients.remote(current_weights) for _ in range(num_workers)]
           # Calculate update after all gradients are available.
           current_weights = self.apply_gradients(gradients)
           
           if i % weight_update_frequency == 0:
-              self.store_weights_in_zookeeper(current_weights)
+              self.store_weights_in_zookeeper(current_weights, i)
               # Evaluate the current model.
               self.model.set_weights(current_weights)
               accuracy = evaluate(self.model, test_loader)
@@ -90,13 +92,13 @@ class ParameterServer(object):
 
       print("Running synchronous parameter server training.")
       current_weights = self.get_weights()
-      for i in range(iterations):
+      for i in range(self.start_iteration, iterations):
           gradients = [compute_gradients.remote(current_weights) for _ in range(num_workers)]
           # Calculate update after all gradients are available.
           current_weights = self.apply_gradients(gradients)
           
           if i % weight_update_frequency == 0:
-              self.store_weights_in_zookeeper(current_weights)
+              self.store_weights_in_zookeeper(current_weights, i)
               # Evaluate the current model.
               self.model.set_weights(current_weights)
               accuracy = evaluate(self.model, test_loader)

@@ -104,3 +104,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+
+# zookeeper log
+apache-zookeeper-3.8.4-bin/logs

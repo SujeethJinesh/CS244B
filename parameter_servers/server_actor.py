@@ -8,7 +8,7 @@ from workers.worker_task import compute_gradients
 from models.test_model import ConvNet, get_data_loader, evaluate
 from zookeeper.zoo import KazooChainNode
 
-iterations = 200
+iterations = 400
 num_workers = 2
 weight_update_frequency = 10
 
@@ -67,17 +67,44 @@ class ParameterServer(object):
       # TODO: implement the following function
       # zid = get_ray_weight_id(event)
       node_id = event.path[6]
-      if event.type=='CHANGED' and node_id < self.chain_node.node_id:
+      if event.type=='CHANGED' and int(node_id) < self.chain_node.node_id:
         retrieved_data = self.chain_node.zk.get("/base/" + node_id)
         unpickled_id_w_string = ray.cloudpickle.loads(retrieved_data[0])
         new_weights = ray.get(unpickled_id_w_string)
-        # new_weights = self.model_saver.get_weights.remote()
         self.model.set_weights(new_weights)
+        self.store_weights_in_zookeeper(new_weights)
         print("backup recieve weights")
         self.chain_node.zk.exists("/base/"+str(node_id), watch=self.chain_node.handle_delete_or_change_event)
 
     def run_synch_experiment(self):
       test_loader = get_data_loader()[1]
+
+      print("Running synchronous parameter server training.")
+      current_weights = self.get_weights()
+      for i in range(iterations):
+          gradients = [compute_gradients.remote(current_weights) for _ in range(num_workers)]
+          # Calculate update after all gradients are available.
+          current_weights = self.apply_gradients(gradients)
+          
+          if i % weight_update_frequency == 0:
+              self.store_weights_in_zookeeper(current_weights)
+              # Evaluate the current model.
+              self.model.set_weights(current_weights)
+              accuracy = evaluate(self.model, test_loader)
+              print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
+
+      print("Final accuracy is {:.1f}.".format(accuracy))
+
+    def run_wait_synch_experiment(self):
+      test_loader = get_data_loader()[1]
+
+      while True:
+          if self.chain_node.head == False:
+              print("Not head, not starting training")
+              time.sleep(2)
+          else:
+              print("Node : ", str(self.chain_node.node_id), " start training")
+              break
 
       print("Running synchronous parameter server training.")
       current_weights = self.get_weights()
@@ -121,6 +148,7 @@ class ParameterServer(object):
 
       print("Final accuracy is {:.1f}.".format(accuracy))
 
+    
     def run_asynch_experiment_with_chain_replication(self):
       test_loader = get_data_loader()[1]
 

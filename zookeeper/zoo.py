@@ -26,20 +26,21 @@ class KazooChainNode(object):
         self.prev_node_change_callback = prev_node_change_callback
 
     def handle_delete_or_change_event(self, event):
-        print("event is", event)
+        print("Node ",  self.node_id, " handles event. Event is", event)
         node_id = int(event.path[6])
         if event.type=='CHANGED':
             print("Node", str(self.node_id), "handle changed event")
             # print(self.zk.get("/base/" + str(node_id)))
             
         elif event.type=='DELETED':
+            print("In handle DELTED")
             # get node id
             if int(event.path[6]) < self.node_id:
                 # check if self is the new head
-                self._get_largest_smaller
+                self._get_largest_smaller()
             else:
                 # check if self is the new tail
-                self._get_smallest_larger
+                self._get_smallest_larger()
         
         self.prev_node_change_callback(event)
         print("after event callback")
@@ -52,12 +53,16 @@ class KazooChainNode(object):
     def _get_largest_smaller(self):
         largest_smaller = None
         for node in self.zk.get_children("/base"):
+            print("get a list of children")
+            print("child is ", node)
             if int(node) < self.node_id:
                 if largest_smaller is None or int(node) > largest_smaller:
                     largest_smaller = int(node)
         if largest_smaller is None:
+            print("set head")
             self.set_head()
         else:
+            print("not head")
             self.head = False
             self.prev_id = largest_smaller
             self.zk.exists("/base/"+str(self.prev_id), watch=self.handle_delete_or_change_event)
@@ -140,6 +145,7 @@ class KazooChainNode(object):
     
     def set_head(self):
         self.head = True
+        print("New head is node ", self.node_id)
         self.prev_id = -1
         self.zk.get_children("/base", watch=self.handle_child_event)
 

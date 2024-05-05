@@ -21,13 +21,13 @@ def main():
   model_saver = ModelSaver.remote()
   ps1 = ParameterServer.remote(1e-2, 1, model_saver)
   ps2 = ParameterServer.remote(1e-2, 2, model_saver)
-  # ray.get([ps.run_asynch_experiment.remote()])
+  ps3 = ParameterServer.remote(1e-2, 3, model_saver)
   try:
-    ray.get([ps1.run_synch_experiment.remote(), kill_server.remote([ps1], 10)])
+    ray.get([ps1.run_synch_experiment.remote(), ps2.run_wait_synch_experiment.remote(),ps3.run_wait_synch_experiment.remote(), kill_server.remote([ps1], 10), kill_server.remote([ps2], 25)])
   except Exception as e:
     print("Catching exception", e)
-    ray.get([ps2.run_synch_experiment.remote()])
-  # ray.get([ps.run_asynch_experiment_with_chain_replication.remote()])
+  while True:
+    pass
 
 if __name__ == "__main__":
   main()

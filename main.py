@@ -2,10 +2,13 @@ import ray
 import time
 import threading
 import os
+import tempfile
+import shutil
 
 from experiments.synch import run_synch_experiment
 from experiments.asynch import run_asynch_experiment
 from parameter_servers.server_actor import ParameterServer
+from parameter_servers.server_actor_disk_ckpoint import ParameterServerDiskCkpoint
 from parameter_servers.server_killer import kill_server
 from parameter_servers.model_saver import ModelSaver
 
@@ -17,7 +20,7 @@ def run_experiment_with_no_ckpointing():
   ray.get([ps.run_training.remote(SYNCHRONOUS)])
 
 
-def run_experiment_with_object_store_ckpointing(ckpoint_period_sec: float = 10):
+def run_experiment_with_object_store_ckpointing():
   ms = ModelSaver.remote()
   def _run_experiment(first_run=True):
     try:
@@ -34,8 +37,12 @@ def run_experiment_with_object_store_ckpointing(ckpoint_period_sec: float = 10):
   _run_experiment()
     
 
-def run_experiment_with_disk_ckpointing(ps: ParameterServer):
-  print('not implemented')
+def run_experiment_with_disk_ckpointing():
+  checkpoint_dir = tempfile.mkdtemp()
+  ps = ParameterServerDiskCkpoint.remote(LEARNING_RATE, checkpoint_dir)
+  server_killer_ref = kill_server.remote([ps], 10, no_restart=False)
+  ray.get(ps.run_training.remote(SYNCHRONOUS))
+  shutil.rmtree(checkpoint_dir)
 
 
 
@@ -51,7 +58,7 @@ def main():
   
   # ray.get([ps.run_asynch_experiment.remote()])
 
-  run_experiment_with_object_store_ckpointing()
+  run_experiment_with_disk_ckpointing()
   # ray.get(server_killer_ref)
 
   # ps = ParameterServer.options(max_concurrency=2).remote(1e-2)

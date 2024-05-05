@@ -13,26 +13,8 @@ num_workers = 2
 weight_update_frequency = 10
 
 @ray.remote
-class ModelSaver(object):
-    def __init__(self):
-        self.weight_reference = None
-
-    def set_weights(self, weights):
-        print('model saver saving weights')
-        self.weight_reference = ray.put(weights)
-        return self.weight_reference
-
-    def get_weights(self):
-        print("enter get weights")
-        if self.weight_reference is not None:
-            print("weight reference is ", self.weight_reference)
-            print("type is ", type(self.weight_reference))
-            return ray.get(self.weight_reference)
-
-@ray.remote
 class ParameterServer(object):
-    def __init__(self, lr, node_id, model_saver):
-        self.model_saver = model_saver
+    def __init__(self, lr, node_id):
         self.model = ConvNet()
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
         self.chain_node = KazooChainNode(node_id, [], self.retrieve_weights_from_zookeeper)

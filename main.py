@@ -19,9 +19,9 @@ def main():
   # Run asynchronous param server experiment
   ray.init(ignore_reinit_error=True)
   model_saver = ModelSaver.remote()
-  ps1 = ParameterServer.remote(1e-2, 1, model_saver)
-  ps2 = ParameterServer.remote(1e-2, 2, model_saver)
-  ps3 = ParameterServer.remote(1e-2, 3, model_saver)
+  ps1 = ParameterServer.remote(1e-2, 1)
+  ps2 = ParameterServer.remote(1e-2, 2)
+  ps3 = ParameterServer.remote(1e-2, 3)
   try:
     ray.get([ps1.run_synch_experiment.remote(), ps2.run_wait_synch_experiment.remote(),ps3.run_wait_synch_experiment.remote(), kill_server.remote([ps1], 10), kill_server.remote([ps2], 25)])
   except Exception as e:

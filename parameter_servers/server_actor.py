@@ -4,6 +4,7 @@ from models.test_model import ConvNet
 import ray
 import time
 import pickle
+import asyncio
 from workers.worker_task import compute_gradients
 from models.test_model import ConvNet, get_data_loader, evaluate
 from zookeeper.zoo import KazooChainNode
@@ -19,10 +20,13 @@ class ParameterServer(object):
         self.start_iteration = 0
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
         self.chain_node = KazooChainNode(node_id, [], self.retrieve_weights_from_zookeeper)
+        self.event = asyncio.Event()
         time.sleep(2)
+        
 
     def apply_gradients(self, gradients):
-        grad = ray.get(gradients)
+        # grad = ray.get(gradients)
+        grad = gradients
         summed_gradients = [
             np.stack(gradient_zip).sum(axis=0) for gradient_zip in zip(*grad)
         ]
@@ -34,15 +38,20 @@ class ParameterServer(object):
     def get_weights(self):
         return self.model.get_weights()
     
-    # TODO potentially race condition: retrieval weights not being triggered
     def store_weights_in_zookeeper(self, weights, iteration):
+      print("start storing weights")
+      id_w = ray.put([weights, iteration + 1])
+      pickled_weight_id = ray.cloudpickle.dumps(id_w)
+      print(self.chain_node.node_id)
+      self.chain_node.zk.set("/base/" + str(self.chain_node.node_id), pickled_weight_id)
+    
+    def non_async_store_weights_in_zookeeper(self, weights, iteration):
       print("start storing weights")
       id_w = ray.put([weights, iteration + 1])
       #id_w = self.model_saver.set_weights.remote(weights)
       pickled_weight_id = ray.cloudpickle.dumps(id_w)
       print(self.chain_node.node_id)
       self.chain_node.zk.set("/base/" + str(self.chain_node.node_id), pickled_weight_id)
-         
       # TODO: store the value in zookeeper
       # zookeeper.put(pickled_weight_id)
 
@@ -59,10 +68,15 @@ class ParameterServer(object):
         self.store_weights_in_zookeeper(new_weights, iteration)
         print("backup recieve weights")
         self.chain_node.zk.exists("/base/"+str(node_id), watch=self.chain_node.handle_delete_or_change_event)
+     
+      elif event.type=='DELETED' and int(node_id) < self.chain_node.node_id:
+          print("Set event")
+          self.event.set()
+          print(self.event)
+          ray.get([self.run_synch_experiment.remote()])
 
     def run_synch_experiment(self):
       test_loader = get_data_loader()[1]
-
       print("Running synchronous parameter server training.")
       current_weights = self.get_weights()
       for i in range(self.start_iteration, iterations):
@@ -79,21 +93,16 @@ class ParameterServer(object):
 
       print("Final accuracy is {:.1f}.".format(accuracy))
 
-    def run_wait_synch_experiment(self):
+    async def run_wait_synch_experiment(self, if_block=True):
       test_loader = get_data_loader()[1]
-
-      while True:
-          if self.chain_node.head == False:
-              print("Not head, not starting training")
-              time.sleep(2)
-          else:
-              print("Node : ", str(self.chain_node.node_id), " start training")
-              break
+      
+      if if_block and self.chain_node.head == False:
+        await self.event.wait()
 
       print("Running synchronous parameter server training.")
       current_weights = self.get_weights()
       for i in range(self.start_iteration, iterations):
-          gradients = [compute_gradients.remote(current_weights) for _ in range(num_workers)]
+          gradients = await asyncio.gather(*[compute_gradients.remote(current_weights) for _ in range(num_workers)])
           # Calculate update after all gradients are available.
           current_weights = self.apply_gradients(gradients)
           

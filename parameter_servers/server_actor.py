@@ -36,15 +36,11 @@ class ParameterServer(object):
     
     # TODO potentially race condition: retrieval weights not being triggered
     def store_weights_in_zookeeper(self, weights, iteration):
-      print("start storing weights")
+      print("Node " + self.chain_node.node_id + " starts storing weights")
       id_w = ray.put([weights, iteration + 1])
       #id_w = self.model_saver.set_weights.remote(weights)
       pickled_weight_id = ray.cloudpickle.dumps(id_w)
-      print(self.chain_node.node_id)
       self.chain_node.zk.set("/base/" + str(self.chain_node.node_id), pickled_weight_id)
-         
-      # TODO: store the value in zookeeper
-      # zookeeper.put(pickled_weight_id)
 
     def retrieve_weights_from_zookeeper(self, event):
       # TODO: implement the following function

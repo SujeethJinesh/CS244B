@@ -19,17 +19,18 @@ def kill_server(actor_handle_list, timeout_sec=10):
 def main():
   # Run asynchronous param server experiment
   ray.init(ignore_reinit_error=True)
-  
-  ps_dict = {}
-  ps1 = ParameterServer.remote(1e-2, 1)
-  ps_dict[1] = ps1
-  ps2 = ParameterServer.remote(1e-2, 2)
-  ps_dict[2] = ps2
-  ps3 = ParameterServer.remote(1e-2, 3)
-  ps_dict[3] = ps3
 
   zk = KazooClient(hosts='127.0.0.1:2181')
   zk.start()
+
+  ps_dict = {}
+
+  for i in range(1, 4):
+      ps = ParameterServer.remote(1e-2, i)
+      ps_dict[i] = ps
+      # Ensures all zookeeper paths associated with the chain nodes exist.
+      while not zk.exists("/base/" + str(i)):
+        time.sleep(2)
 
   def run_new_primary():
     print("New primary runs")

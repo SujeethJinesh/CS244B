@@ -41,7 +41,8 @@ def main():
     if minimum in ps_dict:
       primary = ps_dict[minimum]
       try:
-        ray.get([primary.run_synch_experiment.remote(), kill_server.remote([primary], 10)])
+        # ray.get([primary.run_synch_experiment.remote(), kill_server.remote([primary], 10)])
+        ray.get([primary.run_asynch_experiment.remote(), kill_server.remote([primary], 10)])
       except Exception as e:
         print("Catching exception", e)
         # Ray and Zookeeper uses different communication channels, 

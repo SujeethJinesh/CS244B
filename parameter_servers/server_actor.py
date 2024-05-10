@@ -71,33 +71,6 @@ class ParameterServer(object):
 
       print("Final accuracy is {:.1f}.".format(accuracy))
 
-    def run_wait_synch_experiment(self):
-      test_loader = get_data_loader()[1]
-
-      while True:
-          if self.chain_node.head == False:
-              print("Not head, not starting training")
-              time.sleep(2)
-          else:
-              print("Node : ", str(self.chain_node.node_id), " start training")
-              break
-
-      print("Running synchronous parameter server training.")
-      current_weights = self.get_weights()
-      for i in range(self.start_iteration, iterations):
-          gradients = [compute_gradients.remote(current_weights) for _ in range(num_workers)]
-          # Calculate update after all gradients are available.
-          current_weights = self.apply_gradients(gradients)
-          
-          if i % weight_update_frequency == 0:
-              self.store_weights_in_zookeeper(current_weights, i)
-              # Evaluate the current model.
-              self.model.set_weights(current_weights)
-              accuracy = evaluate(self.model, test_loader)
-              print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
-
-      print("Final accuracy is {:.1f}.".format(accuracy))
-
     def run_asynch_experiment(self):
       test_loader = get_data_loader()[1]
 
@@ -107,7 +80,7 @@ class ParameterServer(object):
       for _ in range(num_workers):
           gradients.append(compute_gradients.remote(current_weights))
 
-      for i in range(iterations * num_workers):
+      for i in range(self.start_iteration, iterations * num_workers):
           ready_gradient_list, _ = ray.wait(gradients)
           ready_gradient_id = ready_gradient_list[0]
           gradients.remove(ready_gradient_id)
@@ -118,44 +91,12 @@ class ParameterServer(object):
 
           if i % weight_update_frequency == 0:
               # Evaluate the current model after every 10 updates.
+              self.store_weights_in_zookeeper(current_weights, i)
               self.model.set_weights(current_weights)
               accuracy = evaluate(self.model, test_loader)
               print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
 
       print("Final accuracy is {:.1f}.".format(accuracy))
-
-    
-    def run_asynch_experiment_with_chain_replication(self):
-      test_loader = get_data_loader()[1]
-
-      print("Running Asynchronous Parameter Server Training.")
-      current_weights = self.get_weights()
-      gradients = []
-      for _ in range(num_workers):
-          gradients.append(compute_gradients.remote(current_weights))
-
-      for i in range(iterations * num_workers):
-          ready_gradient_list, _ = ray.wait(gradients)
-          ready_gradient_id = ready_gradient_list[0]
-          gradients.remove(ready_gradient_id)
-
-          # Compute and apply gradients.
-          current_weights = self.apply_gradients([ready_gradient_id])
-          gradients.append(compute_gradients.remote(current_weights))
-
-          if i % weight_update_frequency == 0:
-              # Evaluate the current model after every 10 updates.
-              self.model.set_weights(current_weights)
-              accuracy = evaluate(self.model, test_loader)
-              print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
-
-      print("Final accuracy is {:.1f}.".format(accuracy))
-
-    def sleep(self, sleep_sec):
-        # for i in range(10):
-        #     time.sleep(sleep_sec)
-        while True:
-            pass
 
     def exit(self, sleep_sec):
         print("in exit method")

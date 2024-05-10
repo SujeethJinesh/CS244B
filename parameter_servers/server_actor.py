@@ -4,21 +4,26 @@ from models.test_model import ConvNet
 import ray
 import time
 import os
-import pickle
 from workers.worker_task import compute_gradients
 from models.test_model import ConvNet, get_data_loader, evaluate
+from zookeeper.zoo import KazooChainNode
 
-iterations = 200
+iterations = 400
 num_workers = 2
 weight_update_frequency = 10
 
 @ray.remote(max_restarts=0)
 class ParameterServer(object):
-    def __init__(self, lr, model_saver):
+    def __init__(self, lr, model_saver=None, node_id=None):
         self.model = ConvNet()
-        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
-        self.model_saver = model_saver
         self.start_iteration = 0
+        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
+        self.start_iteration = 0
+        if model_saver is not None:
+          self.model_saver = model_saver
+
+        if node_id is not None: 
+          self.chain_node = KazooChainNode(node_id, [], self.retrieve_weights_from_zookeeper)
 
     def apply_gradients(self, gradients):
         grad = ray.get(gradients)
@@ -57,22 +62,26 @@ class ParameterServer(object):
         self.run_synch_training()
       else:
         self.run_asynch_training()
-
-    def store_weights_in_zookeeper(self, weights):
-      id_w = ray.put(weights)
-      pickled_weight_id = pickle.dumps(id_w)
-
-      # TODO: store the value in zookeeper
-      # zookeeper.put(pickled_weight_id)
+    
+    def store_weights_in_zookeeper(self, weights, iteration):
+      print("Node " + str(self.chain_node.node_id) + " starts storing weights")
+      id_w = ray.put([weights, iteration + 1])
+      pickled_weight_id = ray.cloudpickle.dumps(id_w)
+      self.chain_node.zk.set("/base/" + str(self.chain_node.node_id), pickled_weight_id)
 
     def retrieve_weights_from_zookeeper(self, event):
-      # TODO: implement the following function
-      # zid = get_ray_weight_id(event)
-      unpickled_id_w_string = pickle.loads(zid)
-      stored_weights = ray.get(unpickled_id_w_string)
-      return stored_weights
+      node_id = event.path[6]
+      if event.type=='CHANGED' and int(node_id) < self.chain_node.node_id:
+        retrieved_data = self.chain_node.zk.get("/base/" + node_id)
+        unpickled_id_w_string = ray.cloudpickle.loads(retrieved_data[0])
+        new_weights, iteration = ray.get(unpickled_id_w_string)
+        self.model.set_weights(new_weights)
+        self.start_iteration = iteration
+        self.store_weights_in_zookeeper(new_weights, iteration)
+        print("backup recieve weights")
+        self.chain_node.zk.exists("/base/"+str(node_id), watch=self.chain_node.handle_delete_or_change_event)
 
-    def run_synch_experiment(self):
+    def run_synch_chain_node_experiment(self):
       test_loader = get_data_loader()[1]
 
       print("Running synchronous parameter server training.")
@@ -81,8 +90,9 @@ class ParameterServer(object):
           gradients = [compute_gradients.remote(current_weights) for _ in range(num_workers)]
           # Calculate update after all gradients are available.
           current_weights = self.apply_gradients(gradients)
-
+          
           if i % weight_update_frequency == 0:
+              self.store_weights_in_zookeeper(current_weights, i)
               # Evaluate the current model.
               self.set_weights(current_weights, i)
               accuracy = evaluate(self.model, test_loader)
@@ -116,7 +126,7 @@ class ParameterServer(object):
 
       print("Final accuracy is {:.1f}.".format(accuracy))
 
-    def run_asynch_experiment_with_chain_replication(self):
+    def run_asynch_chain_node_experiment(self):
       test_loader = get_data_loader()[1]
 
       print("Running Asynchronous Parameter Server Training.")
@@ -125,7 +135,7 @@ class ParameterServer(object):
       for _ in range(num_workers):
           gradients.append(compute_gradients.remote(current_weights))
 
-      for i in range(iterations * num_workers):
+      for i in range(self.start_iteration, iterations * num_workers):
           ready_gradient_list, _ = ray.wait(gradients)
           ready_gradient_id = ready_gradient_list[0]
           gradients.remove(ready_gradient_id)
@@ -136,6 +146,7 @@ class ParameterServer(object):
 
           if i % weight_update_frequency == 0:
               # Evaluate the current model after every 10 updates.
+              self.store_weights_in_zookeeper(current_weights, i)
               self.set_weights(current_weights, i)
               accuracy = evaluate(self.model, test_loader)
               print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))

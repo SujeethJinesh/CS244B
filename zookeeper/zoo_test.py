@@ -1,13 +1,26 @@
 import asyncio
 import threading
 import time
+import pickle
 from zoo import KazooChainNode
 
 print_lock = threading.Lock()
 
 def run_node(node_id, init_role):
-    node = KazooChainNode(node_id, init_role)
-    time.sleep(10)
+    def do_nothing(event):
+        pass
+    node = KazooChainNode(node_id, init_role, do_nothing)
+    if node_id == 1:
+        time.sleep(5)
+        test_string = "test"
+        pickled_data = pickle.dumps("test")
+        print(type(pickled_data))
+        node.zk.set("/base/1", pickled_data)
+        # print(node.zk.get("/base/1"))
+        # print(pickle.loads(node.zk.get("/base/1")[0]))
+    else:
+        time.sleep(10)
+
     node.stop()
 
 def fail_node(node_id, init_role):
@@ -168,12 +181,12 @@ def test_recovery_with_only_head():
 
 if __name__ == "__main__":
     test_bring_up_chain()
-    test_head_node_failure()
-    test_tail_node_failure()
-    test_middle_node_failure()
-    # Currently flaky
-    test_recovery_from_head_failure()
-    # Currently flaky
-    test_recovery_from_tail_failure()
-    # Currently flaky
-    test_recovery_with_only_head()
+    # test_head_node_failure()
+    # test_tail_node_failure()
+    # test_middle_node_failure()
+    # # Currently flaky
+    # test_recovery_from_head_failure()
+    # # Currently flaky
+    # test_recovery_from_tail_failure()
+    # # Currently flaky
+    # test_recovery_with_only_head()

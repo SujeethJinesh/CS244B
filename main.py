@@ -23,7 +23,7 @@ def run_experiment_with_object_store_ckpointing(ckpoint_period_sec: float = 10):
   ms = ModelSaver.remote()
   def _run_experiment(first_run=True):
     try:
-      ps = ParameterServer.remote(LEARNING_RATE, ms)
+      ps = ParameterServer.remote(LEARNING_RATE, model_saver=ms)
       if not first_run:
         ray.get(ps.set_weights.remote(ms.get_weights.remote(), ms.get_iteration_count.remote()))
       else:
@@ -48,7 +48,7 @@ def run_chain_node_experiment():
   ps_dict = {}
 
   for i in range(1, 4):
-      ps = ParameterServer.remote(1e-2, i)
+      ps = ParameterServer.remote(1e-2, node_id=i)
       ps_dict[i] = ps
       # Ensures all zookeeper paths associated with the chain nodes exist.
       while not zk.exists("/base/" + str(i)):
@@ -83,7 +83,7 @@ def run_chain_node_experiment():
     if run_new_primary():
       return
 
-def main()
+def main():
   # Run asynchronous param server experiment
   ray.init()
   

@@ -18,9 +18,12 @@ class ParameterServer(object):
         self.model = ConvNet()
         self.start_iteration = 0
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
-        self.model_saver = model_saver
         self.start_iteration = 0
-        self.chain_node = KazooChainNode(node_id, [], self.retrieve_weights_from_zookeeper)
+        if model_saver is not None:
+          self.model_saver = model_saver
+
+        if node_id is not None: 
+          self.chain_node = KazooChainNode(node_id, [], self.retrieve_weights_from_zookeeper)
 
     def apply_gradients(self, gradients):
         grad = ray.get(gradients)

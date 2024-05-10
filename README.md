@@ -8,6 +8,29 @@ To activate the virtual environment, use the following command
 source env/bin/activate
 ```
 
+## Zookeeper
+
+A running zookeeper server is needed before start the chain node experiments.
+
+A local zookeeper server can be started by running:
+   ```
+   ./apache-zookeeper-3.8.4-bin/bin/zkServer.sh start
+   ```
+
+To stop the zookeeper server, run
+   ```
+   ./apache-zookeeper-3.8.4-bin/bin/zkServer.sh stop
+   ```
+
+To get debug information from the zookeeper server, you can also run the server
+in the foreground.
+   ```
+   ./apache-zookeeper-3.8.4-bin/bin/zkServer.sh start-foreground
+   ```
+
+By default, the zookeeper clients used in the chain node experiments listen to
+localhost at `127.0.0.1:2181`.
+
 ## Metrics
 
 Steps for setting up metrics monitoring on a single-node local cluster:

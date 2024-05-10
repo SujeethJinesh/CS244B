@@ -10,6 +10,8 @@ source env/bin/activate
 
 ## Zookeeper
 
+A zookeeper installation script is provided at `zookeeper/zookeeper_setup.sh`. After running this script, `apache-zookeeper-3.8.4-bin` should appear in the top-level of this project.
+
 A running zookeeper server is needed before start the chain node experiments.
 
 A local zookeeper server can be started by running:

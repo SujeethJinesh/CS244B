@@ -16,8 +16,7 @@ def kill_server(actor_handle_list, timeout_sec=10):
     	ray.kill(actor_handle)
     print("killed server successfully")
 
-def main():
-  # Run asynchronous param server experiment
+def run_chain_node_experiment():
   ray.init(ignore_reinit_error=True)
 
   zk = KazooClient(hosts='127.0.0.1:2181')
@@ -41,8 +40,8 @@ def main():
     if minimum in ps_dict:
       primary = ps_dict[minimum]
       try:
-        # ray.get([primary.run_synch_experiment.remote(), kill_server.remote([primary], 10)])
-        ray.get([primary.run_asynch_experiment.remote(), kill_server.remote([primary], 10)])
+        # ray.get([primary.run_synch_chain_node_experiment.remote(), kill_server.remote([primary], 10)])
+        ray.get([primary.run_asynch_chain_node_experiment.remote(), kill_server.remote([primary], 10)])
       except Exception as e:
         print("Catching exception", e)
         # Ray and Zookeeper uses different communication channels, 
@@ -60,6 +59,10 @@ def main():
   while True:
     if run_new_primary():
       return
+
+def main():
+  run_chain_node_experiment()
+  
 
 if __name__ == "__main__":
   main()

@@ -3,7 +3,6 @@ import numpy as np
 from models.test_model import ConvNet
 import ray
 import time
-import pickle
 from workers.worker_task import compute_gradients
 from models.test_model import ConvNet, get_data_loader, evaluate
 from zookeeper.zoo import KazooChainNode
@@ -52,7 +51,7 @@ class ParameterServer(object):
         print("backup recieve weights")
         self.chain_node.zk.exists("/base/"+str(node_id), watch=self.chain_node.handle_delete_or_change_event)
 
-    def run_synch_experiment(self):
+    def run_synch_chain_node_experiment(self):
       test_loader = get_data_loader()[1]
 
       print("Running synchronous parameter server training.")
@@ -71,7 +70,7 @@ class ParameterServer(object):
 
       print("Final accuracy is {:.1f}.".format(accuracy))
 
-    def run_asynch_experiment(self):
+    def run_asynch_chain_node_experiment(self):
       test_loader = get_data_loader()[1]
 
       print("Running Asynchronous Parameter Server Training.")

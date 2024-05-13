@@ -6,7 +6,7 @@ import time
 import os
 from workers.worker_task import compute_gradients
 from models.test_model import ConvNet, get_data_loader, evaluate
-from zookeeper.zoo import KazooChainNode
+# from zookeeper.zoo import KazooChainNode
 
 iterations = 400
 num_workers = 2
@@ -19,9 +19,7 @@ class ParameterServer(object):
         self.start_iteration = 0
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
         self.start_iteration = 0
-        if model_saver is not None:
-          self.model_saver = model_saver
-
+        self.model_saver = model_saver
         if node_id is not None: 
           self.chain_node = KazooChainNode(node_id, [], self.retrieve_weights_from_zookeeper)
 
@@ -38,7 +36,8 @@ class ParameterServer(object):
     def set_weights(self, weights, iteration_count):
         if weights:
           self.model.set_weights(weights)
-          self.model_saver.set_weights_iteration_count.remote(weights, iteration_count)
+          if self.model_saver:
+            self.model_saver.set_weights_iteration_count.remote(weights, iteration_count)
           self.start_iteration = iteration_count
 
     def get_weights(self):
@@ -59,10 +58,10 @@ class ParameterServer(object):
 
     def run_training(self, synchronous=True):
       if synchronous:
-        self.run_synch_training()
+        self.run_synch_chain_node_experiment()
       else:
-        self.run_asynch_training()
-    
+        self.run_asynch_chain_node_experiment()
+
     def store_weights_in_zookeeper(self, weights, iteration):
       print("Node " + str(self.chain_node.node_id) + " starts storing weights")
       id_w = ray.put([weights, iteration + 1])
@@ -120,7 +119,34 @@ class ParameterServer(object):
 
           if i % weight_update_frequency == 0:
               # Evaluate the current model after every 10 updates.
-              self.model.set_weights(current_weights)
+              self.set_weights(current_weights, i)
+              accuracy = evaluate(self.model, test_loader)
+              print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
+
+      print("Final accuracy is {:.1f}.".format(accuracy))
+
+    def run_asynch_chain_node_experiment(self):
+      test_loader = get_data_loader()[1]
+
+      print("Running Asynchronous Parameter Server Training.")
+      current_weights = self.get_weights()
+      gradients = []
+      for _ in range(num_workers):
+          gradients.append(compute_gradients.remote(current_weights))
+
+      for i in range(self.start_iteration, iterations * num_workers):
+          ready_gradient_list, _ = ray.wait(gradients)
+          ready_gradient_id = ready_gradient_list[0]
+          gradients.remove(ready_gradient_id)
+
+          # Compute and apply gradients.
+          current_weights = self.apply_gradients([ready_gradient_id])
+          gradients.append(compute_gradients.remote(current_weights))
+
+          if i % weight_update_frequency == 0:
+              # Evaluate the current model after every 10 updates.
+              self.store_weights_in_zookeeper(current_weights, i)
+              self.set_weights(current_weights, i)
               accuracy = evaluate(self.model, test_loader)
               print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
 

@@ -2,6 +2,7 @@ import ray
 import time
 import threading
 import os
+<<<<<<< HEAD
 import torch
 
 from experiments.synch import run_synch_experiment
@@ -9,18 +10,37 @@ from experiments.asynch import run_asynch_experiment
 from kazoo.client import KazooClient
 from kazoo.recipe.barrier import Barrier
 from models.test_model import ConvNet
+=======
+import tempfile
+import shutil
+
+
+from experiments.synch import run_synch_experiment
+from experiments.asynch import run_asynch_experiment
+# from kazoo.client import KazooClient
+# from kazoo.recipe.barrier import Barrier
+>>>>>>> 4af1629f81ea716cd93b37d0089ff3c499c1ffc3
 from parameter_servers.server_actor import ParameterServer
+from parameter_servers.server_actor_disk_ckpoint import ParameterServerDiskCkpoint
 from parameter_servers.server_killer import kill_server
 from parameter_servers.model_saver import ModelSaver
 from parameter_servers.server_task import run_parameter_server_task
 from workers.worker_task import compute_gradients_relaxed_consistency
 
 LEARNING_RATE = 1e-2
-SYNCHRONOUS = True
+SYNCHRONOUS = False
 
 def run_experiment_with_no_ckpointing():
   ps = ParameterServer.remote(LEARNING_RATE)
   ray.get([ps.run_training.remote(SYNCHRONOUS)])
+
+
+def run_experiment_with_disk_ckpointing():
+  checkpoint_dir = tempfile.mkdtemp()
+  ps = ParameterServerDiskCkpoint.remote(LEARNING_RATE, checkpoint_dir)
+  server_killer_ref = kill_server.remote([ps], 10, no_restart=False)
+  ray.get(ps.run_training.remote(SYNCHRONOUS))
+  shutil.rmtree(checkpoint_dir)
 
 
 def run_experiment_with_object_store_ckpointing(ckpoint_period_sec: float = 10):
@@ -39,9 +59,6 @@ def run_experiment_with_object_store_ckpointing(ckpoint_period_sec: float = 10):
       _run_experiment(first_run=False)
   _run_experiment()
     
-
-def run_experiment_with_disk_ckpointing(ps: ParameterServer):
-  print('not implemented')
 
 def run_chain_node_experiment():
   ray.init(ignore_reinit_error=True)
@@ -112,8 +129,12 @@ def main():
   ray.init()
   
   # ray.get([ps.run_asynch_experiment.remote()])
-
+  run_experiment_with_no_ckpointing()
+  # ray.get(server_killer_ref)
   # run_experiment_with_object_store_ckpointing()
+  # ray.get(server_killer_ref)
+  # ray.get([ps.run_synch_experiment.remote()])
+  # ray.get([ps.run_asynch_experiment_with_chain_replication.remote()])
   # ray.get(server_killer_ref)
   # ray.get([ps.run_synch_experiment.remote()])
   # ray.get([ps.run_asynch_experiment_with_chain_replication.remote()])
@@ -126,15 +147,11 @@ def main():
   #   print("An exception occured")
 
   # Experiment 4
-  print("Start experiment 4")
-  run_relaxed_consistency_experiment()
+  # print("Start experiment 4")
+  # run_relaxed_consistency_experiment()
 
 
   print("Driver exits")
-
-# def main():
-#   run_chain_node_experiment()
-  
 
 
 if __name__ == "__main__":

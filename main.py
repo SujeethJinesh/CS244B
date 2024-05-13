@@ -2,6 +2,7 @@ import ray
 import time
 import threading
 import os
+import torch
 
 from experiments.synch import run_synch_experiment
 from experiments.asynch import run_asynch_experiment
@@ -99,7 +100,7 @@ def run_relaxed_consistency_experiment():
   zk.create("/base/weights", weight_ref_string, ephemeral=False, makepath=True)
   
   try:
-    ray.get([run_parameter_server_task.remote(1), compute_gradients_relaxed_consistency.remote(0)])
+    ray.get([run_parameter_server_task.remote(model, 1, 1e-2), compute_gradients_relaxed_consistency.remote(model, 0)])
   except Exception as e:
       print("Catching exception", e)
   

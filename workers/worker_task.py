@@ -21,28 +21,26 @@ def compute_gradients(weights):
     return model.get_gradients()
 
 @ray.remote
-def compute_gradients_relaxed_consistency(worker_index):
-  model = ConvNet()
+def compute_gradients_relaxed_consistency(model, worker_index):
   data_iterator = iter(get_data_loader()[0])
-
   zk = KazooClient(hosts='127.0.0.1:2181')
   zk.start()
   zk.create(f"/base/gradients/{worker_index}", b"", ephemeral=True, makepath=True)
 
   def get_weights():
-    print(f"Getting weights")
+    nonlocal zk
     retrieved_data = zk.get("/base/weights")
     unpickled_w_string = ray.cloudpickle.loads(retrieved_data[0])
     return ray.get(unpickled_w_string)
 
   def put_gradients(grads):
-    print("PS storing grads in zookeeper")
+    nonlocal zk
     id_grad = ray.put(grads)
     pickled_grad_id = ray.cloudpickle.dumps(id_grad)
     zk.set(f"/base/gradients/{worker_index}", pickled_grad_id)
 
   def compute_grads():
-    global data_iterator
+    nonlocal data_iterator, model
     try:
         data, target = next(data_iterator)
     except StopIteration:  # When the epoch ends, start a new epoch.

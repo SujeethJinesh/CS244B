@@ -2,18 +2,21 @@ import ray
 import time
 import threading
 import os
+import torch
 import tempfile
 import shutil
 
-
 from experiments.synch import run_synch_experiment
 from experiments.asynch import run_asynch_experiment
-# from kazoo.client import KazooClient
-# from kazoo.recipe.barrier import Barrier
+from kazoo.client import KazooClient
+from kazoo.recipe.barrier import Barrier
+from models.test_model import ConvNet
 from parameter_servers.server_actor import ParameterServer
 from parameter_servers.server_actor_disk_ckpoint import ParameterServerDiskCkpoint
 from parameter_servers.server_killer import kill_server
 from parameter_servers.model_saver import ModelSaver
+from parameter_servers.server_task import run_parameter_server_task
+from workers.worker_task import compute_gradients_relaxed_consistency
 
 LEARNING_RATE = 1e-2
 SYNCHRONOUS = False
@@ -92,12 +95,32 @@ def run_chain_node_experiment():
     if run_new_primary():
       return
 
+def run_relaxed_consistency_experiment():
+  zk = KazooClient(hosts='127.0.0.1:2181')
+  zk.start()
+
+  # TODO: clean up.
+  # Creates the weights ZK node so the workers have initial weights to work on.
+  model = ConvNet()
+  weight_ref = ray.put(model.get_weights())
+  weight_ref_string = ray.cloudpickle.dumps(weight_ref)
+
+  zk.create("/base/weights", weight_ref_string, ephemeral=False, makepath=True)
+  
+  try:
+    ray.get([run_parameter_server_task.remote(model, 1, 1e-2), compute_gradients_relaxed_consistency.remote(model, 0)])
+  except Exception as e:
+      print("Catching exception", e)
+  
+  while True:
+    pass
+    
 def main():
   # Run asynchronous param server experiment
   ray.init()
   
   # ray.get([ps.run_asynch_experiment.remote()])
-  run_experiment_with_no_ckpointing()
+  # run_experiment_with_no_ckpointing()
   # ray.get(server_killer_ref)
   # run_experiment_with_object_store_ckpointing()
   # ray.get(server_killer_ref)
@@ -113,6 +136,11 @@ def main():
   #   ray.get([ps.run_synch_experiment.remote(), ps.exit.remote(10)])
   # except:
   #   print("An exception occured")
+
+  # Experiment 4
+  print("Start experiment 4")
+  run_relaxed_consistency_experiment()
+
 
   print("Driver exits")
 

@@ -80,3 +80,48 @@ Steps for setting up metrics monitoring on a single-node local cluster:
     change this, edit `/tmp/ray/session_latest/metrics/prometheus/prometheus.yml`. 
     Setting a long interval might make it harder to quickly notice
     issues like dead worker nodes.
+
+## GCP
+
+You must first authenticate by installing `gcloud` using https://cloud.google.com/sdk/docs/install and running:
+
+```
+gcloud auth application-default login
+```
+
+Next, run the following:
+
+```
+cd /path/to/CS244B
+
+gcloud config set project ft-distributed-ml-training
+
+ray up gcp.yaml
+
+# View the dashboard at http://127.0.0.1:8265/ after running:
+ray dashboard /path/to/CS244B/gcp.yaml
+
+# In a separate terminal, run:
+ray job submit --runtime-env-json='{"excludes": ["/.git/"]}' --working-dir . -- python main.py
+```
+
+Useful commands:
+```
+  # To terminate the cluster:
+    ray down gcp.yaml
+  
+  # To retrieve the IP address of the cluster head:
+    ray get-head-ip gcp.yaml
+  
+  # To port-forward the cluster's Ray Dashboard to the local machine:
+    ray dashboard gcp.yaml
+  
+  # To submit a job to the cluster, port-forward the Ray Dashboard in another terminal and run:
+    ray job submit --address http://localhost:<dashboard-port> --working-dir . -- python my_script.py
+  
+  # To connect to a terminal on the cluster head for debugging:
+    ray attach gcp.yaml
+  
+  # To monitor autoscaling:
+    ray exec gcp.yaml 'tail -n 100 -f /tmp/ray/session_latest/logs/monitor*'
+```

@@ -21,7 +21,7 @@ SYNCHRONOUS = False
 def run_experiment_with_no_ckpointing():
   ps = ParameterServer.remote(LEARNING_RATE)
   ray.get([ps.run_training.remote(SYNCHRONOUS)])
-    
+
 
 def run_experiment_with_disk_ckpointing():
   checkpoint_dir = tempfile.mkdtemp()
@@ -94,17 +94,19 @@ def run_chain_node_experiment():
 
 def main():
   # Run asynchronous param server experiment
-  print('excluding')
   ray.init()
   
   # ray.get([ps.run_asynch_experiment.remote()])
-
   run_experiment_with_no_ckpointing()
   # ray.get(server_killer_ref)
   # run_experiment_with_object_store_ckpointing()
   # ray.get(server_killer_ref)
   # ray.get([ps.run_synch_experiment.remote()])
   # ray.get([ps.run_asynch_experiment_with_chain_replication.remote()])
+  # ray.get(server_killer_ref)
+  # ray.get([ps.run_synch_experiment.remote()])
+  # ray.get([ps.run_asynch_experiment_with_chain_replication.remote()])
+
 
   # ps = ParameterServer.options(max_concurrency=2).remote(1e-2)
   # try: 

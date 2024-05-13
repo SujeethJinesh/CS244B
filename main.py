@@ -2,24 +2,15 @@ import ray
 import time
 import threading
 import os
-<<<<<<< HEAD
 import torch
+import tempfile
+import shutil
 
 from experiments.synch import run_synch_experiment
 from experiments.asynch import run_asynch_experiment
 from kazoo.client import KazooClient
 from kazoo.recipe.barrier import Barrier
 from models.test_model import ConvNet
-=======
-import tempfile
-import shutil
-
-
-from experiments.synch import run_synch_experiment
-from experiments.asynch import run_asynch_experiment
-# from kazoo.client import KazooClient
-# from kazoo.recipe.barrier import Barrier
->>>>>>> 4af1629f81ea716cd93b37d0089ff3c499c1ffc3
 from parameter_servers.server_actor import ParameterServer
 from parameter_servers.server_actor_disk_ckpoint import ParameterServerDiskCkpoint
 from parameter_servers.server_killer import kill_server
@@ -129,7 +120,7 @@ def main():
   ray.init()
   
   # ray.get([ps.run_asynch_experiment.remote()])
-  run_experiment_with_no_ckpointing()
+  # run_experiment_with_no_ckpointing()
   # ray.get(server_killer_ref)
   # run_experiment_with_object_store_ckpointing()
   # ray.get(server_killer_ref)
@@ -147,8 +138,8 @@ def main():
   #   print("An exception occured")
 
   # Experiment 4
-  # print("Start experiment 4")
-  # run_relaxed_consistency_experiment()
+  print("Start experiment 4")
+  run_relaxed_consistency_experiment()
 
 
   print("Driver exits")

@@ -9,7 +9,7 @@ def kill_server(handle_list, timeout_sec=10, no_restart=True, is_task=False):
     if is_task:
       # TODO: For some reason this ray.cancel doesn't actually kill the ps task
       print (f"killing handle {handle}")
-      ray.cancel(handle, force=False, recursive=False)
+      ray.cancel(handle, force=False, recursive=True)
       print ("killing task")
     else:
       ray.kill(handle, no_restart=no_restart)

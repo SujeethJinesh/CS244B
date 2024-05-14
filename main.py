@@ -122,14 +122,14 @@ def run_relaxed_consistency_experiment():
     # Create server killer.
     server_killer_ref = kill_server.remote([ps], timeout_sec=5, no_restart=False, is_task=True)
     all_tasks.append(server_killer_ref)
-    ray.wait([server_killer_ref])
+    ray.get([server_killer_ref])
 
     # Restart Param server
     print("Restarting ps")
     time.sleep(5)
     server_restart_ref = run_parameter_server_task.remote(model, num_workers, 1e-2)
     # Ensure param server is restarted
-    ray.wait([server_restart_ref])
+    ray.get([server_restart_ref])
 
     # Wait for all tasks
     ray.get(all_tasks)

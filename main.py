@@ -20,6 +20,7 @@ from workers.worker_task import compute_gradients_relaxed_consistency
 
 LEARNING_RATE = 1e-2
 SYNCHRONOUS = False
+num_workers = 1
 
 def run_experiment_with_no_ckpointing():
   ps = ParameterServer.remote(LEARNING_RATE)
@@ -108,12 +109,33 @@ def run_relaxed_consistency_experiment():
   zk.create("/base/weights", weight_ref_string, ephemeral=False, makepath=True)
   
   try:
-    ray.get([run_parameter_server_task.remote(model, 1, 1e-2), compute_gradients_relaxed_consistency.remote(model, 0)])
+    all_tasks = []
+
+    # Create parameter server.
+    ps = run_parameter_server_task.remote(model, num_workers, 1e-2)
+    all_tasks.append(ps)
+
+    # Create workers.
+    workers = [compute_gradients_relaxed_consistency.remote(model, i) for i in range(num_workers)]
+    all_tasks.extend(workers)
+
+    # Create server killer.
+    server_killer_ref = kill_server.remote([ps], timeout_sec=5, no_restart=False, is_task=True)
+    all_tasks.append(server_killer_ref)
+    ray.wait([server_killer_ref])
+
+    # Restart Param server
+    print("Restarting ps")
+    time.sleep(5)
+    server_restart_ref = run_parameter_server_task.remote(model, num_workers, 1e-2)
+    # Ensure param server is restarted
+    ray.wait([server_restart_ref])
+
+    # Wait for all tasks
+    ray.get(all_tasks)
   except Exception as e:
       print("Catching exception", e)
-  
-  while True:
-    pass
+
     
 def main():
   # Run asynchronous param server experiment

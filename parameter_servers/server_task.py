@@ -11,6 +11,7 @@ weight_update_frequency = 10
 
 @ray.remote
 def run_parameter_server_task(model, num_workers, lr):
+  print("Parameter Server is starting")
   optimizer = torch.optim.SGD(model.parameters(), lr=lr)
 
   then = time.time()
@@ -71,7 +72,3 @@ def run_parameter_server_task(model, num_workers, lr):
 
   for worker_index in range(num_workers):
     zk.exists(f"/base/gradients/{worker_index}", watch=handle_gradient_update)
-
-  # while True:
-  #   print("In while true loop for server")
-  #   pass

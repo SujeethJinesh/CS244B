@@ -4,6 +4,7 @@ import torch
 from models.test_model import ConvNet
 import ray
 import os
+import threading
 from models.test_model import ConvNet, get_data_loader, evaluate
 from kazoo.client import KazooClient
 
@@ -71,9 +72,10 @@ def run_parameter_server_task(model, num_workers, lr):
       store_weights_in_zookeeper(weights)
       evaluate_model()
 
+    print(f"pid is {os.getpid()} and thread is {threading.get_ident()} and ray task id is {ray.get_runtime_context().get_task_id()}")
     zk.exists(event.path, watch=handle_gradient_update)
 
   for worker_index in range(num_workers):
     zk.exists(f"/base/gradients/{worker_index}", watch=handle_gradient_update)
 
-  return os.getpid()
+  return os.getpid(), ray.get_runtime_context().get_task_id()

@@ -109,7 +109,8 @@ def run_relaxed_consistency_experiment():
 
   # Create parameter server.
   ps = run_parameter_server_task.remote(model, num_workers, 1e-2)
-  ps_pid = ray.get([ps])[0]
+  ps_pid, ps_ray_task_id = ray.get([ps])[0]
+  print(f"In Driver, got ps_pid {ps_pid} and ps_ray_task_id {ps_ray_task_id}")
 
   # Create workers.
   workers = [compute_gradients_relaxed_consistency.remote(model, i) for i in range(num_workers)]

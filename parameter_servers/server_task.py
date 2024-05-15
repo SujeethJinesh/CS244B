@@ -3,13 +3,14 @@ import numpy as np
 import torch
 from models.test_model import ConvNet
 import ray
+import os
 from models.test_model import ConvNet, get_data_loader, evaluate
 from kazoo.client import KazooClient
 
 iterations = 400
 weight_update_frequency = 10
 
-@ray.remote
+@ray.remote(max_retries=0)
 def run_parameter_server_task(model, num_workers, lr):
   print("Parameter Server is starting")
   optimizer = torch.optim.SGD(model.parameters(), lr=lr)
@@ -17,7 +18,7 @@ def run_parameter_server_task(model, num_workers, lr):
   then = time.time()
   test_loader = get_data_loader()[1]
 
-  zk = KazooClient(hosts='127.0.0.1:2181')
+  zk = KazooClient(hosts='127.0.0.1:2181', timeout=1.0)
   zk.start()
   zk.create("/base/parameter_server", b"", ephemeral=True, makepath=True)
 
@@ -50,6 +51,8 @@ def run_parameter_server_task(model, num_workers, lr):
     model.set_weights(w)
     id_w = ray.put(w)
     pickled_weight_id = ray.cloudpickle.dumps(id_w)
+
+    # This will likely need to be done in an actor so that the weights data will still be kept
     zk.set("/base/weights", pickled_weight_id)
 
   def evaluate_model():
@@ -72,3 +75,5 @@ def run_parameter_server_task(model, num_workers, lr):
 
   for worker_index in range(num_workers):
     zk.exists(f"/base/gradients/{worker_index}", watch=handle_gradient_update)
+
+  return os.getpid()

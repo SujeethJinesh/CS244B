@@ -97,44 +97,39 @@ def run_chain_node_experiment():
       return
 
 def run_relaxed_consistency_experiment():
-  zk = KazooClient(hosts='127.0.0.1:2181')
-  zk.start()
-
-  # TODO: clean up.
-  # Creates the weights ZK node so the workers have initial weights to work on.
   model = ConvNet()
   weight_ref = ray.put(model.get_weights())
   weight_ref_string = ray.cloudpickle.dumps(weight_ref)
-
-  zk.create("/base/weights", weight_ref_string, ephemeral=False, makepath=True)
   
+  zk = KazooClient(hosts='127.0.0.1:2181', timeout=1.0)
+  zk.start()
+  weights_path = "/base/weights"
+  if zk.exists(weights_path) is None:
+    zk.create(weights_path, weight_ref_string, ephemeral=False, makepath=True)
+
+  # Create parameter server.
+  ps = run_parameter_server_task.remote(model, num_workers, 1e-2)
+  ps_pid = ray.get([ps])[0]
+
+  # Create workers.
+  workers = [compute_gradients_relaxed_consistency.remote(model, i) for i in range(num_workers)]
+  print(f"worker ids are {workers} and ps id is {ps}")
+
+  # Kill Server.
   try:
-    all_tasks = []
-
-    # Create parameter server.
-    ps = run_parameter_server_task.remote(model, num_workers, 1e-2)
-    all_tasks.append(ps)
-
-    # Create workers.
-    workers = [compute_gradients_relaxed_consistency.remote(model, i) for i in range(num_workers)]
-    all_tasks.extend(workers)
-
-    # Create server killer.
-    server_killer_ref = kill_server.remote([ps], timeout_sec=5, no_restart=False, is_task=True)
-    all_tasks.append(server_killer_ref)
+    server_killer_ref = kill_server.remote([ps], timeout_sec=5, no_restart=True, is_task=True, os_pid=ps_pid)
     ray.get([server_killer_ref])
+  except ray.exceptions.WorkerCrashedError:
+    print("Caught a WorkerCrashedError")
 
-    # Restart Param server
-    print("Restarting ps")
-    time.sleep(5)
-    server_restart_ref = run_parameter_server_task.remote(model, num_workers, 1e-2)
-    # Ensure param server is restarted
-    ray.get([server_restart_ref])
+  # Restart Param server
+  time.sleep(5)
+  # server_restart_ref = run_parameter_server_task.remote(model, num_workers, 1e-2)
+  # ps_pid = ray.get([server_restart_ref])[0]
+  # print (f"Restarted ps pid is {ps_pid}")
 
-    # Wait for all tasks
-    ray.get(all_tasks)
-  except Exception as e:
-      print("Catching exception", e)
+  # Wait for all tasks
+  ray.get(workers)
 
     
 def main():
@@ -162,7 +157,6 @@ def main():
   # Experiment 4
   print("Start experiment 4")
   run_relaxed_consistency_experiment()
-
 
   print("Driver exits")
 

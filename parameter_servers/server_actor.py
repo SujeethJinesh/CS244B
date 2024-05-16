@@ -6,7 +6,7 @@ import time
 import os
 from workers.worker_task import compute_gradients
 from models.test_model import ConvNet, get_data_loader, evaluate
-# from zookeeper.zoo import KazooChainNode
+from zookeeper.zoo import KazooChainNode
 
 iterations = 400
 num_workers = 2
@@ -14,12 +14,14 @@ weight_update_frequency = 10
 
 @ray.remote(max_restarts=0)
 class ParameterServer(object):
-    def __init__(self, lr, model_saver=None, node_id=None):
+    def __init__(self, lr, model_saver=None, node_id=None, ref_store=None):
         self.model = ConvNet()
         self.start_iteration = 0
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
         self.start_iteration = 0
         self.model_saver = model_saver
+        if ref_store is not None:
+          self.ref_store = ref_store
         if node_id is not None: 
           self.chain_node = KazooChainNode(node_id, [], self.retrieve_weights_from_zookeeper)
 
@@ -65,6 +67,7 @@ class ParameterServer(object):
     def store_weights_in_zookeeper(self, weights, iteration):
       print("Node " + str(self.chain_node.node_id) + " starts storing weights")
       id_w = ray.put([weights, iteration + 1])
+      self.ref_store.partitioned_store_put.remote(self.chain_node.node_id, id_w)
       pickled_weight_id = ray.cloudpickle.dumps(id_w)
       self.chain_node.zk.set("/base/" + str(self.chain_node.node_id), pickled_weight_id)
 

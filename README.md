@@ -8,6 +8,31 @@ To activate the virtual environment, use the following command
 source env/bin/activate
 ```
 
+## Zookeeper
+
+A zookeeper installation script is provided at `zookeeper/zookeeper_setup.sh`. After running this script, `apache-zookeeper-3.8.4-bin` should appear in the top-level of this project.
+
+A running zookeeper server is needed before start the chain node experiments.
+
+A local zookeeper server can be started by running:
+   ```
+   ./apache-zookeeper-3.8.4-bin/bin/zkServer.sh start
+   ```
+
+To stop the zookeeper server, run
+   ```
+   ./apache-zookeeper-3.8.4-bin/bin/zkServer.sh stop
+   ```
+
+To get debug information from the zookeeper server, you can also run the server
+in the foreground.
+   ```
+   ./apache-zookeeper-3.8.4-bin/bin/zkServer.sh start-foreground
+   ```
+
+By default, the zookeeper clients used in the chain node experiments listen to
+localhost at `127.0.0.1:2181`.
+
 ## Metrics
 
 Steps for setting up metrics monitoring on a single-node local cluster:
@@ -55,3 +80,48 @@ Steps for setting up metrics monitoring on a single-node local cluster:
     change this, edit `/tmp/ray/session_latest/metrics/prometheus/prometheus.yml`. 
     Setting a long interval might make it harder to quickly notice
     issues like dead worker nodes.
+
+## GCP
+
+You must first authenticate by installing `gcloud` using https://cloud.google.com/sdk/docs/install and running:
+
+```
+gcloud auth application-default login
+```
+
+Next, run the following:
+
+```
+cd /path/to/CS244B
+
+gcloud config set project ft-distributed-ml-training
+
+ray up gcp.yaml
+
+# View the dashboard at http://127.0.0.1:8265/ after running:
+ray dashboard /path/to/CS244B/gcp.yaml
+
+# In a separate terminal, run:
+ray job submit --runtime-env-json='{"excludes": ["/.git/"]}' --working-dir . -- python main.py
+```
+
+Useful commands:
+```
+  # To terminate the cluster:
+    ray down gcp.yaml
+  
+  # To retrieve the IP address of the cluster head:
+    ray get-head-ip gcp.yaml
+  
+  # To port-forward the cluster's Ray Dashboard to the local machine:
+    ray dashboard gcp.yaml
+  
+  # To submit a job to the cluster, port-forward the Ray Dashboard in another terminal and run:
+    ray job submit --address http://localhost:<dashboard-port> --working-dir . -- python my_script.py
+  
+  # To connect to a terminal on the cluster head for debugging:
+    ray attach gcp.yaml
+  
+  # To monitor autoscaling:
+    ray exec gcp.yaml 'tail -n 100 -f /tmp/ray/session_latest/logs/monitor*'
+```

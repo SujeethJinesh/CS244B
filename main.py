@@ -14,7 +14,7 @@ from models.test_model import ConvNet
 from parameter_servers.server_actor import ParameterServer
 from parameter_servers.server_actor_disk_ckpoint import ParameterServerDiskCkpoint
 from parameter_servers.server_killer import kill_server
-from parameter_servers.model_saver import ModelSaver
+from parameter_servers.model_saver import ModelSaver, PartitionedStore
 from parameter_servers.server_task import run_parameter_server_task
 from workers.worker_task import compute_gradients_relaxed_consistency
 
@@ -52,15 +52,17 @@ def run_experiment_with_object_store_ckpointing(ckpoint_period_sec: float = 10):
     
 
 def run_chain_node_experiment():
-  ray.init(ignore_reinit_error=True)
+  # ray.init(ignore_reinit_error=True)
+  num_chain_nodes = 3
 
   zk = KazooClient(hosts='127.0.0.1:2181')
   zk.start()
 
+  store = PartitionedStore.remote(num_chain_nodes)
   ps_dict = {}
 
-  for i in range(1, 4):
-      ps = ParameterServer.remote(1e-2, node_id=i)
+  for i in range(num_chain_nodes):
+      ps = ParameterServer.remote(1e-2, node_id=i, ref_store=store)
       ps_dict[i] = ps
       # Ensures all zookeeper paths associated with the chain nodes exist.
       while not zk.exists("/base/" + str(i)):
@@ -135,6 +137,7 @@ def main():
   # try: 
   #   ray.get([ps.run_synch_experiment.remote(), ps.exit.remote(10)])
   # except:
+  #   print("An exception occured")
   #   print("An exception occured")
 
   # Experiment 4

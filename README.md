@@ -2,10 +2,16 @@
 
 ## Getting Started
 
+To create the required Python virtual environment, run
+
+```
+./create_venv.sh
+```
+
 To activate the virtual environment, use the following command
 
 ```
-source env/bin/activate
+source training_env/bin/activate
 ```
 
 ## Zookeeper

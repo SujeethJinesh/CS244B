@@ -26,6 +26,7 @@ def compute_gradients(weights):
 
 @ray.remote
 def compute_gradients_relaxed_consistency(model, worker_index):
+  print(f"Worker {worker_index} is starting")
   data_iterator = iter(get_data_loader()[0])
   zk = KazooClient(hosts='127.0.0.1:2181')
   zk.start()
@@ -48,8 +49,6 @@ def compute_gradients_relaxed_consistency(model, worker_index):
     try:
       # Lock the gradient update node
       zk.create(worker_grad_lock_path, ephemeral=True, makepath=True)
-
-      print("Acquired lock to update gradients from worker")
 
       # Read the current list of gradient updates in the zookeeper node
       remote_grad_updates = []

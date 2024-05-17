@@ -39,9 +39,7 @@ class ParamServerTaskActor:
           worker_grad_path = f"/base/gradients/{worker_index}"
 
           # Lock the gradients so we can read them
-          zk.create(event.path)
-
-          print("Acquired lock to retrieve gradients from param server")
+          zk.create(event.path, ephemeral=True, makepath=True)
 
           # Read the current list of gradient updates in the zookeeper node
           remote_grad_updates = None

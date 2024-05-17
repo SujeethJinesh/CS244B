@@ -7,79 +7,10 @@ import os
 import threading
 from models.test_model import ConvNet, get_data_loader, evaluate
 from kazoo.client import KazooClient
+from kazoo.exceptions import NodeExistsError
 
 iterations = 400
 weight_update_frequency = 10
-
-# @ray.remote
-# def run_parameter_server_task(model, num_workers, lr):
-#   print("Parameter Server is starting")
-#   optimizer = torch.optim.SGD(model.parameters(), lr=lr)
-
-#   then = time.time()
-#   test_loader = get_data_loader()[1]
-
-#   zk = KazooClient(hosts='127.0.0.1:2181', timeout=1.0)
-#   zk.start()
-#   zk.create("/base/parameter_server", b"", ephemeral=True, makepath=True)
-
-#   def retrieve_gradients_from_zk(event):
-#     nonlocal zk
-#     # print(f"Got gradient notification from event: {event}")
-#     if event.type=='CHANGED':
-#       retrieved_data = zk.get(event.path)
-#       unpickled_grad_string = ray.cloudpickle.loads(retrieved_data[0])
-#       # TODO need to properly pass back gradient updates for array of updates.
-#       grads = ray.get(unpickled_grad_string)
-#       return [grads]
-
-#   def apply_gradients(grad):
-#     nonlocal model, optimizer
-#     # print(f"Applying gradient to weight")
-#     if grad:
-#       summed_gradients = [
-#           np.stack(gradient_zip).sum(axis=0) for gradient_zip in zip(*grad)
-#       ]
-#       optimizer.zero_grad()
-#       model.set_gradients(summed_gradients)
-#       optimizer.step()
-#       return model.get_weights()
-#     return None
-
-#   def store_weights_in_zookeeper(w):
-#     nonlocal model, zk
-#     # print("PS storing weights in zookeeper")
-#     model.set_weights(w)
-#     id_w = ray.put(w)
-#     pickled_weight_id = ray.cloudpickle.dumps(id_w)
-
-#     # This will likely need to be done in an actor so that the weights data will still be kept
-#     zk.set("/base/weights", pickled_weight_id)
-
-#   def evaluate_model():
-#     nonlocal then, model, test_loader
-#     now = time.time()
-#     if now - then > 2.0:
-#       # Evaluate the current model after every 10 seconds.
-#       accuracy = evaluate(model, test_loader)
-#       print("accuracy is {:.1f}".format(accuracy))
-#       then = now
-
-#   def handle_gradient_update(event):
-#     gradients = retrieve_gradients_from_zk(event)
-#     weights = apply_gradients(gradients)
-#     if weights:
-#       store_weights_in_zookeeper(weights)
-#       evaluate_model()
-
-#     # print(f"pid is {os.getpid()} and thread is {threading.get_ident()} and ray task id is {ray.get_runtime_context().get_task_id()} and job id is {ray.get_runtime_context().get_job_id()} and node id is {ray.get_runtime_context().get_task_id()}")
-#     print("calculated weight from gradient update")
-#     zk.exists(event.path, watch=handle_gradient_update)
-
-#   for worker_index in range(num_workers):
-#     zk.exists(f"/base/gradients/{worker_index}", watch=handle_gradient_update)
-
-#   return os.getpid(), threading.get_ident(), ray.get_runtime_context().get_task_id(), ray.get_runtime_context().get_job_id(), ray.get_runtime_context().get_node_id()
 
 @ray.remote
 class ParamServerTaskActor:
@@ -87,7 +18,7 @@ class ParamServerTaskActor:
   def __init__(self):
     pass
 
-  def run_parameter_server_task(self, model, num_workers, lr):
+  def run_parameter_server_task(self, model, num_workers, lr, weight_saver):
     print("Parameter Server is starting")
     optimizer = torch.optim.SGD(model.parameters(), lr=lr)
 
@@ -98,15 +29,39 @@ class ParamServerTaskActor:
     zk.start()
     zk.create("/base/parameter_server", b"", ephemeral=True, makepath=True)
 
-    def retrieve_gradients_from_zk(event):
+    def maybe_retrieve_gradients_from_zk(event):
       nonlocal zk
-      # print(f"Got gradient notification from event: {event}")
-      if event.type=='CHANGED':
-        retrieved_data = zk.get(event.path)
-        unpickled_grad_string = ray.cloudpickle.loads(retrieved_data[0])
-        # TODO need to properly pass back gradient updates for array of updates.
-        grads = ray.get(unpickled_grad_string)
-        return [grads]
+
+      # If there's no longer a lock on the 
+      if event.type=='DELETED':
+        try:
+          worker_index = event.path.split("/")[-1]
+          worker_grad_path = f"/base/gradients/{worker_index}"
+
+          # Lock the gradients so we can read them
+          zk.create(event.path)
+
+          print("Acquired lock to retrieve gradients from param server")
+
+          # Read the current list of gradient updates in the zookeeper node
+          remote_grad_updates = None
+          pickled_remote_gradient_updates_id = zk.get(worker_grad_path)
+          if pickled_remote_gradient_updates_id[0] != b'':
+            remote_grad_updates_ref = ray.cloudpickle.loads(pickled_remote_gradient_updates_id[0])
+            remote_grad_updates = ray.get(remote_grad_updates_ref)
+
+          # Place gradients in object store
+          id_grads = ray.put(b'')
+          pickled_grad_id = ray.cloudpickle.dumps(id_grads)
+          zk.set(worker_grad_path, pickled_grad_id)
+
+          # Unlock the gradients
+          zk.delete(event.path)
+          return remote_grad_updates
+        except NodeExistsError:
+          # We'll get em next time
+          print(f"PS Lock on node {worker_index} was locked, we'll get em next time.")
+      return None
 
     def apply_gradients(grad):
       nonlocal model, optimizer
@@ -122,36 +77,31 @@ class ParamServerTaskActor:
       return None
 
     def store_weights_in_zookeeper(w):
-      nonlocal model, zk
-      # print("PS storing weights in zookeeper")
+      nonlocal model, zk, weight_saver
       model.set_weights(w)
-      id_w = ray.put(w)
-      pickled_weight_id = ray.cloudpickle.dumps(id_w)
+      pickled_id_w = ray.get(weight_saver.set_weights.remote(w))
 
-      # This will likely need to be done in an actor so that the weights data will still be kept
-      zk.set("/base/weights", pickled_weight_id)
+      zk.set("/base/weights", pickled_id_w)
 
     def evaluate_model():
       nonlocal then, model, test_loader
       now = time.time()
-      if now - then > 2.0:
+      if now - then > 1.0:
         # Evaluate the current model after every 10 seconds.
         accuracy = evaluate(model, test_loader)
         print("accuracy is {:.1f}".format(accuracy))
         then = now
 
     def handle_gradient_update(event):
-      gradients = retrieve_gradients_from_zk(event)
-      weights = apply_gradients(gradients)
+      weights = None
+      gradients = maybe_retrieve_gradients_from_zk(event)
+      if gradients:
+        weights = apply_gradients(gradients)
       if weights:
         store_weights_in_zookeeper(weights)
         evaluate_model()
 
-      # print(f"pid is {os.getpid()} and thread is {threading.get_ident()} and ray task id is {ray.get_runtime_context().get_task_id()} and job id is {ray.get_runtime_context().get_job_id()} and node id is {ray.get_runtime_context().get_task_id()}")
-      print("calculated weight from gradient update")
       zk.exists(event.path, watch=handle_gradient_update)
 
     for worker_index in range(num_workers):
-      zk.exists(f"/base/gradients/{worker_index}", watch=handle_gradient_update)
-
-    return os.getpid(), threading.get_ident(), ray.get_runtime_context().get_task_id(), ray.get_runtime_context().get_job_id(), ray.get_runtime_context().get_node_id()
+      zk.exists(f"/base/gradients/lock/{worker_index}", watch=handle_gradient_update)

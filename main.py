@@ -106,27 +106,32 @@ def run_relaxed_consistency_experiment():
   weights_path = "/base/weights"
   zk.create(weights_path, weight_ref_string, ephemeral=False, makepath=True)
 
-  print(f"Driver process pid is {os.getpid()}")
-  try:
-    # 0. Create WeightSaver
-    weight_saver = ModelSaver.remote()
+  training_tasks = []
 
-    # 1. Create parameter server.
-    ps_actor = ParamServerTaskActor.remote()
-    ps = ps_actor.run_parameter_server_task.remote(model, num_workers, 1e-2)
-    ps_pid, thread_id, ps_ray_task_id, ps_job_id, ps_node_id = ray.get([ps])[0]
-    print(f"ps_pid is {ps_pid}")
-    # print(f"In Driver, got ps_pid {ps_pid} and thread_id is {thread_id} and ps_ray_task_id {ps_ray_task_id} and ps_job_id is {ps_job_id}, and ps_node_id is {ps_node_id}")
+  # 0. Create WeightSaver
+  weight_saver = ModelSaver.remote()
 
-    # 2. Create workers.
-    worker = compute_gradients_relaxed_consistency.remote(model, 0)
-    # print(f"worker ids are {workers} and ps id is {ps}")
+  # 1. Create parameter server.
+  ps_actor = ParamServerTaskActor.remote()
+  ps_ref = ps_actor.run_parameter_server_task.remote(model, num_workers, 1e-2, weight_saver)
+  ray.get([ps_ref])
 
-    # Kill Server.
-    server_killer_ref = kill_server.remote([ps_actor], timeout_sec=2, no_restart=True)
-    ray.get([ps, worker, server_killer_ref])
-  except ray.exceptions.WorkerCrashedError:
-    print("Caught a WorkerCrashedError")
+  # 2. Create workers.
+  workers = [compute_gradients_relaxed_consistency.remote(model, i) for i in range(num_workers)]
+  training_tasks.extend(workers)
+
+  # 3. Kill Server.
+  server_killer_ref = kill_server.remote([ps_actor], timeout_sec=10, no_restart=True)
+  ray.get([server_killer_ref])
+
+  # 4. Recreate Server.
+  time.sleep(5)
+  recreated_ps_actor = ParamServerTaskActor.remote()
+  recreated_ps_ref = ps_actor.run_parameter_server_task.remote(model, num_workers, 1e-2, weight_saver)
+  training_tasks.append(recreated_ps_ref)
+
+  # 5. Run till completion
+  ray.get(training_tasks)
 
     
 def main():

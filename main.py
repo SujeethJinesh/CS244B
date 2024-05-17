@@ -15,11 +15,12 @@ from parameter_servers.server_actor import ParameterServer
 from parameter_servers.server_actor_disk_ckpoint import ParameterServerDiskCkpoint
 from parameter_servers.server_killer import kill_server
 from parameter_servers.model_saver import ModelSaver, PartitionedStore
-from parameter_servers.server_task import run_parameter_server_task
+from parameter_servers.server_task import ParamServerTaskActor
 from workers.worker_task import compute_gradients_relaxed_consistency
 
 LEARNING_RATE = 1e-2
 SYNCHRONOUS = False
+num_workers = 1
 
 def run_experiment_with_no_ckpointing():
   ps = ParameterServer.remote(LEARNING_RATE)
@@ -98,24 +99,42 @@ def run_chain_node_experiment():
       return
 
 def run_relaxed_consistency_experiment():
-  zk = KazooClient(hosts='127.0.0.1:2181')
-  zk.start()
-
-  # TODO: clean up.
-  # Creates the weights ZK node so the workers have initial weights to work on.
   model = ConvNet()
   weight_ref = ray.put(model.get_weights())
   weight_ref_string = ray.cloudpickle.dumps(weight_ref)
+  
+  zk = KazooClient(hosts='127.0.0.1:2181', timeout=1.0)
+  zk.start()
+  weights_path = "/base/weights"
+  zk.create(weights_path, weight_ref_string, ephemeral=False, makepath=True)
 
-  zk.create("/base/weights", weight_ref_string, ephemeral=False, makepath=True)
-  
-  try:
-    ray.get([run_parameter_server_task.remote(model, 1, 1e-2), compute_gradients_relaxed_consistency.remote(model, 0)])
-  except Exception as e:
-      print("Catching exception", e)
-  
-  while True:
-    pass
+  training_tasks = []
+
+  # 0. Create WeightSaver
+  weight_saver = ModelSaver.remote()
+
+  # 1. Create parameter server.
+  ps_actor = ParamServerTaskActor.remote()
+  ps_ref = ps_actor.run_parameter_server_task.remote(model, num_workers, 1e-2, weight_saver)
+  ray.get([ps_ref])
+
+  # 2. Create workers.
+  workers = [compute_gradients_relaxed_consistency.remote(model, i) for i in range(num_workers)]
+  training_tasks.extend(workers)
+
+  # 3. Kill Server.
+  server_killer_ref = kill_server.remote([ps_actor], timeout_sec=10, no_restart=True)
+  ray.get([server_killer_ref])
+
+  # 4. Recreate Server.
+  time.sleep(5)
+  recreated_ps_actor = ParamServerTaskActor.remote()
+  recreated_ps_ref = recreated_ps_actor.run_parameter_server_task.remote(model, num_workers, 1e-2, weight_saver)
+  training_tasks.append(recreated_ps_ref)
+
+  # 5. Run till completion
+  ray.get(training_tasks)
+
     
 def main():
   # Run asynchronous param server experiment
@@ -143,7 +162,6 @@ def main():
   # Experiment 4
   print("Start experiment 4")
   run_relaxed_consistency_experiment()
-
 
   print("Driver exits")
 

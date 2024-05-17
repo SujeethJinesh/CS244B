@@ -26,9 +26,7 @@ def compute_gradients_relaxed_consistency(model, worker_index):
   zk = KazooClient(hosts='127.0.0.1:2181')
   zk.start()
   worker_grad_path = f"/base/gradients/{worker_index}"
-  print(f"checking if {worker_grad_path} exists, and result is {zk.exists(worker_grad_path)}")
-  if zk.exists(worker_grad_path) is None:
-    zk.create(worker_grad_path, b"", ephemeral=True, makepath=True)
+  zk.create(worker_grad_path, b"", ephemeral=True, makepath=True)
 
   def get_weights():
     nonlocal zk

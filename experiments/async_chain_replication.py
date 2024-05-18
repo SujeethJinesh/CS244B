@@ -8,7 +8,7 @@ from parameter_servers.model_saver import PartitionedStore
 from parameter_servers.server_actor import ParameterServer
 from parameter_servers.server_killer import kill_server
 
-def run_async_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
+def run_async_chain_replication(model):
   num_chain_nodes = 3
 
   zk = KazooClient(hosts='127.0.0.1:2181')

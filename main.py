@@ -115,7 +115,7 @@ def run_relaxed_consistency_experiment():
 
   # 1. Create parameter server.
   ps_actor = ParamServerTaskActor.remote()
-  ps_ref = ps_actor.run_parameter_server_task.remote(model, num_workers, 1e-2, weight_saver)
+  ps_ref = ps_actor.run_parameter_server_task.remote(model, num_workers, 1e-3, weight_saver)
   ray.get([ps_ref])
 
   # 2. Create workers.
@@ -129,7 +129,7 @@ def run_relaxed_consistency_experiment():
   # 4. Recreate Server.
   time.sleep(5)
   recreated_ps_actor = ParamServerTaskActor.remote()
-  recreated_ps_ref = recreated_ps_actor.run_parameter_server_task.remote(model, num_workers, 1e-2, weight_saver)
+  recreated_ps_ref = recreated_ps_actor.run_parameter_server_task.remote(model, num_workers, 1e-3, weight_saver)
   training_tasks.append(recreated_ps_ref)
 
   # 5. Run till completion

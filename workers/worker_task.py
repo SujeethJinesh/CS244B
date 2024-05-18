@@ -1,5 +1,5 @@
 import torch.nn.functional as F
-from models.test_model import ConvNet, get_data_loader
+from models.imagenet_model import ConvNet, get_data_loader
 import ray
 
 @ray.remote

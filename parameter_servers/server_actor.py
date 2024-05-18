@@ -1,12 +1,11 @@
 import torch
 import numpy as np
-from models.test_model import ConvNet
 import ray
 import time
 import os
 import pickle
 from workers.worker_task import compute_gradients
-from models.test_model import ConvNet, get_data_loader, evaluate
+from models.imagenet_model import ConvNet, get_data_loader, evaluate
 
 iterations = 200
 num_workers = 2
@@ -16,7 +15,9 @@ weight_update_frequency = 10
 class ParameterServer(object):
     def __init__(self, lr, model_saver):
         self.model = ConvNet()
-        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
+        # self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
+        self.lr_scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=30, gamma=0.1)
         self.model_saver = model_saver
         self.start_iteration = 0
 
@@ -72,7 +73,7 @@ class ParameterServer(object):
       stored_weights = ray.get(unpickled_id_w_string)
       return stored_weights
 
-    def run_synch_experiment(self):
+    def run_synch_training(self):
       test_loader = get_data_loader()[1]
 
       print("Running synchronous parameter server training.")
@@ -85,8 +86,8 @@ class ParameterServer(object):
           if i % weight_update_frequency == 0:
               # Evaluate the current model.
               self.set_weights(current_weights, i)
-              accuracy = evaluate(self.model, test_loader)
-              print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
+              accuracy, avg_loss = evaluate(self.model, test_loader)
+              print(f"Iter {i+1}: \taccuracy is {accuracy:.1f}, \tloss is {avg_loss:.3f}") 
 
       print("Final accuracy is {:.1f}.".format(accuracy))
 
@@ -111,8 +112,8 @@ class ParameterServer(object):
           if i % weight_update_frequency == 0:
               # Evaluate the current model after every 10 updates.
               self.model.set_weights(current_weights)
-              accuracy = evaluate(self.model, test_loader)
-              print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
+              accuracy, avg_loss = evaluate(self.model, test_loader)
+              print(f"Iter {i+1}: \taccuracy is {accuracy:.1f}, \tloss is {avg_loss:.3f}") 
 
       print("Final accuracy is {:.1f}.".format(accuracy))
 
@@ -138,7 +139,8 @@ class ParameterServer(object):
               # Evaluate the current model after every 10 updates.
               self.set_weights(current_weights, i)
               accuracy = evaluate(self.model, test_loader)
-              print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
+              accuracy, avg_loss = evaluate(self.model, test_loader)
+              print(f"Iter {i+1}: \taccuracy is {accuracy:.1f}, \tloss is {avg_loss:.3f}") 
 
       print("Final accuracy is {:.1f}.".format(accuracy))
 

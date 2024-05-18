@@ -13,7 +13,8 @@ LEARNING_RATE = 1e-2
 SYNCHRONOUS = True
 
 def run_experiment_with_no_ckpointing():
-  ps = ParameterServer.remote(LEARNING_RATE)
+  ms = ModelSaver.remote()
+  ps = ParameterServer.remote(LEARNING_RATE, ms)
   ray.get([ps.run_training.remote(SYNCHRONOUS)])
 
 
@@ -48,10 +49,11 @@ def main():
 
   # Run asynchronous param server experiment
   ray.init()
+  run_experiment_with_no_ckpointing()
   
   # ray.get([ps.run_asynch_experiment.remote()])
 
-  run_experiment_with_object_store_ckpointing()
+  # run_experiment_with_object_store_ckpointing()
   # ray.get(server_killer_ref)
   # ray.get([ps.run_synch_experiment.remote()])
   # ray.get([ps.run_asynch_experiment_with_chain_replication.remote()])

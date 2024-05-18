@@ -131,3 +131,16 @@ Useful commands:
   # To monitor autoscaling:
     ray exec gcp.yaml 'tail -n 100 -f /tmp/ray/session_latest/logs/monitor*'
 ```
+
+## Imagenet
+
+`models/imagenet_model.py` contains two models that are trained on 
+[Tiny ImageNet](https://paperswithcode.com/dataset/tiny-imagenet) dataset. 
+The first model `ConvNet` is a simple Convolution network and the second 
+model `AlexNet` is a more complex CNN model called [Alexnet](https://en.wikipedia.org/wiki/AlexNet).
+
+To use the two models you will first need to download the dataset from
+Stanford CS231N website: http://cs231n.stanford.edu/tiny-imagenet-200.zip.
+Replace `data_dir` with your local path.
+
+

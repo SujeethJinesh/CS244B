@@ -149,6 +149,8 @@ def main():
   # ray.get(server_killer_ref)
   # ray.get([ps.run_synch_experiment.remote()])
   # ray.get([ps.run_asynch_experiment_with_chain_replication.remote()])
+
+  # run_experiment_with_object_store_ckpointing()
   # ray.get(server_killer_ref)
   # ray.get([ps.run_synch_experiment.remote()])
   # ray.get([ps.run_asynch_experiment_with_chain_replication.remote()])

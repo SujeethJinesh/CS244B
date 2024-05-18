@@ -71,12 +71,15 @@ class ParamServerTaskActor:
       nonlocal model, optimizer
       # print(f"Applying gradients of length {len(grad)}")
       if grad:
+        temp_optimizer = optimizer
+        if len(grad) > 10:
+          temp_optimizer = torch.optim.SGD(model.parameters(), lr=1e-5)
         summed_gradients = [
             np.stack(gradient_zip).sum(axis=0) for gradient_zip in zip(*grad)
         ]
-        optimizer.zero_grad()
+        temp_optimizer.zero_grad()
         model.set_gradients(summed_gradients)
-        optimizer.step()
+        temp_optimizer.step()
         return model.get_weights()
       return None
 

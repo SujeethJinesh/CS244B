@@ -1,11 +1,8 @@
 import time
 import numpy as np
 import torch
-from models.test_model import ConvNet
 import ray
-import os
-import threading
-from models.test_model import ConvNet, get_data_loader, evaluate
+from models.test_model import get_data_loader, evaluate
 from kazoo.client import KazooClient
 from kazoo.exceptions import NodeExistsError, NoNodeError
 

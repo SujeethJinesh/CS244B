@@ -1,16 +1,15 @@
 import ray
 from parameter_servers.server_actor import ParameterServer
 from workers.worker_task import compute_gradients
-from models.test_model import ConvNet, get_data_loader, evaluate
+from models.test_model import get_data_loader, evaluate
 
 iterations = 200
 num_workers = 2
 
-def run_synch_experiment():
+def run_sync(model):
   ray.init(ignore_reinit_error=True)
   ps = ParameterServer.remote(1e-2)
 
-  model = ConvNet()
   test_loader = get_data_loader()[1]
 
   print("Running synchronous parameter server training.")

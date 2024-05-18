@@ -1,7 +1,7 @@
 import ray
 from parameter_servers.server_actor import ParameterServer
 from workers.worker_task import compute_gradients
-from models.test_model import ConvNet, get_data_loader, evaluate
+from models.imagenet_model import ConvNet, get_data_loader, evaluate
 
 iterations = 200
 num_workers = 2
@@ -23,8 +23,8 @@ def run_synch_experiment():
       if i % 10 == 0:
           # Evaluate the current model.
           model.set_weights(ray.get(current_weights))
-          accuracy = evaluate(model, test_loader)
-          print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
+          accuracy, avg_loss = evaluate(model, test_loader)
+          print(f"Iter {i+1}: \taccuracy is {accuracy:.1f}, \tloss is {avg_loss:.3f}") 
 
   print("Final accuracy is {:.1f}.".format(accuracy))
   # Clean up Ray resources and processes before the next example.

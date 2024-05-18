@@ -1,8 +1,9 @@
 import ray.cloudpickle
 import torch.nn.functional as F
-from models.test_model import ConvNet, get_data_loader
+# from models.test_model import ConvNet, get_data_loader
 from kazoo.client import KazooClient
 from kazoo.exceptions import NodeExistsError
+from models.imagenet_model import ConvNet, get_data_loader
 import ray
 import json
 from threading import Thread

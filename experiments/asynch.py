@@ -1,7 +1,7 @@
 import ray
 from parameter_servers.server_actor import ParameterServer
 from workers.worker_task import compute_gradients
-from models.test_model import ConvNet, get_data_loader, evaluate
+from models.imagenet_model import ConvNet, get_data_loader, evaluate
 
 iterations = 200
 num_workers = 2

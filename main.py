@@ -23,7 +23,8 @@ SYNCHRONOUS = False
 num_workers = 1
 
 def run_experiment_with_no_ckpointing():
-  ps = ParameterServer.remote(LEARNING_RATE)
+  ms = ModelSaver.remote()
+  ps = ParameterServer.remote(LEARNING_RATE, ms)
   ray.get([ps.run_training.remote(SYNCHRONOUS)])
 
 
@@ -139,6 +140,7 @@ def run_relaxed_consistency_experiment():
 def main():
   # Run asynchronous param server experiment
   ray.init()
+  run_experiment_with_no_ckpointing()
   
   # ray.get([ps.run_asynch_experiment.remote()])
   # run_experiment_with_no_ckpointing()

@@ -66,3 +66,4 @@ def run_async_relaxed_consistency(model, num_workers=1, epochs=5, server_kill_ti
 
   # 6. Cleanup
   try_delete_zookeeper_weights_node()
+  

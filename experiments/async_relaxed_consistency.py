@@ -34,7 +34,7 @@ def initialize_zk_with_weights(model):
   try_delete_zookeeper_weights_node()
   zk.create(WEIGHTS_ZK_PATH, weight_ref_string, ephemeral=False, makepath=True)
 
-def run_async_relaxed_consistency(model, num_workers=1):
+def run_async_relaxed_consistency(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
   initialize_zk_with_weights(model)
 
   training_tasks = []
@@ -48,15 +48,15 @@ def run_async_relaxed_consistency(model, num_workers=1):
   ray.get([ps_ref])
 
   # 2. Create workers.
-  workers = [compute_gradients_relaxed_consistency.remote(model, i) for i in range(num_workers)]
-  training_tasks.extend(workers)
+  worker_refs = [compute_gradients_relaxed_consistency.remote(model, i, epochs=epochs) for i in range(num_workers)]
+  training_tasks.extend(worker_refs)
 
   # 3. Kill Server.
-  server_killer_ref = kill_server.remote([ps_actor_ref], timeout_sec=10, no_restart=True)
+  server_killer_ref = kill_server.remote([ps_actor_ref], timeout_sec=server_kill_timeout, no_restart=True)
   ray.get([server_killer_ref])
 
   # 4. Recreate Server.
-  time.sleep(5)
+  time.sleep(server_recovery_timeout)
   recreated_ps_actor = ParamServerTaskActor.remote()
   recreated_ps_ref = recreated_ps_actor.run_parameter_server_task.remote(model, num_workers, 1e-3, weight_saver_ref)
   training_tasks.append(recreated_ps_ref)

@@ -55,6 +55,10 @@ def main():
   parser = argparse.ArgumentParser()
   parser.add_argument('--experiment', type=str, choices=EXPERIMENT_MAP.keys(), required=True, help="Type of experiment to run")
   parser.add_argument('--model', type=str, choices=MODEL_MAP.keys(), default="debug", help="Type of model to use")
+  parser.add_argument('--workers', type=int, default=1, help="Number of workers to use")
+  parser.add_argument('--epochs', type=int, default=5, help="Number of epochs to run")
+  parser.add_argument('--server_kill_timeout', type=int, default=10, help="Time before parameter server is killed")
+  parser.add_argument('--server_recovery_timeout', type=int, default=5, help="Time after parameter server is killed to recover")
   args = parser.parse_args()
   
   # Parse the flags
@@ -63,6 +67,10 @@ def main():
 
   experiment = EXPERIMENT_MAP[experiment_name]
   model = MODEL_MAP[model_name]
+  workers = args.workers
+  epochs = args.epochs
+  server_kill_timeout = args.server_kill_timeout
+  server_recovery_timeout = args.server_recovery_timeout
 
   # Initialize Ray as this is common between all experiments.
   print("Initializing Ray")
@@ -70,7 +78,7 @@ def main():
 
   # Run appropriate experiment
   print(f"Starting {experiment_name} experiment with model {model_name}.")
-  experiment(model)
+  experiment(model, num_workers=workers, epochs=epochs, server_kill_timeout=server_kill_timeout, server_recovery_timeout=server_recovery_timeout)
   print(f"Completed {experiment_name} experiment.")
 
 

@@ -25,8 +25,9 @@ def compute_gradients(weights):
     return model.get_gradients()
 
 @ray.remote
-def compute_gradients_relaxed_consistency(model, worker_index):
-  print(f"Worker {worker_index} is starting")
+def compute_gradients_relaxed_consistency(model, worker_index, epochs=5):
+  curr_epoch = 0
+  print(f"Worker {worker_index} is starting at Epoch {curr_epoch}")
   data_iterator = iter(get_data_loader()[0])
   zk = KazooClient(hosts='127.0.0.1:2181')
   zk.start()
@@ -72,7 +73,7 @@ def compute_gradients_relaxed_consistency(model, worker_index):
       # We'll get em next time
       print(f"Lock on node {worker_index} was locked, we'll get em next time.")
 
-  def compute_grads():
+  def compute_grads(data, target):
     nonlocal data_iterator, model
     try:
         data, target = next(data_iterator)
@@ -85,10 +86,28 @@ def compute_gradients_relaxed_consistency(model, worker_index):
     loss.backward()
     return model.get_gradients()
 
+  def has_next_data():
+    nonlocal curr_epoch, epochs, data_iterator
+    try:
+      d, t = next(data_iterator)
+      return True, d, t
+    except StopIteration:
+      if curr_epoch < epochs:
+        data_iterator = iter(get_data_loader()[0])
+        d, t = next(data_iterator)
+        curr_epoch += 1
+        print(f"Starting Epoch {curr_epoch}")
+        return True, d, t
+      else:
+        return False, None, None
+
   while True:
+    has, data, target = has_next_data()
+    if not has:
+      break
     weights = get_weights()
     model.set_weights(weights)
-    gradients = compute_grads()
+    gradients = compute_grads(data, target)
     local_gradient_updates.append(gradients)
 
     # Parameter server is done doing work on the gradients

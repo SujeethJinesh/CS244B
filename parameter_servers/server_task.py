@@ -15,20 +15,27 @@ class ParamServerTaskActor:
   def __init__(self):
     pass
 
-  def run_parameter_server_task(self, model, num_workers, lr, weight_saver):
-    print("Parameter Server is starting")
-    then = time.time()
-    test_loader = get_data_loader()[1]
-
+  def _start_zk(self):
     zk = KazooClient(hosts='127.0.0.1:2181', timeout=1.0)
     zk.start()
     zk.create("/base/parameter_server", b"", ephemeral=True, makepath=True)
+    return zk
 
+  def _load_weights_for_optimizer(self, zk, model, lr):
     retrieved_data = zk.get("/base/weights")
     unpickled_w_string = ray.cloudpickle.loads(retrieved_data[0])
     stored_weights = ray.get(unpickled_w_string)
     model.set_weights(stored_weights)
     optimizer = torch.optim.SGD(model.parameters(), lr=lr)
+    return model, optimizer
+
+  def run_parameter_server_task(self, model, num_workers, lr, weight_saver):
+    print("Parameter Server is starting")
+    then = time.time()
+    test_loader = get_data_loader()[1]
+
+    zk = self._start_zk()
+    model, optimizer = self._load_weights_for_optimizer(zk, model, lr)
 
     def maybe_retrieve_gradients_from_zk(event):
       nonlocal zk

@@ -8,23 +8,18 @@ from workers.worker_task import compute_gradients
 from models.test_model import ConvNet, get_data_loader, evaluate
 from zookeeper.zoo import KazooChainNode
 
-from ray.util.metrics import Gauge
-
-iterations = 1000
+iterations = 400
 num_workers = 2
 weight_update_frequency = 10
 
-
 @ray.remote(max_restarts=0)
 class ParameterServer(object):
-    def __init__(self, lr, model_saver=None, node_id=None, ref_store=None, metric_exporter=None):
-        self.accuracy = 0
+    def __init__(self, lr, model_saver=None, node_id=None, ref_store=None):
         self.model = ConvNet()
         self.start_iteration = 0
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
         self.start_iteration = 0
         self.model_saver = model_saver
-        self.metric_exporter = metric_exporter
         if ref_store is not None:
           self.ref_store = ref_store
         if node_id is not None: 
@@ -49,6 +44,19 @@ class ParameterServer(object):
 
     def get_weights(self):
         return self.model.get_weights()
+
+    def save_ckpoint(self):
+      print('not implemented')
+      # with tempfile.TemporaryDirectory() as temp_checkpoint_dir:
+      #     checkpoint = None
+
+      #     # Only the global rank 0 worker saves and reports the checkpoint
+      #     if train.get_context().get_world_rank() == 0:
+      #         ...  # Save checkpoint to temp_checkpoint_dir
+
+      #         checkpoint = Checkpoint.from_directory(tmpdir)
+
+      #     train.report(metrics, checkpoint=checkpoint)
 
     def run_training(self, synchronous=True):
       if synchronous:
@@ -91,10 +99,8 @@ class ParameterServer(object):
               self.set_weights(current_weights, i)
               accuracy = evaluate(self.model, test_loader)
               print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
-              return accuracy
 
-      # print("Final accuracy is {:.1f}.".format(accuracy))
-
+      print("Final accuracy is {:.1f}.".format(accuracy))
 
     def run_asynch_training(self):
       test_loader = get_data_loader()[1]
@@ -139,24 +145,42 @@ class ParameterServer(object):
           # Compute and apply gradients.
           current_weights = self.apply_gradients([ready_gradient_id])
           gradients.append(compute_gradients.remote(current_weights))
-          # self.gauge.set(0.5)
+
           if i % weight_update_frequency == 0:
               # Evaluate the current model after every 10 updates.
               self.store_weights_in_zookeeper(current_weights, i)
               self.set_weights(current_weights, i)
-              print("compute accuracy")
               accuracy = evaluate(self.model, test_loader)
-              # ray.get([self.metric_exporter.set_accuracy.remote(accuracy)])
-              self.metric_exporter.set_accuracy.remote(accuracy)
-              print("Iter {}: \taccuracy is {:.1f}".format(i, self.accuracy))
-              return accuracy
+              print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
 
       print("Final accuracy is {:.1f}.".format(accuracy))
 
+    def run_asynch_chain_node_experiment(self):
+      test_loader = get_data_loader()[1]
 
-    def set_metric(self, val):
-      print("set metric")
-      # self.gauge.set(val)
+      print("Running Asynchronous Parameter Server Training.")
+      current_weights = self.get_weights()
+      gradients = []
+      for _ in range(num_workers):
+          gradients.append(compute_gradients.remote(current_weights))
+
+      for i in range(self.start_iteration, iterations * num_workers):
+          ready_gradient_list, _ = ray.wait(gradients)
+          ready_gradient_id = ready_gradient_list[0]
+          gradients.remove(ready_gradient_id)
+
+          # Compute and apply gradients.
+          current_weights = self.apply_gradients([ready_gradient_id])
+          gradients.append(compute_gradients.remote(current_weights))
+
+          if i % weight_update_frequency == 0:
+              # Evaluate the current model after every 10 updates.
+              self.store_weights_in_zookeeper(current_weights, i)
+              self.set_weights(current_weights, i)
+              accuracy = evaluate(self.model, test_loader)
+              print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
+
+      print("Final accuracy is {:.1f}.".format(accuracy))
 
     def exit(self, sleep_sec):
         print("in exit method")

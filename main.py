@@ -74,7 +74,7 @@ def main():
 
   # Initialize Ray as this is common between all experiments.
   print("Initializing Ray")
-  ray.init(ignore_reinit_error=True)
+  ray.init(ignore_reinit_error=True, _metrics_export_port=8081)
 
   # Run appropriate experiment
   print(f"Starting {experiment_name} experiment with model {model_name}.")

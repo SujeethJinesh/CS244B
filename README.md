@@ -102,6 +102,12 @@ Steps for setting up metrics monitoring on a single-node local cluster:
     Setting a long interval might make it harder to quickly notice
     issues like dead worker nodes.
 
+## Custom Metrics
+
+We instrument metrics for this project in addition to Ray's default metrics. We export metrics using Prometheus and provide a custom Grafana dashboard to visual our experiment results. To import the our pre-configured dashboard, you need to start the Prometheus server and then in the Grafana UI, you can create a new dashboard by importing `metrics/dashboard.json`.
+
+To Verify that custom metrics are implemented correctly, you can open `localhost:8081` to see if there are logs associated with your custom metrics.
+
 ## GCP
 
 You must first authenticate by installing `gcloud` using https://cloud.google.com/sdk/docs/install and running:

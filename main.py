@@ -51,8 +51,7 @@ def init_random_seeds(seed=0):
 def main():
   # Initialize Ray as this is common between all experiments.
   print("Initializing Ray")
-  # ray.init(address='auto', logging_level=logging.DEBUG)
-  ray.init()
+  ray.init(ignore_reinit_error=True, _metrics_export_port=8081)
 
   # Ensure consistency across experiments when it comes to randomness
   init_random_seeds()

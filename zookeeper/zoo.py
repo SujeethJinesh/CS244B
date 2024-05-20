@@ -30,7 +30,6 @@ class KazooChainNode(object):
         node_id = int(event.path[6])
         if event.type=='CHANGED':
             print("Node", str(self.node_id), "handle changed event")
-            # print(self.zk.get("/base/" + str(node_id)))
             
         elif event.type=='DELETED':
             print("In handle DELTED")
@@ -52,7 +51,7 @@ class KazooChainNode(object):
 
     def _get_largest_smaller(self):
         largest_smaller = None
-        for node in self.zk.get_children("/base"):
+        for node in self.zk.get_children("/exp3"):
             print("get a list of children")
             print("child is ", node)
             if int(node) < self.node_id:
@@ -65,11 +64,11 @@ class KazooChainNode(object):
             print("not head")
             self.head = False
             self.prev_id = largest_smaller
-            self.zk.exists("/base/"+str(self.prev_id), watch=self.handle_delete_or_change_event)
+            self.zk.exists("/exp3/"+str(self.prev_id), watch=self.handle_delete_or_change_event)
 
     def _get_smallest_larger(self):
         smallest_larger = None
-        for node in self.zk.get_children("/base"):
+        for node in self.zk.get_children("/exp3"):
             if int(node) > self.node_id:
                 if smallest_larger is None or int(node) < smallest_larger:
                     smallest_larger = int(node)   
@@ -78,12 +77,12 @@ class KazooChainNode(object):
         else: 
             self.tail = False
             self.next_id = smallest_larger
-            self.zk.exists("/base/"+str(self.next_id), watch=self.handle_delete_or_change_event)
+            self.zk.exists("/exp3/"+str(self.next_id), watch=self.handle_delete_or_change_event)
     
     def _get_neighbors(self):
         largest_smaller = None
         smallest_larger = None
-        for node in self.zk.get_children("/base"):
+        for node in self.zk.get_children("/exp3"):
             if int(node) < self.node_id:
                 if largest_smaller is None or int(node) > largest_smaller:
                     largest_smaller = int(node)
@@ -96,7 +95,7 @@ class KazooChainNode(object):
         else:
             self.head = False
             self.prev_id = largest_smaller
-            if not self.zk.exists("/base/"+str(self.prev_id), watch=self.handle_delete_or_change_event):
+            if not self.zk.exists("/exp3/"+str(self.prev_id), watch=self.handle_delete_or_change_event):
                 # retry if there is a state change since `get_children`
                 self._get_neighbors()
         
@@ -105,7 +104,7 @@ class KazooChainNode(object):
         else:
             self.tail = False
             self.next_id = smallest_larger
-            if not self.zk.exists("/base/"+str(self.next_id), watch=self.handle_delete_or_change_event):
+            if not self.zk.exists("/exp3/"+str(self.next_id), watch=self.handle_delete_or_change_event):
                 # retry if there is a state change since `get_children`
                 self._get_neighbors()
 
@@ -113,32 +112,9 @@ class KazooChainNode(object):
         print("NODE ", node_id, " is created")
         
         self.node_id = node_id
-        self.zk.create("/base/"+str(self.node_id), b"somevalue", ephemeral=True, makepath=True)
+        self.zk.create("/exp3/"+str(self.node_id), b" ", ephemeral=True, makepath=True)
 
         self._get_neighbors()
-        # largest_smaller = None
-        # smallest_larger = None
-        # for node in self.zk.get_children("/base"):
-        #     if int(node) < self.node_id:
-        #         if largest_smaller is None or int(node) > largest_smaller:
-        #             largest_smaller = int(node)
-        #     elif int(node) > self.node_id:
-        #         if smallest_larger is None or int(node) < smallest_larger:
-        #             smallest_larger = int(node)   
-        
-        # if largest_smaller is None:
-        #     self.set_head()
-        # else:
-        #     self.head = False
-        #     self.prev_id = largest_smaller
-        #     self.zk.exists("/base/"+str(self.prev_id), watch=self.handle_delete_or_change_event):
-        
-        # if smallest_larger is None:
-        #     self.set_tail()
-        # else:
-        #     self.tail = False
-        #     self.next_id = smallest_larger
-        #     self.zk.exists("/base/"+str(self.next_id), watch=self.handle_delete_or_change_event)
 
     def stop(self):
         self.zk.stop()
@@ -147,12 +123,12 @@ class KazooChainNode(object):
         self.head = True
         print("New head is node ", self.node_id)
         self.prev_id = -1
-        self.zk.get_children("/base", watch=self.handle_child_event)
+        self.zk.get_children("/exp3", watch=self.handle_child_event)
 
     def set_tail(self):
         self.tail = True
         self.next_id = -1
-        self.zk.get_children("/base", watch=self.handle_child_event)
+        self.zk.get_children("/exp3", watch=self.handle_child_event)
 
     def get_role(self):
         role = ""

@@ -15,9 +15,7 @@ def run_node(node_id, init_role):
         test_string = "test"
         pickled_data = pickle.dumps("test")
         print(type(pickled_data))
-        node.zk.set("/base/1", pickled_data)
-        # print(node.zk.get("/base/1"))
-        # print(pickle.loads(node.zk.get("/base/1")[0]))
+        node.zk.set("/exp3/1", pickled_data)
     else:
         time.sleep(10)
 

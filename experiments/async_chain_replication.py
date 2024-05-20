@@ -21,13 +21,13 @@ def run_async_chain_replication(model, num_workers=1, epochs=5, server_kill_time
       ps = ParameterServer.remote(1e-2, node_id=i, ref_store=store)
       ps_dict[i] = ps
       # Ensures all zookeeper paths associated with the chain nodes exist.
-      while not zk.exists("/base/" + str(i)):
+      while not zk.exists("/exp3/" + str(i)):
         time.sleep(2)
 
   def run_new_primary():
     print("New primary runs")
     minimum = 100
-    for node in zk.get_children('/base'):
+    for node in zk.get_children('/exp3'):
       if int(node) < minimum:
         minimum = int(node)
     if minimum in ps_dict:
@@ -39,8 +39,8 @@ def run_async_chain_replication(model, num_workers=1, epochs=5, server_kill_time
         print("Catching exception", e)
         # Ray and Zookeeper uses different communication channels, 
         # so synchronizatoin is needed here.
-        print("block on node ", '/base/' + str(minimum))
-        barrier = Barrier(client=zk, path='/base/' + str(minimum))
+        print("block on node ", '/exp3/' + str(minimum))
+        barrier = Barrier(client=zk, path='/exp3/' + str(minimum))
         barrier.wait()
         return False
     else:

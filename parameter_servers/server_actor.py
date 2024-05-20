@@ -186,4 +186,3 @@ class ParameterServer(object):
         print("in exit method")
         time.sleep(sleep_sec)
         os._exit(0)
-        

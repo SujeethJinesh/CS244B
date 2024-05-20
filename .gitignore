@@ -1,3 +1,6 @@
+prometheus-2.52.0.darwin-arm64/
+prometheus/
+
 .DS_Store
 
 **/__pycache__/

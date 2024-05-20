@@ -1,4 +1,5 @@
 import argparse
+import logging
 import os
 import random
 
@@ -48,6 +49,11 @@ def init_random_seeds(seed=0):
 
 
 def main():
+  # Initialize Ray as this is common between all experiments.
+  print("Initializing Ray")
+  # ray.init(address='auto', logging_level=logging.DEBUG)
+  ray.init()
+
   # Ensure consistency across experiments when it comes to randomness
   init_random_seeds()
 
@@ -71,10 +77,6 @@ def main():
   epochs = args.epochs
   server_kill_timeout = args.server_kill_timeout
   server_recovery_timeout = args.server_recovery_timeout
-
-  # Initialize Ray as this is common between all experiments.
-  print("Initializing Ray")
-  ray.init(ignore_reinit_error=True)
 
   # Run appropriate experiment
   print(f"Starting {experiment_name} experiment with model {model_name}.")

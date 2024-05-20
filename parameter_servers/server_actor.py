@@ -69,19 +69,19 @@ class ParameterServer(object):
       id_w = ray.put([weights, iteration + 1])
       self.ref_store.partitioned_store_put.remote(self.chain_node.node_id, id_w)
       pickled_weight_id = ray.cloudpickle.dumps(id_w)
-      self.chain_node.zk.set("/base/" + str(self.chain_node.node_id), pickled_weight_id)
+      self.chain_node.zk.set("/exp3/" + str(self.chain_node.node_id), pickled_weight_id)
 
     def retrieve_weights_from_zookeeper(self, event):
       node_id = event.path[6]
       if event.type=='CHANGED' and int(node_id) < self.chain_node.node_id:
-        retrieved_data = self.chain_node.zk.get("/base/" + node_id)
+        retrieved_data = self.chain_node.zk.get("/exp3/" + node_id)
         unpickled_id_w_string = ray.cloudpickle.loads(retrieved_data[0])
         new_weights, iteration = ray.get(unpickled_id_w_string)
         self.model.set_weights(new_weights)
         self.start_iteration = iteration
         self.store_weights_in_zookeeper(new_weights, iteration)
         print("backup recieve weights")
-        self.chain_node.zk.exists("/base/"+str(node_id), watch=self.chain_node.handle_delete_or_change_event)
+        self.chain_node.zk.exists("/exp3/"+str(node_id), watch=self.chain_node.handle_delete_or_change_event)
 
     def run_synch_chain_node_experiment(self):
       test_loader = get_data_loader()[1]

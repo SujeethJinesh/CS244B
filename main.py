@@ -11,7 +11,7 @@ from experiments.asynch import run_async
 from experiments.sync import run_sync
 from experiments.async_relaxed_consistency import run_async_relaxed_consistency
 
-from experiments.async_chain_replication import run_async_chain_replication
+from experiments.chain_replication import run_async_chain_replication, run_sync_chain_replication
 from experiments.debug_no_checkpointing import run_debug_no_checkpointing
 from experiments.debug_disk_checkpointing import run_debug_disk_checkpointing
 from experiments.debug_object_store_checkpointing import run_debug_object_store_checkpointing
@@ -22,6 +22,7 @@ num_workers = 1
 EXPERIMENT_MAP = {
   "SYNC_CONTROL": run_sync,
   "ASYNC_CONTROL": run_async,
+  "SYNC_CHAIN_REPLICATION": run_sync_chain_replication,
   "ASYNC_CHAIN_REPLICATION": run_async_chain_replication,
   "ASYNC_RELAXED_CONSISTENCY": run_async_relaxed_consistency,
 

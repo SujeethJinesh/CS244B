@@ -1,12 +1,14 @@
 import torch
 import numpy as np
-from models.test_model import ConvNet
 import ray
 import time
 import os
 from ray import train
 from workers.worker_task import compute_gradients
-from models.test_model import ConvNet, get_data_loader, evaluate
+# from models.test_model import ConvNet
+# from models.test_model import ConvNet, get_data_loader, evaluate
+from models.fashion_mnist import ConvNet
+from models.fashion_mnist import get_data_loader, evaluate
 
 iterations = 200
 num_workers = 2

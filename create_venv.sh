@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PYTHON_VERSION="3.9"
+PYTHON_VERSION="3.11"
 python$PYTHON_VERSION -m venv training_env
 
 source training_env/bin/activate

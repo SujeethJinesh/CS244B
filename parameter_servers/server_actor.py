@@ -5,14 +5,15 @@ import ray
 import time
 import os
 from workers.worker_task import compute_gradients
-from models.test_model import ConvNet, get_data_loader, evaluate
+# from models.test_model import ConvNet, get_data_loader, evaluate
+from models.fashion_mnist import ConvNet, get_data_loader, evaluate
 from zookeeper.zoo import KazooChainNode
 
 # TODO (Change to training epochs)
-iterations = 400
+iterations = 4000
 # Set weight update frequency for the model maintained by the parameter server.
 # Used for model evaluation.
-WEIGHT_UPDATE_FREQUENCY = 10
+WEIGHT_UPDATE_FREQUENCY = 20
 
 @ray.remote(max_restarts=0)
 class ParameterServer(object):

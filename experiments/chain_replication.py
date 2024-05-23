@@ -56,8 +56,8 @@ def run_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10
     time.sleep(server_recovery_timeout)
   run_new_primary()
 
-def run_async_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
+def run_async_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=1000, server_recovery_timeout=5):
   run_chain_replication(model, num_workers, epochs, server_kill_timeout, server_kill_timeout, False)
 
-def run_sync_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
+def run_sync_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=1000, server_recovery_timeout=5):
   run_chain_replication(model, num_workers, epochs, server_kill_timeout, server_kill_timeout, True)

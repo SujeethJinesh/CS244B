@@ -2,7 +2,8 @@ import time
 import numpy as np
 import torch
 import ray
-from models.test_model import get_data_loader, evaluate
+# from models.test_model import get_data_loader, evaluate
+from models.fashion_mnist import get_data_loader, evaluate
 from kazoo.client import KazooClient
 from kazoo.exceptions import NodeExistsError, NoNodeError
 

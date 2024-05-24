@@ -7,6 +7,7 @@ from kazoo.client import KazooClient
 from parameter_servers.model_saver import ModelSaver
 from parameter_servers.server_killer import kill_server
 from parameter_servers.server_task import ParamServerTaskActor
+from metrics.metric_exporter import MetricExporter
 from workers.worker_task import compute_gradients_relaxed_consistency
 
 WEIGHTS_ZK_PATH = "/base/weights"
@@ -37,6 +38,8 @@ def initialize_zk_with_weights(model):
 def run_async_relaxed_consistency(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
   initialize_zk_with_weights(model)
 
+  metric_exporter = MetricExporter.remote("relaxed consistency")
+
   training_tasks = []
 
   # 0. Create WeightSaver
@@ -44,7 +47,7 @@ def run_async_relaxed_consistency(model, num_workers=1, epochs=5, server_kill_ti
 
   # 1. Create parameter server.
   ps_actor_ref = ParamServerTaskActor.remote()
-  ps_ref = ps_actor_ref.run_parameter_server_task.remote(model, num_workers, 1e-3, weight_saver_ref)
+  ps_ref = ps_actor_ref.run_parameter_server_task.remote(model, num_workers, 1e-3, weight_saver_ref, metric_exporter)
   ray.get([ps_ref])
 
   # 2. Create workers.
@@ -58,7 +61,7 @@ def run_async_relaxed_consistency(model, num_workers=1, epochs=5, server_kill_ti
   # 4. Recreate Server.
   time.sleep(server_recovery_timeout)
   recreated_ps_actor = ParamServerTaskActor.remote()
-  recreated_ps_ref = recreated_ps_actor.run_parameter_server_task.remote(model, num_workers, 1e-3, weight_saver_ref)
+  recreated_ps_ref = recreated_ps_actor.run_parameter_server_task.remote(model, num_workers, 1e-3, weight_saver_ref, metric_exporter)
   training_tasks.append(recreated_ps_ref)
 
   # 5. Run till completion

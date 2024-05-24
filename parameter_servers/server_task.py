@@ -30,7 +30,7 @@ class ParamServerTaskActor:
     optimizer = torch.optim.SGD(model.parameters(), lr=lr)
     return model, optimizer
 
-  def run_parameter_server_task(self, model, num_workers, lr, weight_saver):
+  def run_parameter_server_task(self, model, num_workers, lr, weight_saver, metric_exporter):
     print("Parameter Server is starting")
     then = time.time()
     test_loader = get_data_loader()[1]
@@ -99,6 +99,7 @@ class ParamServerTaskActor:
       nonlocal then, model, test_loader
       accuracy = evaluate(model, test_loader)
       print("accuracy is {:.1f}".format(accuracy))
+      metric_exporter.set_accuracy.remote(accuracy)
 
     def handle_gradient_update(event):
       nonlocal then

@@ -14,9 +14,23 @@ To activate the virtual environment, use the following command
 source training_env/bin/activate
 ```
 
-## Running Experiments
+## Running Experiments (Quick Start)
 
 In order to run an experiment, you can use the following commands.
+
+### Start Zookeeper
+
+```
+./apache-zookeeper-3.8.4-bin/bin/zkServer.sh start-foreground
+```
+
+### Start Prometheseus
+
+```
+ray metrics launch-prometheus
+```
+
+### Run Experiment
 
 ```
 python3 main.py --experiment {SYNC_CONTROL,ASYNC_CONTROL,ASYNC_CHAIN_REPLICATION,ASYNC_RELAXED_CONSISTENCY,DEBUG_NO_CHECKPOINTING,DEBUG_DISK_CHECKPOINTING,DEBUG_OBJECT_STORE_CHECKPOINTING} [--model {IMAGENET,DEBUG}]
@@ -69,7 +83,7 @@ Steps for setting up metrics monitoring on a single-node local cluster:
    `prometheus-2.52.0-rc.1.darwin-amd64`), run:
 
    ```
-   ./prometheus --config.file=/tmp/ray/session_latest/metrics/prometheus/prometheus.yml
+    ray metrics launch-prometheus
    ```
 
    This starts a service that records metrics from ray.

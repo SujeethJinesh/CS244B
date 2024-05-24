@@ -21,5 +21,16 @@ class MetricExporter:
         )
         self.accuracy_gauge.set_default_tags({"Experiment": experiment_name})
 
+        self.loss_gauge = Gauge(
+            "training_loss",
+            description="Loss of the current training run.",
+            tag_keys=("Experiment",)
+        )
+        self.loss_gauge.set_default_tags({"Experiment": experiment_name})
+
     def set_accuracy(self, accuracy):
         self.accuracy_gauge.set(accuracy)
+
+    def set_loss(self, loss):
+        self.loss_gauge.set(loss)
+

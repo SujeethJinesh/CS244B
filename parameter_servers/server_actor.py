@@ -69,7 +69,7 @@ class ParameterServer(object):
       print("Running synchronous parameter server training.")
       current_weights = self.get_weights()
       for i in range(self.start_iteration, iterations):
-          gradients = [compute_gradients.remote(current_weights) for _ in range(num_workers)]
+          gradients = [compute_gradients.remote(current_weights, self.metric_exporter) for _ in range(num_workers)]
           # Calculate update after all gradients are available.
           current_weights = self.apply_gradients(gradients)
           
@@ -90,7 +90,7 @@ class ParameterServer(object):
       current_weights = self.get_weights()
       gradients = []
       for _ in range(num_workers):
-          gradients.append(compute_gradients.remote(current_weights))
+          gradients.append(compute_gradients.remote(current_weights, self.metric_exporter))
 
       for i in range(self.start_iteration, iterations * num_workers):
           ready_gradient_list, _ = ray.wait(gradients)

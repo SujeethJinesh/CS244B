@@ -11,7 +11,7 @@ import json
 from threading import Thread
 
 @ray.remote
-def compute_gradients(weights):
+def compute_gradients(weights, metric_exporter=None):
     model = ConvNet()
     data_iterator = iter(get_data_loader()[0])
 
@@ -26,7 +26,8 @@ def compute_gradients(weights):
     output = model(data)
     loss_fn = nn.CrossEntropyLoss()
     loss = loss_fn(output, target)
-    print("loss is", loss)
+    if metric_exporter is not None:
+      metric_exporter.set_loss.remote(loss.item())
     loss.backward()
     return model.get_gradients()
 

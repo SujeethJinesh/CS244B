@@ -1,5 +1,6 @@
 import ray.cloudpickle
 import torch.nn.functional as F
+import torch.nn as nn
 from models.fashion_mnist import ConvNet, get_data_loader
 # from models.test_model import ConvNet, get_data_loader
 from kazoo.client import KazooClient
@@ -22,7 +23,9 @@ def compute_gradients(weights):
         data, target = next(data_iterator)
     model.zero_grad()
     output = model(data)
-    loss = F.nll_loss(output, target)
+    loss_fn = nn.CrossEntropyLoss()
+    loss = loss_fn(output, target)
+    print("loss is", loss)
     loss.backward()
     return model.get_gradients()
 

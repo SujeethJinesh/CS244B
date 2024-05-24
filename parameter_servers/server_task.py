@@ -32,6 +32,18 @@ class ParamServerTaskActor:
 
   def run_parameter_server_task(self, model, num_workers, lr, weight_saver, metric_exporter):
     print("Parameter Server is starting")
+    if not torch.backends.mps.is_available():
+      if not torch.backends.mps.is_built():
+        print("MPS not available because the current PyTorch install was not "
+              "built with MPS enabled.")
+      else:
+        print("MPS not available because the current MacOS version is not 12.3+ "
+              "and/or you do not have an MPS-enabled device on this machine.")
+    else:
+      mps_device = torch.device("mps")
+      x = torch.ones(5, device=mps_device)
+      y = x * 2
+      model.to(mps_device)
     then = time.time()
     test_loader = get_data_loader()[1]
 

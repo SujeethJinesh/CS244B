@@ -1,3 +1,4 @@
+import torch
 import ray.cloudpickle
 import torch.nn.functional as F
 import torch.nn as nn
@@ -36,6 +37,19 @@ def compute_gradients_relaxed_consistency(model, worker_index, epochs=5):
   data_iterator = iter(get_data_loader()[0])
   zk = KazooClient(hosts='127.0.0.1:2181')
   zk.start()
+
+  if not torch.backends.mps.is_available():
+    if not torch.backends.mps.is_built():
+      print("MPS not available because the current PyTorch install was not "
+            "built with MPS enabled.")
+    else:
+      print("MPS not available because the current MacOS version is not 12.3+ "
+            "and/or you do not have an MPS-enabled device on this machine.")
+  else:
+    mps_device = torch.device("mps")
+    x = torch.ones(5, device=mps_device)
+    y = x * 2
+    model.to(mps_device)
 
   local_gradient_updates = []
 

@@ -29,6 +29,18 @@ def get_data_loader():
             transform=transform,
         )
 
+    if not torch.backends.mps.is_available():
+      if not torch.backends.mps.is_built():
+        print("MPS not available because the current PyTorch install was not "
+              "built with MPS enabled.")
+      else:
+        print("MPS not available because the current MacOS version is not 12.3+ "
+              "and/or you do not have an MPS-enabled device on this machine.")
+    else:
+      mps_device = torch.device("mps")
+      training_data = [(data.to(mps_device), torch.tensor(target).to(mps_device)) for data, target in training_data]
+      test_data = [(data.to(mps_device), torch.tensor(target).to(mps_device)) for data, target in test_data]
+
     # Create data loaders
     train_dataloader = DataLoader(training_data, batch_size=batch_size, shuffle=True)
     test_dataloader = DataLoader(test_data, batch_size=batch_size)

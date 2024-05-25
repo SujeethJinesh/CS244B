@@ -64,7 +64,7 @@ class ConvNet(nn.Module):
         return {k: v.cpu() for k, v in self.state_dict().items()}
 
     def set_weights(self, weights):
-        self.load_state_dict(weights)
+        self.load_state_dict(weights, strict=False)
 
     def get_gradients(self):
         grads = []

@@ -5,8 +5,9 @@ import ray
 import time
 import os
 from workers.worker_task import compute_gradients
+from models.imagenet import ConvNet, get_data_loader, evaluate
 # from models.test_model import ConvNet, get_data_loader, evaluate
-from models.fashion_mnist import ConvNet, get_data_loader, evaluate
+# from models.fashion_mnist import ConvNet, get_data_loader, evaluate
 from zookeeper.zoo import KazooChainNode
 
 # TODO (Change to training epochs)

@@ -17,7 +17,8 @@ from experiments.debug_no_checkpointing import run_debug_no_checkpointing
 from experiments.debug_disk_checkpointing import run_debug_disk_checkpointing
 from experiments.debug_object_store_checkpointing import run_debug_object_store_checkpointing
 # from models.test_model import ConvNet
-from models.fashion_mnist import ConvNet
+from models.imagenet import ConvNet
+# from models.fashion_mnist import ConvNet
 
 num_workers = 2
 

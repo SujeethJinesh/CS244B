@@ -27,7 +27,7 @@ def run_async(model, num_workers=1, epochs=5, server_kill_timeout=10, server_rec
 
     # Compute and apply gradients.
     current_weights = ps.apply_gradients.remote([ready_gradient_id])
-    gradients.append(compute_gradients.remote(current_weights))
+    gradients.append(compute_gradients.remote(current_weights, metric_exporter=metric_exporter))
 
     if i % 10 == 0:
       # Evaluate the current model after every 10 updates.

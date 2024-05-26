@@ -26,14 +26,14 @@ def run_sync(model, num_workers=1, epochs=5, server_kill_timeout=10, server_reco
     print("Running synchronous parameter server training.")
     weights_ref = ps.get_weights.remote()
     for _ in range(iterations * epochs):
-        gradients = [compute_gradients.remote(weights_ref, metric_exporter=metric_exporter) for _ in range(num_workers)]
-        # Calculate update after all gradients are available.
-        weights_ref = ps.apply_gradients.remote(gradients)
+      gradients = [compute_gradients.remote(weights_ref, metric_exporter=metric_exporter) for _ in range(num_workers)]
+      # Calculate update after all gradients are available.
+      weights_ref = ps.apply_gradients.remote(gradients)
 
-        evaluator_state.weights_lock.acquire()
-        evaluator_state.CURRENT_WEIGHTS = ray.get(weights_ref)
-        model.set_weights(evaluator_state.CURRENT_WEIGHTS)
-        evaluator_state.weights_lock.release()
+      evaluator_state.weights_lock.acquire()
+      evaluator_state.CURRENT_WEIGHTS = ray.get(weights_ref)
+      model.set_weights(evaluator_state.CURRENT_WEIGHTS)
+      evaluator_state.weights_lock.release()
 
     timer_runs.clear()
     eval_thread.join()  # Ensure the eval thread has finished

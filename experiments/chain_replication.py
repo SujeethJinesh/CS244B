@@ -53,11 +53,12 @@ def run_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10
 
   for i in range(num_chain_nodes - 1):
     run_new_primary()
+    ps =  ps = ParameterServer.remote(1e-2, node_id=num_chain_nodes + i, metric_exporter=metric_exporter)
     time.sleep(server_recovery_timeout)
   run_new_primary()
 
-def run_async_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=1000, server_recovery_timeout=5):
+def run_async_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
   run_chain_replication(model, num_workers, epochs, server_kill_timeout, server_kill_timeout, False)
 
-def run_sync_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=1000, server_recovery_timeout=5):
+def run_sync_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
   run_chain_replication(model, num_workers, epochs, server_kill_timeout, server_kill_timeout, True)

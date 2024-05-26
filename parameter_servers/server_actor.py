@@ -24,7 +24,8 @@ class ParameterServer(object):
         self.start_iteration = 0
         if metric_exporter is not None:
           self.metric_exporter = metric_exporter
-        if node_id is not None: 
+        if node_id is not None:
+          # TODO: Add read/write hit to ZK
           self.chain_node = KazooChainNode(node_id, [], self.retrieve_weights_from_zookeeper)
 
     def apply_gradients(self, gradients):

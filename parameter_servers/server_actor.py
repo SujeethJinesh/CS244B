@@ -14,7 +14,7 @@ from zookeeper.zoo import KazooChainNode
 iterations = 4000
 # Set weight update frequency for the model maintained by the parameter server.
 # Used for model evaluation.
-WEIGHT_UPDATE_FREQUENCY = 20
+WEIGHT_UPDATE_FREQUENCY = 10
 
 @ray.remote(max_restarts=0)
 class ParameterServer(object):
@@ -53,6 +53,10 @@ class ParameterServer(object):
       pickled_weight_id = ray.cloudpickle.dumps(id_w)
       self.chain_node.zk.set("/exp3/" + str(self.chain_node.node_id), pickled_weight_id)
 
+    def store_weights_in_zookeeper_chain(self, weights_ref):
+      print("Node " + str(self.chain_node.node_id) + " starts storing weights")
+      self.chain_node.zk.set("/exp3/" + str(self.chain_node.node_id), weights_ref)
+
     def retrieve_weights_from_zookeeper(self, event):
       node_id = event.path[6]
       if event.type=='CHANGED' and int(node_id) < self.chain_node.node_id:
@@ -61,11 +65,12 @@ class ParameterServer(object):
         new_weights, iteration = ray.get(unpickled_id_w_string)
         self.model.set_weights(new_weights)
         self.start_iteration = iteration
-        self.store_weights_in_zookeeper(new_weights, iteration)
+        self.store_weights_in_zookeeper_chain(retrieved_data[0])
         print("backup recieve weights")
         self.chain_node.zk.exists("/exp3/"+str(node_id), watch=self.chain_node.handle_delete_or_change_event)
 
     def run_synch_chain_node_experiment(self, num_workers):
+      # test_loader = get_data_loader()[0]
       test_loader = get_data_loader()[1]
 
       print("Running synchronous parameter server training.")

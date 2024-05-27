@@ -1,43 +1,45 @@
 import ray.cloudpickle
-import torch.nn.functional as F
 import torch.nn as nn
-from models.fashion_mnist import ConvNet, get_data_loader
-# from models.test_model import ConvNet, get_data_loader
-# from models.cifar10 import ResNet, get_data_loader
 from kazoo.client import KazooClient
 from kazoo.exceptions import NodeExistsError
 import ray
-import json
-from threading import Thread
+from shared import DATA_LOADER_MAP
+from models.fashion_mnist import FashionMNISTConvNet
+
 
 @ray.remote
-def compute_gradients(weights, metric_exporter=None):
-    # model = ConvNet()
-    model = ResNet()
-    data_iterator = iter(get_data_loader()[0])
+def compute_gradients(model_name, weights, metric_exporter=None):
+    if model_name == "DEBUG":
+      model = FashionMNISTConvNet()
+    else:
+      model = None
+
+    train_loader, _ = DATA_LOADER_MAP[model_name]
+    data_iterator = iter(train_loader)
 
     model.train()
     model.set_weights(weights)
     try:
         data, target = next(data_iterator)
     except StopIteration:  # When the epoch ends, start a new epoch.
-        data_iterator = iter(get_data_loader()[0])
+        data_iterator = iter(train_loader)
         data, target = next(data_iterator)
     model.zero_grad()
     output = model(data)
     loss_fn = nn.CrossEntropyLoss()
     loss = loss_fn(output, target)
-    print("training loss is", loss.item())
     if metric_exporter is not None:
       metric_exporter.set_loss.remote(loss.item())
     loss.backward()
     return model.get_gradients()
 
 @ray.remote
-def compute_gradients_relaxed_consistency(model, worker_index, epochs=5, metric_exporter=None):
+def compute_gradients_relaxed_consistency(model_name, worker_index, epochs=5, metric_exporter=None):
   curr_epoch = 0
   print(f"Worker {worker_index} is starting at Epoch {curr_epoch}")
-  data_iterator = iter(get_data_loader()[0])
+  model = MODEL_MAP[model_name]()
+  train_loader, _ = DATA_LOADER_MAP[model_name]
+  data_iterator = iter(train_loader)
   zk = KazooClient(hosts='127.0.0.1:2181')
   zk.start()
 
@@ -87,7 +89,7 @@ def compute_gradients_relaxed_consistency(model, worker_index, epochs=5, metric_
     try:
         data, target = next(data_iterator)
     except StopIteration:  # When the epoch ends, start a new epoch.
-        data_iterator = iter(get_data_loader()[0])
+        data_iterator = iter(train_loader)
         data, target = next(data_iterator)
     model.zero_grad()
     output = model(data)
@@ -105,7 +107,7 @@ def compute_gradients_relaxed_consistency(model, worker_index, epochs=5, metric_
       return True, d, t
     except StopIteration:
       if curr_epoch < epochs:
-        data_iterator = iter(get_data_loader()[0])
+        data_iterator = iter(train_loader)
         d, t = next(data_iterator)
         curr_epoch += 1
         print(f"Starting Epoch {curr_epoch}")

@@ -1,3 +1,4 @@
+import copy
 import time
 
 import ray
@@ -19,8 +20,10 @@ def run_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10
 
   ps_dict = {}
 
+
   for i in range(num_chain_nodes):
-      ps = ParameterServer.remote(1e-2, node_id=i, metric_exporter=metric_exporter)
+      server_model_copy = copy.deepcopy(model)  
+      ps = ParameterServer.remote(server_model_copy, 1e-2, node_id=i, metric_exporter=metric_exporter)
       ps_dict[i] = ps
       # Ensures all zookeeper paths associated with the chain nodes exist.
       while not zk.exists("/exp3/" + str(i)):
@@ -54,7 +57,8 @@ def run_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10
 
   for i in range(num_chain_nodes - 1):
     run_new_primary()
-    ps =  ps = ParameterServer.remote(1e-2, node_id=num_chain_nodes + i, metric_exporter=metric_exporter)
+    server_model_copy = copy.deepcopy(model)
+    ps =  ps = ParameterServer.remote(server_model_copy, 1e-2, node_id=num_chain_nodes + i, metric_exporter=metric_exporter)
     time.sleep(server_recovery_timeout)
   run_new_primary()
 

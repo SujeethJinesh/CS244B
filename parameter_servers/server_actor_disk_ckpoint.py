@@ -5,18 +5,16 @@ import time
 import os
 from ray import train
 from workers.worker_task import compute_gradients
-# from models.test_model import ConvNet
-# from models.test_model import ConvNet, get_data_loader, evaluate
-from models.fashion_mnist import ConvNet
-from models.fashion_mnist import get_data_loader, evaluate
+from shared import MODEL_MAP, DATA_LOADER_MAP, evaluate
 
 iterations = 200
 num_workers = 2
 
 @ray.remote(max_restarts=-1, max_task_retries=-1)
 class ParameterServerDiskCkpoint(object):
-    def __init__(self, lr, checkpoint_dir):
-        self.model = ConvNet()
+    def __init__(self, model_name, lr, checkpoint_dir):
+        self.model_name = model_name
+        self.model = MODEL_MAP[model_name]()
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
         self.checkpoint_dir = checkpoint_dir
 
@@ -67,7 +65,7 @@ class ParameterServerDiskCkpoint(object):
 
 
     def run_synch_training(self):
-      test_loader = get_data_loader()[1]
+      _, test_loader = DATA_LOADER_MAP[self.model_name]
 
       print("Running synchronous parameter server training.")
       current_weights = self.get_weights()
@@ -85,7 +83,7 @@ class ParameterServerDiskCkpoint(object):
       print("Final accuracy is {:.1f}.".format(accuracy))
 
     def run_asynch_training(self):
-      test_loader = get_data_loader()[1]
+      _, test_loader = DATA_LOADER_MAP[self.model_name]
 
       print("Running Asynchronous Parameter Server Training.")
       current_weights = self.get_weights()

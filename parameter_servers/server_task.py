@@ -2,10 +2,9 @@ import time
 import numpy as np
 import torch
 import ray
-# from models.test_model import get_data_loader, evaluate
-from models.fashion_mnist import get_data_loader, evaluate
 from kazoo.client import KazooClient
 from kazoo.exceptions import NodeExistsError, NoNodeError
+from shared import MODEL_MAP, DATA_LOADER_MAP, evaluate
 
 iterations = 400
 weight_update_frequency = 10
@@ -30,10 +29,11 @@ class ParamServerTaskActor:
     optimizer = torch.optim.SGD(model.parameters(), lr=lr)
     return model, optimizer
 
-  def run_parameter_server_task(self, model, num_workers, lr, weight_saver, metric_exporter):
+  def run_parameter_server_task(self, model_name, num_workers, lr, weight_saver, metric_exporter):
     print("Parameter Server is starting")
     then = time.time()
-    test_loader = get_data_loader()[1]
+    model = MODEL_MAP[model_name]()
+    _, test_loader = DATA_LOADER_MAP[model_name]
 
     zk = self._start_zk()
     model, optimizer = self._load_weights_for_optimizer(zk, model, lr)

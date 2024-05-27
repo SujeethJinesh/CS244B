@@ -1,14 +1,10 @@
 import torch
 import numpy as np
-from models.test_model import ConvNet
 import ray
-import time
-import os
 from workers.worker_task import compute_gradients
-# from models.test_model import ConvNet, get_data_loader, evaluate
-# from models.fashion_mnist import ConvNet, get_data_loader, evaluate
-from models.cifar10 import ResNet, get_data_loader, evaluate
 from zookeeper.zoo import KazooChainNode
+from shared import MODEL_MAP, DATA_LOADER_MAP, evaluate
+from models.fashion_mnist import FashionMNISTConvNet
 
 # TODO (Change to training epochs)
 iterations = 4000
@@ -18,9 +14,8 @@ WEIGHT_UPDATE_FREQUENCY = 10
 
 @ray.remote(max_restarts=0)
 class ParameterServer(object):
-    def __init__(self, lr, node_id=None, metric_exporter=None):
-        #self.model = ConvNet()
-        self.model = ResNet()
+    def __init__(self, model_name, lr, node_id=None, metric_exporter=None):
+        self.model = FashionMNISTConvNet()
         self.start_iteration = 0
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
         self.start_iteration = 0
@@ -72,7 +67,7 @@ class ParameterServer(object):
 
     def run_synch_chain_node_experiment(self, num_workers):
       # test_loader = get_data_loader()[0]
-      test_loader = get_data_loader()[1]
+      _, test_loader = DATA_LOADER_MAP[self.model_name]
 
       print("Running synchronous parameter server training.")
       current_weights = self.get_weights()
@@ -92,7 +87,7 @@ class ParameterServer(object):
       print("Final accuracy is {:.1f}.".format(accuracy))
 
     def run_asynch_chain_node_experiment(self, num_workers):
-      test_loader = get_data_loader()[1]
+      _, test_loader = DATA_LOADER_MAP[self.model_name]
 
       print("Running Asynchronous Parameter Server Training.")
       current_weights = self.get_weights()

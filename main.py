@@ -1,5 +1,4 @@
 import argparse
-import logging
 import os
 import random
 
@@ -16,10 +15,7 @@ from experiments.chain_replication import run_async_chain_replication, run_sync_
 from experiments.debug_no_checkpointing import run_debug_no_checkpointing
 from experiments.debug_disk_checkpointing import run_debug_disk_checkpointing
 from experiments.debug_object_store_checkpointing import run_debug_object_store_checkpointing
-# from models.test_model import ConvNet
-from models.fashion_mnist import ConvNet
-
-num_workers = 2
+from shared import MODEL_MAP
 
 EXPERIMENT_MAP = {
   "SYNC_CONTROL": run_sync,
@@ -31,11 +27,6 @@ EXPERIMENT_MAP = {
   "DEBUG_NO_CHECKPOINTING": run_debug_no_checkpointing,
   "DEBUG_DISK_CHECKPOINTING": run_debug_disk_checkpointing,
   "DEBUG_OBJECT_STORE_CHECKPOINTING": run_debug_object_store_checkpointing,
-}
-
-MODEL_MAP = {
-  "IMAGENET": None,
-  "DEBUG": ConvNet()
 }
 
 # TODO: This doesn't seem to make the randomness consistent
@@ -61,7 +52,7 @@ def main():
   # Use flags for argument parsing
   parser = argparse.ArgumentParser()
   parser.add_argument('--experiment', type=str, choices=EXPERIMENT_MAP.keys(), required=True, help="Type of experiment to run")
-  parser.add_argument('--model', type=str, choices=MODEL_MAP.keys(), default="debug", help="Type of model to use")
+  parser.add_argument('--model', type=str, choices=MODEL_MAP.keys(), default="FASHION_MNIST", help="Type of model to use")
   parser.add_argument('--workers', type=int, default=1, help="Number of workers to use")
   parser.add_argument('--epochs', type=int, default=5, help="Number of epochs to run")
   parser.add_argument('--server_kill_timeout', type=int, default=10, help="Time before parameter server is killed")
@@ -73,7 +64,6 @@ def main():
   model_name = args.model.upper()
 
   experiment = EXPERIMENT_MAP[experiment_name]
-  model = MODEL_MAP[model_name]
   workers = args.workers
   epochs = args.epochs
   server_kill_timeout = args.server_kill_timeout
@@ -81,7 +71,7 @@ def main():
 
   # Run appropriate experiment
   print(f"Starting {experiment_name} experiment with model {model_name}.")
-  experiment(model, num_workers=workers, epochs=epochs, server_kill_timeout=server_kill_timeout, server_recovery_timeout=server_recovery_timeout)
+  experiment(model_name, num_workers=workers, epochs=epochs, server_kill_timeout=server_kill_timeout, server_recovery_timeout=server_recovery_timeout)
   print(f"Completed {experiment_name} experiment.")
 
 

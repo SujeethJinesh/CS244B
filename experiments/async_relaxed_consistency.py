@@ -1,3 +1,4 @@
+import copy
 import subprocess
 import time
 
@@ -47,11 +48,15 @@ def run_async_relaxed_consistency(model, num_workers=1, epochs=5, server_kill_ti
 
   # 1. Create parameter server.
   ps_actor_ref = ParamServerTaskActor.remote()
-  ps_ref = ps_actor_ref.run_parameter_server_task.remote(model, num_workers, 1e-3, weight_saver_ref, metric_exporter)
+  server_model_copy = copy.deepcopy(model)
+  ps_ref = ps_actor_ref.run_parameter_server_task.remote(server_model_copy, num_workers, 1e-3, weight_saver_ref, metric_exporter)
   ray.get([ps_ref])
 
   # 2. Create workers.
-  worker_refs = [compute_gradients_relaxed_consistency.remote(model, i, epochs=epochs, metric_exporter=metric_exporter) for i in range(num_workers)]
+  worker_refs = []
+  for i in range(num_workers):
+    server_model_copy = copy.deepcopy(model)
+    worker_refs.append(compute_gradients_relaxed_consistency.remote(server_model_copy, i, epochs=epochs, metric_exporter=metric_exporter))
   training_tasks.extend(worker_refs)
 
   # 3. Kill Server.
@@ -61,7 +66,8 @@ def run_async_relaxed_consistency(model, num_workers=1, epochs=5, server_kill_ti
   # 4. Recreate Server.
   time.sleep(server_recovery_timeout)
   recreated_ps_actor = ParamServerTaskActor.remote()
-  recreated_ps_ref = recreated_ps_actor.run_parameter_server_task.remote(model, num_workers, 1e-3, weight_saver_ref, metric_exporter)
+  server_model_copy = copy.deepcopy(model)
+  recreated_ps_ref = recreated_ps_actor.run_parameter_server_task.remote(server_model_copy, num_workers, 1e-3, weight_saver_ref, metric_exporter)
   training_tasks.append(recreated_ps_ref)
 
   # 5. Run till completion

@@ -1,0 +1,32 @@
+import torch
+import torch.nn as nn
+
+from models.fashion_mnist import FashionMNISTConvNet, fashion_mnist_get_data_loader
+
+MODEL_MAP = {
+  "IMAGENET": None,
+  "FASHION_MNIST": FashionMNISTConvNet
+}
+
+DATA_LOADER_MAP = {
+  "IMAGENET": None,
+  "FASHION_MNIST": (fashion_mnist_train_data_loader, fashion_mnist_test_data_loader)
+}
+
+def evaluate(model, test_loader):
+    """Evaluates the accuracy of the model on a validation dataset."""
+    model.eval()
+    test_loss, num_correct, num_total = 0, 0, 0
+    loss_fn = nn.CrossEntropyLoss()
+    with torch.no_grad():
+        for batch, (X, y) in enumerate(test_loader):
+            pred = model(X)
+            loss = loss_fn(pred, y)
+
+            test_loss += loss.item()
+            num_total += y.shape[0]
+            num_correct += (pred.argmax(1) == y).sum().item()
+
+    test_loss /= len(test_loader)
+    accuracy = num_correct / num_total
+    return accuracy

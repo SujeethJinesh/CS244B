@@ -2,7 +2,6 @@ import time
 import numpy as np
 import torch
 import ray
-# from models.test_model import get_data_loader, evaluate
 from models.fashion_mnist import get_data_loader, evaluate
 from kazoo.client import KazooClient
 from kazoo.exceptions import NodeExistsError, NoNodeError
@@ -32,8 +31,6 @@ class ParamServerTaskActor:
 
   def run_parameter_server_task(self, model, num_workers, lr, weight_saver, metric_exporter):
     print("Parameter Server is starting")
-    then = time.time()
-    test_loader = get_data_loader()[1]
 
     zk = self._start_zk()
     model, optimizer = self._load_weights_for_optimizer(zk, model, lr)
@@ -95,29 +92,26 @@ class ParamServerTaskActor:
 
       zk.set("/base/weights", pickled_id_w)
 
-    def evaluate_model():
-      nonlocal then, model, test_loader
-      accuracy = evaluate(model, test_loader)
-      print("accuracy is {:.1f}".format(accuracy))
-      metric_exporter.set_accuracy.remote(accuracy)
+    # def evaluate_model():
+    #   nonlocal then, model, test_loader
+    #   accuracy = evaluate(model, test_loader)
+    #   print("accuracy is {:.1f}".format(accuracy))
+    #   metric_exporter.set_accuracy.remote(accuracy)
 
     def handle_gradient_update(event):
-      nonlocal then
+      # nonlocal then
       weights = None
       gradients = maybe_retrieve_gradients_from_zk(event)
       if gradients:
         weights = apply_gradients(gradients)
       if weights:
         store_weights_in_zookeeper(weights)
-        now = time.time()
-        if now - then > 1.0:
-          evaluate_model()
-          then = now
+        # now = time.time()
+        # if now - then > 1.0:
+        #   evaluate_model()
+        #   then = now
 
       zk.exists(event.path, watch=handle_gradient_update)
-
-    print("Running initial evaluation")
-    evaluate_model()
 
     for worker_index in range(num_workers):
       zk.exists(f"/base/gradients/lock/{worker_index}", watch=handle_gradient_update)

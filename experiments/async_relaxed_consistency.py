@@ -1,4 +1,6 @@
+import copy
 import subprocess
+import threading
 import time
 
 import ray
@@ -9,6 +11,8 @@ from parameter_servers.server_killer import kill_server
 from parameter_servers.server_task import ParamServerTaskActor
 from metrics.metric_exporter import MetricExporter
 from workers.worker_task import compute_gradients_relaxed_consistency
+from models.fashion_mnist import get_data_loader, evaluate
+from evaluation.evaluator import async_eval
 
 WEIGHTS_ZK_PATH = "/base/weights"
 
@@ -45,6 +49,14 @@ def run_async_relaxed_consistency(model, num_workers=1, epochs=5, server_kill_ti
   # 0. Create WeightSaver
   weight_saver_ref = ModelSaver.remote()
 
+  # 0.5. Start Eval Thread
+  model_copy = copy.deepcopy(model)
+  timer_runs = threading.Event()
+  timer_runs.set()
+  test_loader = get_data_loader()[1]
+  eval_thread = threading.Thread(target=async_eval, args=(timer_runs, model_copy, test_loader, metric_exporter, evaluate))
+  eval_thread.start()
+
   # 1. Create parameter server.
   ps_actor_ref = ParamServerTaskActor.remote()
   ps_ref = ps_actor_ref.run_parameter_server_task.remote(model, num_workers, 1e-3, weight_saver_ref, metric_exporter)
@@ -55,14 +67,14 @@ def run_async_relaxed_consistency(model, num_workers=1, epochs=5, server_kill_ti
   training_tasks.extend(worker_refs)
 
   # 3. Kill Server.
-  server_killer_ref = kill_server.remote([ps_actor_ref], timeout_sec=server_kill_timeout, no_restart=True)
-  ray.get([server_killer_ref])
+  # server_killer_ref = kill_server.remote([ps_actor_ref], timeout_sec=server_kill_timeout, no_restart=True)
+  # ray.get([server_killer_ref])
 
-  # 4. Recreate Server.
-  time.sleep(server_recovery_timeout)
-  recreated_ps_actor = ParamServerTaskActor.remote()
-  recreated_ps_ref = recreated_ps_actor.run_parameter_server_task.remote(model, num_workers, 1e-3, weight_saver_ref, metric_exporter)
-  training_tasks.append(recreated_ps_ref)
+  # # 4. Recreate Server.
+  # time.sleep(server_recovery_timeout)
+  # recreated_ps_actor = ParamServerTaskActor.remote()
+  # recreated_ps_ref = recreated_ps_actor.run_parameter_server_task.remote(model, num_workers, 1e-3, weight_saver_ref, metric_exporter)
+  # training_tasks.append(recreated_ps_ref)
 
   # 5. Run till completion
   ray.get(training_tasks)

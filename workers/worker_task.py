@@ -1,12 +1,10 @@
 import ray.cloudpickle
-import torch.nn.functional as F
 import torch.nn as nn
 from models.fashion_mnist import ConvNet, get_data_loader
 # from models.test_model import ConvNet, get_data_loader
 from kazoo.client import KazooClient
 from kazoo.exceptions import NodeExistsError
 import ray
-import json
 from threading import Thread
 
 @ray.remote

@@ -79,6 +79,8 @@ Steps for setting up metrics monitoring on a single-node local cluster:
 4. Open the ray dashboard in the browser. The default address is
    `localhost:8265`.
 
+4.5 Verify the metrics are correct by verifying `localhost:8081` and grepping for `ray_training_loss` or `ray_training_accuracy`
+
 5. In a new terminal, navigate to the Prometheus directory (e.g.
    `prometheus-2.52.0-rc.1.darwin-amd64`), run:
 
@@ -115,6 +117,18 @@ Steps for setting up metrics monitoring on a single-node local cluster:
     change this, edit `/tmp/ray/session_latest/metrics/prometheus/prometheus.yml`.
     Setting a long interval might make it harder to quickly notice
     issues like dead worker nodes.
+
+## Create Grafana Dashboards
+
+1. First login to grafana on the top right corner with admin/admin.
+
+2. Create a dashboard with the `+` icon on the top right corner and scroll down to `Select Metric`.
+
+3. Add the metric you prefer like `ray_training_...` and then set the experiment equal to the experiment name.
+
+4. You can modify what the dashboard shows (timeseries graph, table, etc.). When exporting data, prefer using a table view.
+
+5. (Optional) You can save this panel in your dashboard view.
 
 ## Custom Metrics
 

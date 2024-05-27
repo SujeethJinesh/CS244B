@@ -3,18 +3,17 @@ import torch.nn as nn
 from kazoo.client import KazooClient
 from kazoo.exceptions import NodeExistsError
 import ray
-from shared import DATA_LOADER_MAP
-from models.fashion_mnist import FashionMNISTConvNet
-
+from models.fashion_mnist import FashionMNISTConvNet, fashion_mnist_get_data_loader
 
 @ray.remote
 def compute_gradients(model_name, weights, metric_exporter=None):
-    if model_name == "DEBUG":
+    if model_name == "FASHION_MNIST":
       model = FashionMNISTConvNet()
+      train_loader, _ = fashion_mnist_get_data_loader()
     else:
       model = None
+      train_loader = None
 
-    train_loader, _ = DATA_LOADER_MAP[model_name]
     data_iterator = iter(train_loader)
 
     model.train()
@@ -37,8 +36,12 @@ def compute_gradients(model_name, weights, metric_exporter=None):
 def compute_gradients_relaxed_consistency(model_name, worker_index, epochs=5, metric_exporter=None):
   curr_epoch = 0
   print(f"Worker {worker_index} is starting at Epoch {curr_epoch}")
-  model = MODEL_MAP[model_name]()
-  train_loader, _ = DATA_LOADER_MAP[model_name]
+  if model_name == "FASHION_MNIST":
+    model = FashionMNISTConvNet()
+    train_loader, _ = fashion_mnist_get_data_loader()
+  else:
+    model = None
+    train_loader = None
   data_iterator = iter(train_loader)
   zk = KazooClient(hosts='127.0.0.1:2181')
   zk.start()

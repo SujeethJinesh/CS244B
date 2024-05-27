@@ -4,7 +4,8 @@ import torch
 import ray
 from kazoo.client import KazooClient
 from kazoo.exceptions import NodeExistsError, NoNodeError
-from shared import MODEL_MAP, DATA_LOADER_MAP, evaluate
+from shared import MODEL_MAP, evaluate
+from models.fashion_mnist import FashionMNISTConvNet, fashion_mnist_get_data_loader
 
 iterations = 400
 weight_update_frequency = 10
@@ -32,8 +33,13 @@ class ParamServerTaskActor:
   def run_parameter_server_task(self, model_name, num_workers, lr, weight_saver, metric_exporter):
     print("Parameter Server is starting")
     then = time.time()
-    model = MODEL_MAP[model_name]()
-    _, test_loader = DATA_LOADER_MAP[model_name]
+    if model_name == "FASHION_MNIST":
+      model = FashionMNISTConvNet()
+      _, test_loader = fashion_mnist_get_loader()
+    else:
+      model = None
+      test_loader = None
+    
 
     zk = self._start_zk()
     model, optimizer = self._load_weights_for_optimizer(zk, model, lr)

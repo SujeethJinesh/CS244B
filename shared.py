@@ -8,10 +8,10 @@ MODEL_MAP = {
   "FASHION_MNIST": FashionMNISTConvNet
 }
 
-DATA_LOADER_MAP = {
-  "IMAGENET": None,
-  "FASHION_MNIST": (fashion_mnist_train_data_loader, fashion_mnist_test_data_loader)
-}
+# DATA_LOADER_MAP = {
+#   "IMAGENET": None,
+#   "FASHION_MNIST": (fashion_mnist_train_data_loader, fashion_mnist_test_data_loader)
+# }
 
 def evaluate(model, test_loader):
     """Evaluates the accuracy of the model on a validation dataset."""
@@ -26,7 +26,7 @@ def evaluate(model, test_loader):
             test_loss += loss.item()
             num_total += y.shape[0]
             num_correct += (pred.argmax(1) == y).sum().item()
-
     test_loss /= len(test_loader)
+    print("loss is ", test_loss)
     accuracy = num_correct / num_total
     return accuracy

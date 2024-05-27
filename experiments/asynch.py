@@ -6,7 +6,8 @@ import threading
 import copy
 from evaluation.evaluator import async_eval
 from evaluation.evaluator_state import evaluator_state
-from shared import MODEL_MAP, DATA_LOADER_MAP, evaluate
+from shared import MODEL_MAP, evaluate
+from models.fashion_mnist import FashionMNISTConvNet, fashion_mnist_get_data_loader
 
 iterations = 200
 num_workers = 2
@@ -16,8 +17,12 @@ def run_async(model_name, num_workers=1, epochs=5, server_kill_timeout=10, serve
   server_model_copy = copy.deepcopy(model)
   ps = ParameterServer.remote(server_model_copy, 1e-2)
 
-  model = MODEL_MAP[model_name]()
-  test_loader = DATA_LOADER_MAP[model_name]
+  if model_name == "FASHION_MNIST":
+    model = FashionMNISTConvNet()
+    _, test_loader = fashion_mnist_get_data_loader()
+  else:
+    model = None
+    test_loader = None
 
   # Start eval thread
   eval_model_copy = copy.deepcopy(model)

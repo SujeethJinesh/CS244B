@@ -6,6 +6,7 @@ import os
 from ray import train
 from workers.worker_task import compute_gradients
 from shared import MODEL_MAP, DATA_LOADER_MAP, evaluate
+from models.fashion_mnist import FashionMNISTConvNet, fashion_mnist_get_data_loader
 
 iterations = 200
 num_workers = 2
@@ -14,7 +15,10 @@ num_workers = 2
 class ParameterServerDiskCkpoint(object):
     def __init__(self, model_name, lr, checkpoint_dir):
         self.model_name = model_name
-        self.model = MODEL_MAP[model_name]()
+        if model_name == "FASHION_MNIST":
+          self.model = FashionMNISTConvNet()
+        else:
+          self.model = None
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
         self.checkpoint_dir = checkpoint_dir
 
@@ -65,7 +69,10 @@ class ParameterServerDiskCkpoint(object):
 
 
     def run_synch_training(self):
-      _, test_loader = DATA_LOADER_MAP[self.model_name]
+      if model_name == "FASHION_MNIST":
+        _, test_loader = fashion_mnist_get_data_loader()
+      else:
+        test_loader = None
 
       print("Running synchronous parameter server training.")
       current_weights = self.get_weights()
@@ -83,7 +90,10 @@ class ParameterServerDiskCkpoint(object):
       print("Final accuracy is {:.1f}.".format(accuracy))
 
     def run_asynch_training(self):
-      _, test_loader = DATA_LOADER_MAP[self.model_name]
+      if model_name == "FASHION_MNIST":
+        _, test_loader = fashion_mnist_get_data_loader()
+      else:
+        test_loader = None
 
       print("Running Asynchronous Parameter Server Training.")
       current_weights = self.get_weights()

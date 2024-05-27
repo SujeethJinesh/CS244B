@@ -7,8 +7,8 @@ from models.fashion_mnist import get_data_loader, evaluate
 from kazoo.client import KazooClient
 from kazoo.exceptions import NodeExistsError, NoNodeError
 
-iterations = 400
-weight_update_frequency = 10
+iterations = 4000
+weight_update_frequency = 100
 
 @ray.remote
 class ParamServerTaskActor:

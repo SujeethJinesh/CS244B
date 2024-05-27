@@ -1,6 +1,25 @@
 # CS244B
 
-## Getting Started
+# Getting Started
+
+## Running Experiments (Quick Start)
+
+In order to run an experiment, you need to run the following script. This script
+ will set up the runtime environment, zookeeper server, Prometheus, and Grafana.
+
+### Start Zookeeper
+
+```
+setup_experiment.sh
+```
+
+### Run Experiment
+
+```
+python3 main.py --experiment {SYNC_CONTROL,ASYNC_CONTROL,ASYNC_CHAIN_REPLICATION,ASYNC_RELAXED_CONSISTENCY,DEBUG_NO_CHECKPOINTING,DEBUG_DISK_CHECKPOINTING,DEBUG_OBJECT_STORE_CHECKPOINTING} [--model {IMAGENET,DEBUG}]
+```
+
+## Runtime Environment
 
 To create the required Python virtual environment, run
 
@@ -12,28 +31,6 @@ To activate the virtual environment, use the following command
 
 ```
 source training_env/bin/activate
-```
-
-## Running Experiments (Quick Start)
-
-In order to run an experiment, you can use the following commands.
-
-### Start Zookeeper
-
-```
-./apache-zookeeper-3.8.4-bin/bin/zkServer.sh start-foreground
-```
-
-### Start Prometheseus
-
-```
-ray metrics launch-prometheus
-```
-
-### Run Experiment
-
-```
-python3 main.py --experiment {SYNC_CONTROL,ASYNC_CONTROL,ASYNC_CHAIN_REPLICATION,ASYNC_RELAXED_CONSISTENCY,DEBUG_NO_CHECKPOINTING,DEBUG_DISK_CHECKPOINTING,DEBUG_OBJECT_STORE_CHECKPOINTING} [--model {IMAGENET,DEBUG}]
 ```
 
 ## Zookeeper

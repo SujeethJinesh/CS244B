@@ -6,7 +6,7 @@ import time
 import os
 from workers.worker_task import compute_gradients
 # from models.test_model import ConvNet, get_data_loader, evaluate
-# from models.fashion_mnist import ConvNet, get_data_loader, evaluate
+from models.fashion_mnist import ConvNet, get_data_loader, evaluate
 from models.cifar10 import ResNet, get_data_loader, evaluate
 from zookeeper.zoo import KazooChainNode
 
@@ -19,8 +19,8 @@ WEIGHT_UPDATE_FREQUENCY = 10
 @ray.remote(max_restarts=0)
 class ParameterServer(object):
     def __init__(self, lr, node_id=None, metric_exporter=None):
-        #self.model = ConvNet()
-        self.model = ResNet()
+        self.model = ConvNet()
+        # self.model = ResNet()
         self.start_iteration = 0
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
         self.start_iteration = 0

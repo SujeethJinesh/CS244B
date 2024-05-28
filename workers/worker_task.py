@@ -12,8 +12,8 @@ from threading import Thread
 
 @ray.remote
 def compute_gradients(weights, metric_exporter=None):
-    # model = ConvNet()
-    model = ResNet()
+    model = ConvNet()
+    # model = ResNet()
     data_iterator = iter(get_data_loader()[0])
 
     model.train()
@@ -68,6 +68,8 @@ def compute_gradients_relaxed_consistency(model, worker_index, epochs=5, metric_
         remote_grad_updates = ray.get(remote_grad_updates_ref)
         if remote_grad_updates == b'':
           remote_grad_updates = []
+        ray.internal.free([remote_grad_updates_ref])
+        del remote_grad_updates_ref
       remote_grad_updates.extend(local_gradient_updates)
 
       # Place gradients in object store

@@ -4,6 +4,7 @@ import torch
 import ray
 # from models.test_model import get_data_loader, evaluate
 from models.fashion_mnist import fashion_mnist_get_data_loader
+from models.test_model import test_model_get_data_loader
 from models.model_common import evaluate
 from kazoo.client import KazooClient
 from kazoo.exceptions import NodeExistsError, NoNodeError
@@ -37,8 +38,7 @@ class ParamServerTaskActor:
     if self.model_name == "FASHION":
       data_loader_fn = fashion_mnist_get_data_loader
     else:
-      data_loader_fn = None
-    #TODO Update data loader fn
+      data_loader_fn = test_model_get_data_loader
     test_loader = data_loader_fn[1]
 
     zk = self._start_zk()

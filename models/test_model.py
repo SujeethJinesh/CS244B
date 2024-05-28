@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from torchvision import datasets, transforms
 from filelock import FileLock
 
-def get_data_loader():
+def test_model_get_data_loader():
     """Safely downloads data. Returns training/validation set dataloader."""
     mnist_transforms = transforms.Compose(
         [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
@@ -46,11 +46,11 @@ def evaluate(model, test_loader):
             correct += (predicted == target).sum().item()
     return 100.0 * correct / total
 
-class ConvNet(nn.Module):
+class TestModel(nn.Module):
     """Small ConvNet for MNIST."""
 
     def __init__(self):
-        super(ConvNet, self).__init__()
+        super(TestModel, self).__init__()
         self.conv1 = nn.Conv2d(1, 3, kernel_size=3)
         self.fc = nn.Linear(192, 10)
 

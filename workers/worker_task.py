@@ -2,7 +2,7 @@ import ray.cloudpickle
 import torch.nn.functional as F
 import torch.nn as nn
 from models.fashion_mnist import FashionMNISTConvNet, fashion_mnist_get_data_loader
-# from models.test_model import ConvNet, get_data_loader
+from models.test_model import TestModel, test_model_get_data_loader
 from kazoo.client import KazooClient
 from kazoo.exceptions import NodeExistsError
 import ray
@@ -11,12 +11,12 @@ from threading import Thread
 
 @ray.remote
 def compute_gradients(model_name, weights, metric_exporter=None):
-    data_loader_fn = fashion_mnist_get_data_loader
     if model_name == "FASHION":
       model = FashionMNISTConvNet()
-      #TODO add data loader func
+      data_loader_fn = fashion_mnist_get_data_loader
     else:
-      model = None
+      model = TestModel()
+      data_loader_fn = test_model_get_data_loader
     data_iterator = iter(data_loader_fn()[0])
 
     model.train()

@@ -16,7 +16,7 @@ from experiments.chain_replication import run_async_chain_replication, run_sync_
 from experiments.debug_no_checkpointing import run_debug_no_checkpointing
 from experiments.debug_disk_checkpointing import run_debug_disk_checkpointing
 from experiments.debug_object_store_checkpointing import run_debug_object_store_checkpointing
-# from models.test_model import ConvNet
+from models.test_model import TestModel
 from models.fashion_mnist import FashionMNISTConvNet
 
 num_workers = 2
@@ -34,7 +34,7 @@ EXPERIMENT_MAP = {
 }
 
 MODEL_MAP = {
-  "IMAGENET": None,
+  "DEBUG": TestModel(),
   "FASHION": FashionMNISTConvNet()
 }
 

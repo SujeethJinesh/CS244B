@@ -4,6 +4,7 @@ from workers.worker_task import compute_gradients
 from metrics.metric_exporter import MetricExporter
 # from models.test_model import get_data_loader, evaluate
 from models.fashion_mnist import fashion_mnist_get_data_loader
+from models.test_model import TestModel
 from models.model_common import evaluate
 
 iterations = 200
@@ -16,7 +17,7 @@ def run_async(model_name, num_workers=1, epochs=5, server_kill_timeout=10, serve
   if model_name == "FASHION":
     model = FashionMNISTConvNet()
   else:
-    model = None
+    model = TestModel()
   # TODO Update data_loader_fn
   test_loader = data_loader_fn()[1]
 

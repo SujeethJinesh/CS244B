@@ -2,7 +2,7 @@ import ray
 from parameter_servers.server_actor import ParameterServer
 from workers.worker_task import compute_gradients
 from metrics.metric_exporter import MetricExporter
-# from models.test_model import get_data_loader, evaluate
+from models.test_model import TestModel, test_model_get_data_loader
 from models.fashion_mnist import FashionMNISTConvNet, fashion_mnist_get_data_loader
 from models.model_common import evaluate
 
@@ -12,9 +12,12 @@ num_workers = 2
 def run_sync(model_name, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
   metric_exporter = MetricExporter.remote("sync control")
   ps = ParameterServer.remote(model_name, 1e-2)
-  data_loader_fn = fashion_mnist_get_data_loader
   if model_name == "FASHION":
     model = FashionMNISTConvNet()
+    data_loader_fn = fashion_mnist_get_data_loader
+  else:
+    model = TestModel()
+    data_loader_fn = test_model_get_data_loader
   # TODO Update data_loader_fn
   test_loader = data_loader_fn()[1]
 

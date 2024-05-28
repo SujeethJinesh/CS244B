@@ -57,7 +57,7 @@ def run_async_relaxed_consistency(model_name, num_workers=1, epochs=5, server_ki
   ray.get([ps_ref])
 
   # 2. Create workers.
-  worker_refs = [compute_gradients_relaxed_consistency.remote(model, i, epochs=epochs, metric_exporter=metric_exporter) for i in range(num_workers)]
+  worker_refs = [compute_gradients_relaxed_consistency.remote(model_name, model, i, epochs=epochs, metric_exporter=metric_exporter) for i in range(num_workers)]
   training_tasks.extend(worker_refs)
 
   # 3. Kill Server.

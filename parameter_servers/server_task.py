@@ -39,7 +39,7 @@ class ParamServerTaskActor:
       data_loader_fn = fashion_mnist_get_data_loader
     else:
       data_loader_fn = test_model_get_data_loader
-    test_loader = data_loader_fn[1]
+    test_loader = data_loader_fn()[1]
 
     zk = self._start_zk()
     model, optimizer = self._load_weights_for_optimizer(zk, model, lr)

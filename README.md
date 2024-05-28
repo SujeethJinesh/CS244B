@@ -178,3 +178,37 @@ Useful commands:
   # To monitor autoscaling:
     ray exec gcp.yaml 'tail -n 100 -f /tmp/ray/session_latest/logs/monitor*'
 ```
+
+### Set up GCP
+
+SSH to cluster head `ray attach gcp.yaml` and run the following:
+
+```
+# Java
+# https://cloud.google.com/java/docs/setup#debianubuntu
+
+# ZooKeeper
+
+pip install kazoo
+wget "https://dlcdn.apache.org/zookeeper/zookeeper-3.8.4/apache-zookeeper-3.8.4-bin.tar.gz"
+tar -xzf apache-zookeeper-3.8.4-bin.tar.gz
+rm apache-zookeeper-3.8.4-bin.tar.gz
+# By default zookeeper uses zoo.cfg as the server starting config.
+mv apache-zookeeper-3.8.4-bin/conf/zoo_sample.cfg apache-zookeeper-3.8.4-bin/conf/zoo.cfg
+
+./apache-zookeeper-3.8.4-bin/bin/zkServer.sh start
+
+# Prometheus
+
+wget https://github.com/prometheus/prometheus/releases/download/v2.52.0/prometheus-2.52.0.linux-amd64.tar.gz
+tar -xzf prometheus-2.52.0.linux-amd64.tar.gz
+rm prometheus-2.52.0.linux-amd64.tar.gz
+
+# Grafana
+
+wget https://dl.grafana.com/enterprise/release/grafana-enterprise-11.0.0.linux-amd64.tar.gz
+tar -zxvf grafana-enterprise-11.0.0.linux-amd64.tar.gz
+
+# [DO NOT RUN] TO FORCE KILL
+ray stop --force
+```

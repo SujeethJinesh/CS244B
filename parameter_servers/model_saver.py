@@ -42,6 +42,7 @@ class ModelSaver(object):
     def __init__(self):
         self.weight_reference = None
         self.iteration_count = 0
+        self.old_weight_id = None
 
     def set_weights_iteration_count(self, weights, iteration_count):
         print('saving weights')
@@ -51,6 +52,10 @@ class ModelSaver(object):
     def set_weights(self, w):
       self.weight_reference = ray.put(w)
       pickled_weight_id = ray.cloudpickle.dumps(self.weight_reference)
+      if self.old_weight_id:
+        ray.internal.free([self.old_weight_id])
+        del self.old_weight_id
+        self.old_weight_id = pickled_weight_id
       return pickled_weight_id
 
     def get_weights(self):

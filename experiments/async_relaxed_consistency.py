@@ -55,14 +55,14 @@ def run_async_relaxed_consistency(model, num_workers=1, epochs=5, server_kill_ti
   training_tasks.extend(worker_refs)
 
   # 3. Kill Server.
-  server_killer_ref = kill_server.remote([ps_actor_ref], timeout_sec=server_kill_timeout, no_restart=True)
-  ray.get([server_killer_ref])
+  # server_killer_ref = kill_server.remote([ps_actor_ref], timeout_sec=server_kill_timeout, no_restart=True)
+  # ray.get([server_killer_ref])
 
   # 4. Recreate Server.
-  time.sleep(server_recovery_timeout)
-  recreated_ps_actor = ParamServerTaskActor.remote()
-  recreated_ps_ref = recreated_ps_actor.run_parameter_server_task.remote(model, num_workers, 1e-3, weight_saver_ref, metric_exporter)
-  training_tasks.append(recreated_ps_ref)
+  # time.sleep(server_recovery_timeout)
+  # recreated_ps_actor = ParamServerTaskActor.remote()
+  # recreated_ps_ref = recreated_ps_actor.run_parameter_server_task.remote(model, num_workers, 1e-3, weight_saver_ref, metric_exporter)
+  # training_tasks.append(recreated_ps_ref)
 
   # 5. Run till completion
   ray.get(training_tasks)

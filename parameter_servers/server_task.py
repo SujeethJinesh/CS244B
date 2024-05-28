@@ -41,7 +41,7 @@ class ParamServerTaskActor:
     def maybe_retrieve_gradients_from_zk(event):
       nonlocal zk
 
-      # If there's no longer a lock on the 
+      # If there's no longer a lock on the gradients path
       if event.type=='DELETED':
         try:
           worker_index = event.path.split("/")[-1]
@@ -56,6 +56,8 @@ class ParamServerTaskActor:
           if pickled_remote_gradient_updates_id[0] != b'':
             remote_grad_updates_ref = ray.cloudpickle.loads(pickled_remote_gradient_updates_id[0])
             remote_grad_updates = ray.get(remote_grad_updates_ref)
+            ray.internal.free([remote_grad_updates_ref])
+            del remote_grad_updates_ref
 
           # Place gradients in object store
           id_grads = ray.put(b'')

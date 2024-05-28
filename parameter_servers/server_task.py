@@ -100,7 +100,7 @@ class ParamServerTaskActor:
 
     def evaluate_model():
       nonlocal then, model, test_loader
-      accuracy = evaluate(model, test_loader, device)
+      accuracy = evaluate(model, test_loader, device=device)
       print("accuracy is {:.1f}".format(accuracy))
       metric_exporter.set_accuracy.remote(accuracy)
 

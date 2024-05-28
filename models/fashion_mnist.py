@@ -36,7 +36,7 @@ def get_data_loader(device):
     return train_dataloader, test_dataloader
 
 
-def evaluate(model, test_loader, device):
+def evaluate(model, test_loader, device="cpu"):
     """Evaluates the accuracy of the model on a validation dataset."""
     model.eval()
     correct = 0

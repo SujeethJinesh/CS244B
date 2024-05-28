@@ -7,7 +7,7 @@ import os
 from workers.worker_task import compute_gradients
 # from models.test_model import ConvNet, get_data_loader, evaluate
 from models.fashion_mnist import ConvNet, get_data_loader, evaluate
-from models.cifar10 import ResNet, get_data_loader, evaluate
+# from models.cifar10 import ResNet, get_data_loader, evaluate
 from zookeeper.zoo import KazooChainNode
 
 # TODO (Change to training epochs)
@@ -70,9 +70,9 @@ class ParameterServer(object):
         print("backup recieve weights")
         self.chain_node.zk.exists("/exp3/"+str(node_id), watch=self.chain_node.handle_delete_or_change_event)
 
-    def run_synch_chain_node_experiment(self, num_workers):
-      # test_loader = get_data_loader()[0]
-      test_loader = get_data_loader()[1]
+    def run_synch_chain_node_experiment(self, num_workers, device="cpu"):
+      # test_loader = get_data_loader(device)[0]
+      test_loader = get_data_loader(device)[1]
 
       print("Running synchronous parameter server training.")
       current_weights = self.get_weights()
@@ -85,14 +85,14 @@ class ParameterServer(object):
               self.store_weights_in_zookeeper(current_weights, i)
               # Evaluate the current model.
               self.set_weights(current_weights, i)
-              accuracy = evaluate(self.model, test_loader)
+              accuracy = evaluate(self.model, test_loader, device=device)
               self.metric_exporter.set_accuracy.remote(accuracy)
               print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
 
       print("Final accuracy is {:.1f}.".format(accuracy))
 
-    def run_asynch_chain_node_experiment(self, num_workers):
-      test_loader = get_data_loader()[1]
+    def run_asynch_chain_node_experiment(self, num_workers, device="cpu"):
+      test_loader = get_data_loader(device)[1]
 
       print("Running Asynchronous Parameter Server Training.")
       current_weights = self.get_weights()
@@ -113,7 +113,7 @@ class ParameterServer(object):
               # Evaluate the current model after every 10 updates.
               self.store_weights_in_zookeeper(current_weights, i)
               self.set_weights(current_weights, i)
-              accuracy = evaluate(self.model, test_loader)
+              accuracy = evaluate(self.model, test_loader, device=device)
               self.metric_exporter.set_accuracy.remote(accuracy)
               print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
 

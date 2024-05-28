@@ -11,11 +11,11 @@ from evaluation.evaluator_state import evaluator_state
 iterations = 200
 num_workers = 2
 
-def run_async(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
+def run_async(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5, device="cpu"):
   metric_exporter = MetricExporter.remote("async control")
   ps = ParameterServer.remote(1e-2)
 
-  test_loader = get_data_loader()[1]
+  test_loader = get_data_loader(device)[1]
 
   # Start eval thread
   model_copy = copy.deepcopy(model)

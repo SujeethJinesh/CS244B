@@ -11,17 +11,17 @@ import json
 from threading import Thread
 
 @ray.remote
-def compute_gradients(weights, metric_exporter=None):
+def compute_gradients(weights, metric_exporter=None, device="cpu"):
     model = ConvNet()
     # model = ResNet()
-    data_iterator = iter(get_data_loader()[0])
+    data_iterator = iter(get_data_loader(device)[0])
 
     model.train()
     model.set_weights(weights)
     try:
         data, target = next(data_iterator)
     except StopIteration:  # When the epoch ends, start a new epoch.
-        data_iterator = iter(get_data_loader()[0])
+        data_iterator = iter(get_data_loader(device)[0])
         data, target = next(data_iterator)
     model.zero_grad()
     output = model(data)

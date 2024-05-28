@@ -30,13 +30,14 @@ class ParamServerTaskActor:
     optimizer = torch.optim.SGD(model.parameters(), lr=lr)
     return model, optimizer
 
-  def run_parameter_server_task(self, model, num_workers, lr, weight_saver, metric_exporter):
+  def run_parameter_server_task(self, model, num_workers, lr, weight_saver, metric_exporter, device):
     print("Parameter Server is starting")
     then = time.time()
-    test_loader = get_data_loader()[1]
+    test_loader = get_data_loader(device)[1]
 
     zk = self._start_zk()
     model, optimizer = self._load_weights_for_optimizer(zk, model, lr)
+    model.to(device)
 
     def maybe_retrieve_gradients_from_zk(event):
       nonlocal zk
@@ -76,19 +77,15 @@ class ParamServerTaskActor:
 
     def apply_gradients(grad):
       nonlocal model, optimizer
-      # print(f"Applying gradients of length {len(grad)}")
       if grad:
-        temp_optimizer = optimizer
-        if len(grad) > 10:
-          temp_optimizer = torch.optim.SGD(model.parameters(), lr=1e-5)
         summed_gradients = [
             np.stack(gradient_zip).sum(axis=0) for gradient_zip in zip(*grad)
         ]
-        temp_optimizer.zero_grad()
-        model.set_gradients(summed_gradients)
-        temp_optimizer.step()
-        return model.get_weights()
-      return None
+        optimizer.zero_grad()
+        model.set_gradients(summed_gradients, device)
+        optimizer.step()
+        return model.get_weights(), len(grad)
+      return None, 0
 
     def store_weights_in_zookeeper(w):
       nonlocal model, zk, weight_saver
@@ -99,7 +96,7 @@ class ParamServerTaskActor:
 
     def evaluate_model():
       nonlocal then, model, test_loader
-      accuracy = evaluate(model, test_loader)
+      accuracy = evaluate(model, test_loader, device)
       print("accuracy is {:.1f}".format(accuracy))
       metric_exporter.set_accuracy.remote(accuracy)
 
@@ -108,7 +105,8 @@ class ParamServerTaskActor:
       weights = None
       gradients = maybe_retrieve_gradients_from_zk(event)
       if gradients:
-        weights = apply_gradients(gradients)
+        weights, gradient_count = apply_gradients(gradients)
+        metric_exporter.set_gradients_processed.remote(gradient_count)
       if weights:
         store_weights_in_zookeeper(weights)
         now = time.time()

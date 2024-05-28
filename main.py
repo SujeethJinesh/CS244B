@@ -1,5 +1,4 @@
 import argparse
-import logging
 import os
 import random
 
@@ -67,14 +66,22 @@ def main():
   parser.add_argument('--epochs', type=int, default=5, help="Number of epochs to run")
   parser.add_argument('--server_kill_timeout', type=int, default=10, help="Time before parameter server is killed")
   parser.add_argument('--server_recovery_timeout', type=int, default=5, help="Time after parameter server is killed to recover")
+  parser.add_argument('--use-mps', action='store_true', help="Use MPS for GPU acceleration on Apple Silicon")
   args = parser.parse_args()
   
   # Parse the flags
   experiment_name = args.experiment.upper()
   model_name = args.model.upper()
+  has_mps = torch.backends.mps.is_available()
+  use_mps_if_available = args.use_mps
+
+  print(f"Does this device have MPS? {has_mps}")
+  print(f"Using MPS? {use_mps_if_available}")
+
+  device = torch.device("mps" if use_mps_if_available and has_mps else "cpu")
 
   experiment = EXPERIMENT_MAP[experiment_name]
-  model = MODEL_MAP[model_name]
+  model = MODEL_MAP[model_name].to(device)
   workers = args.workers
   epochs = args.epochs
   server_kill_timeout = args.server_kill_timeout
@@ -82,7 +89,7 @@ def main():
 
   # Run appropriate experiment
   print(f"Starting {experiment_name} experiment with model {model_name}.")
-  experiment(model, num_workers=workers, epochs=epochs, server_kill_timeout=server_kill_timeout, server_recovery_timeout=server_recovery_timeout)
+  experiment(model, num_workers=workers, epochs=epochs, server_kill_timeout=server_kill_timeout, server_recovery_timeout=server_recovery_timeout, device=device)
   print(f"Completed {experiment_name} experiment.")
 
 

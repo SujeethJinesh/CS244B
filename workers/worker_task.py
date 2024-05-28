@@ -10,16 +10,21 @@ import json
 from threading import Thread
 
 @ray.remote
-def compute_gradients(weights, metric_exporter=None):
-    model = FashionMNISTConvNet()
-    data_iterator = iter(fashion_mnist_get_data_loader()[0])
+def compute_gradients(model_name, weights, metric_exporter=None):
+    data_loader_fn = fashion_mnist_get_data_loader
+    if model_name == "FashionMNIST":
+      model = FashionMNISTConvNet()
+      #TODO add data loader func
+    else:
+      model = None
+    data_iterator = iter(data_loader_fn()[0])
 
     model.train()
     model.set_weights(weights)
     try:
         data, target = next(data_iterator)
     except StopIteration:  # When the epoch ends, start a new epoch.
-        data_iterator = iter(fashion_mnist_get_data_loader()[0])
+        data_iterator = iter(data_loader_fn()[0])
         data, target = next(data_iterator)
     model.zero_grad()
     output = model(data)
@@ -32,9 +37,11 @@ def compute_gradients(weights, metric_exporter=None):
 
 @ray.remote
 def compute_gradients_relaxed_consistency(model, worker_index, epochs=5, metric_exporter=None):
+  #TODO add data loader func
+  data_loader_fn = fashion_mnist_get_data_loader()
   curr_epoch = 0
   print(f"Worker {worker_index} is starting at Epoch {curr_epoch}")
-  data_iterator = iter(fashion_mnist_get_data_loader()[0])
+  data_iterator = iter(data_loader_fn()[0])
   zk = KazooClient(hosts='127.0.0.1:2181')
   zk.start()
 

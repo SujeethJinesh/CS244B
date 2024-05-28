@@ -9,7 +9,7 @@ from parameter_servers.server_actor import ParameterServer
 from parameter_servers.server_killer import kill_server
 from metrics.metric_exporter import MetricExporter
 
-def run_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5, sync=False):
+def run_chain_replication(model_name, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5, sync=False):
   num_chain_nodes = 3
 
   zk = KazooClient(hosts='127.0.0.1:2181')
@@ -20,7 +20,7 @@ def run_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10
   ps_dict = {}
 
   for i in range(num_chain_nodes):
-      ps = ParameterServer.remote(1e-2, node_id=i, metric_exporter=metric_exporter)
+      ps = ParameterServer.remote(model_name, 1e-2, node_id=i, metric_exporter=metric_exporter)
       ps_dict[i] = ps
       # Ensures all zookeeper paths associated with the chain nodes exist.
       while not zk.exists("/exp3/" + str(i)):
@@ -54,12 +54,12 @@ def run_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10
 
   for i in range(num_chain_nodes - 1):
     run_new_primary()
-    ps =  ps = ParameterServer.remote(1e-2, node_id=num_chain_nodes + i, metric_exporter=metric_exporter)
+    ps =  ps = ParameterServer.remote(model_name, 1e-2, node_id=num_chain_nodes + i, metric_exporter=metric_exporter)
     time.sleep(server_recovery_timeout)
   run_new_primary()
 
-def run_async_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
-  run_chain_replication(model, num_workers, epochs, server_kill_timeout, server_kill_timeout, False)
+def run_async_chain_replication(model_name, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
+  run_chain_replication(model_name, num_workers, epochs, server_kill_timeout, server_kill_timeout, False)
 
-def run_sync_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
-  run_chain_replication(model, num_workers, epochs, server_kill_timeout, server_kill_timeout, True)
+def run_sync_chain_replication(model_name, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
+  run_chain_replication(model_name, num_workers, epochs, server_kill_timeout, server_kill_timeout, True)

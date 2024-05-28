@@ -9,11 +9,12 @@ from models.model_common import evaluate
 iterations = 200
 num_workers = 2
 
-def run_sync(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
+def run_sync(model_name, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
   metric_exporter = MetricExporter.remote("sync control")
-  ps = ParameterServer.remote(1e-2)
-
-  test_loader = fashion_mnist_get_data_loader()[1]
+  ps = ParameterServer.remote(model_name, 1e-2)
+  data_loader_fn = fashion_mnist_get_data_loader
+  # TODO Update data_loader_fn
+  test_loader = fashion_mnist_get_data_loader[1]
 
   print("Running synchronous parameter server training.")
   current_weights = ps.get_weights.remote()

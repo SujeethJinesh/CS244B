@@ -35,7 +35,7 @@ EXPERIMENT_MAP = {
 
 MODEL_MAP = {
   "IMAGENET": None,
-  "DEBUG": FashionMNISTConvNet()
+  "FashionMNIST": FashionMNISTConvNet()
 }
 
 # TODO: This doesn't seem to make the randomness consistent
@@ -82,7 +82,7 @@ def main():
 
   # Run appropriate experiment
   print(f"Starting {experiment_name} experiment with model {model_name}.")
-  experiment(model, num_workers=workers, epochs=epochs, server_kill_timeout=server_kill_timeout, server_recovery_timeout=server_recovery_timeout)
+  experiment(model_name, num_workers=workers, epochs=epochs, server_kill_timeout=server_kill_timeout, server_recovery_timeout=server_recovery_timeout)
   print(f"Completed {experiment_name} experiment.")
 
 

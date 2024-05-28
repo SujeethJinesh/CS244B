@@ -19,8 +19,12 @@ WEIGHT_UPDATE_FREQUENCY = 10
 
 @ray.remote(max_restarts=0)
 class ParameterServer(object):
-    def __init__(self, lr, node_id=None, metric_exporter=None):
-        self.model = FashionMNISTConvNet()
+    def __init__(self, model_name, lr, node_id=None, metric_exporter=None):
+        if model_name == "FashionMNIST":
+          self.model = FashionMNISTConvNet()
+        else:
+          self.model = None
+        self.model_name = model_name
         self.start_iteration = 0
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
         self.start_iteration = 0
@@ -71,7 +75,10 @@ class ParameterServer(object):
         self.chain_node.zk.exists("/exp3/"+str(node_id), watch=self.chain_node.handle_delete_or_change_event)
 
     def run_synch_chain_node_experiment(self, num_workers):
-      test_loader = fashion_mnist_get_data_loader[1]
+      data_loader_fn = fashion_mnist_get_data_loader
+      if self.model_name == "FashionMNIST":
+        data_loader_fn = fashion_mnist_get_data_loader
+      test_loader = data_loader_fn()[1]
 
       print("Running synchronous parameter server training.")
       current_weights = self.get_weights()

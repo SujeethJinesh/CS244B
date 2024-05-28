@@ -14,8 +14,8 @@ weight_update_frequency = 10
 @ray.remote
 class ParamServerTaskActor:
   
-  def __init__(self):
-    pass
+  def __init__(self, model_name):
+    self.model_name = model_name
 
   def _start_zk(self):
     zk = KazooClient(hosts='127.0.0.1:2181', timeout=1.0)
@@ -34,7 +34,12 @@ class ParamServerTaskActor:
   def run_parameter_server_task(self, model, num_workers, lr, weight_saver, metric_exporter):
     print("Parameter Server is starting")
     then = time.time()
-    test_loader = fashion_mnist_get_data_loader[1]
+    if self.model_name == "FashionMNIST":
+      data_loader_fn = fashion_mnist_get_data_loader
+    else:
+      data_loader_fn = None
+    #TODO Update data loader fn
+    test_loader = data_loader_fn[1]
 
     zk = self._start_zk()
     model, optimizer = self._load_weights_for_optimizer(zk, model, lr)

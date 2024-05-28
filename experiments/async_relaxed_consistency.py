@@ -10,6 +10,7 @@ from parameter_servers.server_task import ParamServerTaskActor
 from metrics.metric_exporter import MetricExporter
 from workers.worker_task import compute_gradients_relaxed_consistency
 from models.fashion_mnist import FashionMNISTConvNet
+from models.test_model import TestModel
 
 WEIGHTS_ZK_PATH = "/base/weights"
 
@@ -39,6 +40,8 @@ def initialize_zk_with_weights(model):
 def run_async_relaxed_consistency(model_name, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
   if model_name == "FASHION":
     model = FashionMNISTConvNet()
+  else:
+    model = TestModel()
   initialize_zk_with_weights(model)
 
   metric_exporter = MetricExporter.remote("relaxed consistency")

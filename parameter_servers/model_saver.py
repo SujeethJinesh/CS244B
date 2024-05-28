@@ -34,7 +34,6 @@ class PartitionedStore(object):
     #         retrieved_data = self.partition_zk_clients[event.path].get(event.path, watch=self.store_data_ref)
     #         object_ref = ray.cloudpickle.loads(retrieved_data[0])
     #         partitioned_store_put(event.path, object_ref)
-    
 
 
 @ray.remote

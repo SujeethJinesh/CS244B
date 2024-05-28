@@ -28,9 +28,21 @@ class MetricExporter:
         )
         self.loss_gauge.set_default_tags({"Experiment": experiment_name})
 
+        self.gradients_gauge = Gauge(
+            "processed_gradients",
+            description="Cumulative number of gradients processed in the weight update.",
+            tag_keys=("Experiment",)
+        )
+        self.gradients_gauge.set_default_tags({"Experiment": experiment_name})
+
+        self.cumulative_gradients = 0
+
     def set_accuracy(self, accuracy):
         self.accuracy_gauge.set(accuracy)
 
     def set_loss(self, loss):
         self.loss_gauge.set(loss)
 
+    def set_gradients_processed(self, count):
+        self.cumulative_gradients += count
+        self.gradients_gauge.set(self.cumulative_gradients)

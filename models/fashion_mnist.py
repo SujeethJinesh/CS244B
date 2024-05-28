@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader
 from torchvision.transforms import Normalize, ToTensor
 from filelock import FileLock
 
-def get_data_loader():
+def get_data_loader(device):
     batch_size = 32
     # Transform to normalize the input images
     transform = transforms.Compose([ToTensor(), Normalize((0.5,), (0.5,))])
@@ -36,7 +36,7 @@ def get_data_loader():
     return train_dataloader, test_dataloader
 
 
-def evaluate(model, test_loader):
+def evaluate(model, test_loader, device="cpu"):
     """Evaluates the accuracy of the model on a validation dataset."""
     model.eval()
     correct = 0
@@ -45,6 +45,7 @@ def evaluate(model, test_loader):
     loss_fn = nn.CrossEntropyLoss()
     with torch.no_grad():
         for batch, (X, y) in enumerate(test_loader):
+            X, y = X.to(device), y.to(device)
             pred = model(X)
             loss = loss_fn(pred, y)
 
@@ -89,7 +90,7 @@ class ConvNet(nn.Module):
             grads.append(grad)
         return grads
 
-    def set_gradients(self, gradients):
+    def set_gradients(self, gradients, device="cpu"):
         for g, p in zip(gradients, self.parameters()):
             if g is not None:
-                p.grad = torch.from_numpy(g)
+                p.grad = torch.from_numpy(g).to(device)

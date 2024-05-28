@@ -11,17 +11,17 @@ import json
 from threading import Thread
 
 @ray.remote
-def compute_gradients(weights, metric_exporter=None):
+def compute_gradients(weights, metric_exporter=None, device="cpu"):
     model = ConvNet()
     # model = ResNet()
-    data_iterator = iter(get_data_loader()[0])
+    data_iterator = iter(get_data_loader(device)[0])
 
     model.train()
     model.set_weights(weights)
     try:
         data, target = next(data_iterator)
     except StopIteration:  # When the epoch ends, start a new epoch.
-        data_iterator = iter(get_data_loader()[0])
+        data_iterator = iter(get_data_loader(device)[0])
         data, target = next(data_iterator)
     model.zero_grad()
     output = model(data)
@@ -34,10 +34,10 @@ def compute_gradients(weights, metric_exporter=None):
     return model.get_gradients()
 
 @ray.remote
-def compute_gradients_relaxed_consistency(model, worker_index, epochs=5, metric_exporter=None):
+def compute_gradients_relaxed_consistency(model, worker_index, epochs=5, metric_exporter=None, device="cpu"):
   curr_epoch = 0
   print(f"Worker {worker_index} is starting at Epoch {curr_epoch}")
-  data_iterator = iter(get_data_loader()[0])
+  data_iterator = iter(get_data_loader(device)[0])
   zk = KazooClient(hosts='127.0.0.1:2181')
   zk.start()
 
@@ -89,12 +89,12 @@ def compute_gradients_relaxed_consistency(model, worker_index, epochs=5, metric_
     try:
         data, target = next(data_iterator)
     except StopIteration:  # When the epoch ends, start a new epoch.
-        data_iterator = iter(get_data_loader()[0])
+        data_iterator = iter(get_data_loader(device)[0])
         data, target = next(data_iterator)
     model.zero_grad()
-    output = model(data)
+    output = model(data.to(device))
     loss_fn = nn.CrossEntropyLoss()
-    loss = loss_fn(output, target)
+    loss = loss_fn(output, target.to(device))
     if metric_exporter is not None:
       metric_exporter.set_loss.remote(loss.item())
     loss.backward()
@@ -107,7 +107,7 @@ def compute_gradients_relaxed_consistency(model, worker_index, epochs=5, metric_
       return True, d, t
     except StopIteration:
       if curr_epoch < epochs:
-        data_iterator = iter(get_data_loader()[0])
+        data_iterator = iter(get_data_loader(device)[0])
         d, t = next(data_iterator)
         curr_epoch += 1
         print(f"Starting Epoch {curr_epoch}")

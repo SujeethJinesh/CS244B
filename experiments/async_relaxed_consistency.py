@@ -37,7 +37,7 @@ def initialize_zk_with_weights(model):
   zk.create(WEIGHTS_ZK_PATH, weight_ref_string, ephemeral=False, makepath=True)
 
 def run_async_relaxed_consistency(model_name, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
-  if model_name == "FashionMNIST":
+  if model_name == "FASHION":
     model = FashionMNISTConvNet()
   initialize_zk_with_weights(model)
 

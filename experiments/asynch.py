@@ -13,8 +13,12 @@ def run_async(model_name, num_workers=1, epochs=5, server_kill_timeout=10, serve
   metric_exporter = MetricExporter.remote("async control")
   ps = ParameterServer.remote(model_name, 1e-2)
   data_loader_fn = fashion_mnist_get_data_loader
+  if model_name == "FASHION":
+    model = FashionMNISTConvNet()
+  else:
+    model = None
   # TODO Update data_loader_fn
-  test_loader = fashion_mnist_get_data_loader[1]
+  test_loader = data_loader_fn()[1]
 
   print("Running Asynchronous Parameter Server Training.")
   current_weights = ps.get_weights.remote()

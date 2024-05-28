@@ -34,7 +34,7 @@ class ParamServerTaskActor:
   def run_parameter_server_task(self, model, num_workers, lr, weight_saver, metric_exporter):
     print("Parameter Server is starting")
     then = time.time()
-    if self.model_name == "FashionMNIST":
+    if self.model_name == "FASHION":
       data_loader_fn = fashion_mnist_get_data_loader
     else:
       data_loader_fn = None

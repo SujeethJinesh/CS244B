@@ -20,7 +20,7 @@ WEIGHT_UPDATE_FREQUENCY = 10
 @ray.remote(max_restarts=0)
 class ParameterServer(object):
     def __init__(self, model_name, lr, node_id=None, metric_exporter=None):
-        if model_name == "FashionMNIST":
+        if model_name == "FASHION":
           self.model = FashionMNISTConvNet()
         else:
           self.model = None
@@ -76,14 +76,14 @@ class ParameterServer(object):
 
     def run_synch_chain_node_experiment(self, num_workers):
       data_loader_fn = fashion_mnist_get_data_loader
-      if self.model_name == "FashionMNIST":
+      if self.model_name == "FASHION":
         data_loader_fn = fashion_mnist_get_data_loader
       test_loader = data_loader_fn()[1]
 
       print("Running synchronous parameter server training.")
       current_weights = self.get_weights()
       for i in range(self.start_iteration, iterations):
-          gradients = [compute_gradients.remote(current_weights, self.metric_exporter) for _ in range(num_workers)]
+          gradients = [compute_gradients.remote(model_name, current_weights, self.metric_exporter) for _ in range(num_workers)]
           # Calculate update after all gradients are available.
           current_weights = self.apply_gradients(gradients)
           
@@ -104,7 +104,7 @@ class ParameterServer(object):
       current_weights = self.get_weights()
       gradients = []
       for _ in range(num_workers):
-          gradients.append(compute_gradients.remote(current_weights, self.metric_exporter))
+          gradients.append(compute_gradients.remote(model_name, current_weights, self.metric_exporter))
 
       for i in range(self.start_iteration, iterations * num_workers):
           ready_gradient_list, _ = ray.wait(gradients)

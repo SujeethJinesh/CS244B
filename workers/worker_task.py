@@ -12,7 +12,7 @@ from threading import Thread
 @ray.remote
 def compute_gradients(model_name, weights, metric_exporter=None):
     data_loader_fn = fashion_mnist_get_data_loader
-    if model_name == "FashionMNIST":
+    if model_name == "FASHION":
       model = FashionMNISTConvNet()
       #TODO add data loader func
     else:

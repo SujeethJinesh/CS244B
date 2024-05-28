@@ -3,7 +3,7 @@ from parameter_servers.server_actor import ParameterServer
 from workers.worker_task import compute_gradients
 from metrics.metric_exporter import MetricExporter
 # from models.test_model import get_data_loader, evaluate
-from models.fashion_mnist import fashion_mnist_get_data_loader
+from models.fashion_mnist import FashionMNISTConvNet, fashion_mnist_get_data_loader
 from models.model_common import evaluate
 
 iterations = 200
@@ -13,13 +13,15 @@ def run_sync(model_name, num_workers=1, epochs=5, server_kill_timeout=10, server
   metric_exporter = MetricExporter.remote("sync control")
   ps = ParameterServer.remote(model_name, 1e-2)
   data_loader_fn = fashion_mnist_get_data_loader
+  if model_name == "FASHION":
+    model = FashionMNISTConvNet()
   # TODO Update data_loader_fn
-  test_loader = fashion_mnist_get_data_loader[1]
+  test_loader = data_loader_fn()[1]
 
   print("Running synchronous parameter server training.")
   current_weights = ps.get_weights.remote()
   for i in range(iterations * epochs):
-    gradients = [compute_gradients.remote(current_weights, metric_exporter=metric_exporter) for _ in range(num_workers)]
+    gradients = [compute_gradients.remote(model_name, current_weights, metric_exporter=metric_exporter) for _ in range(num_workers)]
     # Calculate update after all gradients are available.
     current_weights = ps.apply_gradients.remote(gradients)
 

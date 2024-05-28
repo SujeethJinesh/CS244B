@@ -35,7 +35,7 @@ EXPERIMENT_MAP = {
 
 MODEL_MAP = {
   "IMAGENET": None,
-  "FashionMNIST": FashionMNISTConvNet()
+  "FASHION": FashionMNISTConvNet()
 }
 
 # TODO: This doesn't seem to make the randomness consistent

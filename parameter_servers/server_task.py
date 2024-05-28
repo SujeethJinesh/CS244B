@@ -77,15 +77,19 @@ class ParamServerTaskActor:
 
     def apply_gradients(grad):
       nonlocal model, optimizer
+      # print(f"Applying gradients of length {len(grad)}")
       if grad:
+        temp_optimizer = optimizer
+        if len(grad) > 10:
+          temp_optimizer = torch.optim.SGD(model.parameters(), lr=1e-5)
         summed_gradients = [
             np.stack(gradient_zip).sum(axis=0) for gradient_zip in zip(*grad)
         ]
-        optimizer.zero_grad()
-        model.set_gradients(summed_gradients, device)
-        optimizer.step()
-        return model.get_weights(), len(grad)
-      return None, 0
+        temp_optimizer.zero_grad()
+        model.set_gradients(summed_gradients)
+        temp_optimizer.step()
+        return model.get_weights()
+      return None
 
     def store_weights_in_zookeeper(w):
       nonlocal model, zk, weight_saver

@@ -6,8 +6,9 @@ import time
 import os
 from workers.worker_task import compute_gradients
 # from models.test_model import ConvNet, get_data_loader, evaluate
-# from models.fashion_mnist import ConvNet, get_data_loader, evaluate
-from models.cifar10 import ResNet, get_data_loader, evaluate
+from models.fashion_mnist import FashionMNISTConvNet, fashion_mnist_get_data_loader
+from models.model_common import evaluate
+# from models.cifar10 import ResNet, get_data_loader, evaluate
 from zookeeper.zoo import KazooChainNode
 
 # TODO (Change to training epochs)
@@ -20,7 +21,7 @@ WEIGHT_UPDATE_FREQUENCY = 10
 class ParameterServer(object):
     def __init__(self, lr, node_id=None, metric_exporter=None):
         #self.model = ConvNet()
-        self.model = ResNet()
+        self.model = FashionMNISTConvNet()
         self.start_iteration = 0
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
         self.start_iteration = 0
@@ -71,8 +72,7 @@ class ParameterServer(object):
         self.chain_node.zk.exists("/exp3/"+str(node_id), watch=self.chain_node.handle_delete_or_change_event)
 
     def run_synch_chain_node_experiment(self, num_workers):
-      # test_loader = get_data_loader()[0]
-      test_loader = get_data_loader()[1]
+      test_loader = fashion_mnist_get_data_loader[1]
 
       print("Running synchronous parameter server training.")
       current_weights = self.get_weights()

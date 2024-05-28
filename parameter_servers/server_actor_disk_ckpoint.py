@@ -7,8 +7,8 @@ from ray import train
 from workers.worker_task import compute_gradients
 # from models.test_model import ConvNet
 # from models.test_model import ConvNet, get_data_loader, evaluate
-from models.fashion_mnist import ConvNet
-from models.fashion_mnist import get_data_loader, evaluate
+from models.fashion_mnist import FashionMNIST, fashion_mnist_get_data_loader
+from models.model_common import evaluate
 
 iterations = 200
 num_workers = 2
@@ -67,7 +67,7 @@ class ParameterServerDiskCkpoint(object):
 
 
     def run_synch_training(self):
-      test_loader = get_data_loader()[1]
+      test_loader = fashion_mnist_get_data_loader()[1]
 
       print("Running synchronous parameter server training.")
       current_weights = self.get_weights()
@@ -85,7 +85,7 @@ class ParameterServerDiskCkpoint(object):
       print("Final accuracy is {:.1f}.".format(accuracy))
 
     def run_asynch_training(self):
-      test_loader = get_data_loader()[1]
+      test_loader = fashion_mnist_get_data_loader()[1]
 
       print("Running Asynchronous Parameter Server Training.")
       current_weights = self.get_weights()

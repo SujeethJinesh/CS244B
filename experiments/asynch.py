@@ -2,11 +2,9 @@ import ray
 from parameter_servers.server_actor import ParameterServer
 from workers.worker_task import compute_gradients
 from metrics.metric_exporter import MetricExporter
-from models.fashion_mnist import get_data_loader, evaluate
-import threading
-import copy
-from evaluation.evaluator import async_eval
-from evaluation.evaluator_state import evaluator_state
+# from models.test_model import get_data_loader, evaluate
+from models.fashion_mnist import fashion_mnist_get_data_loader
+from models.model_common import evaluate
 
 iterations = 200
 num_workers = 2
@@ -15,14 +13,7 @@ def run_async(model, num_workers=1, epochs=5, server_kill_timeout=10, server_rec
   metric_exporter = MetricExporter.remote("async control")
   ps = ParameterServer.remote(1e-2)
 
-  test_loader = get_data_loader()[1]
-
-  # Start eval thread
-  model_copy = copy.deepcopy(model)
-  timer_runs = threading.Event()
-  timer_runs.set()
-  eval_thread = threading.Thread(target=async_eval, args=(timer_runs, model_copy, test_loader, metric_exporter, evaluate))
-  eval_thread.start()
+  test_loader = fashion_mnist_get_data_loader[1]
 
   print("Running Asynchronous Parameter Server Training.")
   current_weights = ps.get_weights.remote()
@@ -30,7 +21,7 @@ def run_async(model, num_workers=1, epochs=5, server_kill_timeout=10, server_rec
   for _ in range(num_workers):
     gradients.append(compute_gradients.remote(current_weights))
 
-  for _ in range(iterations * num_workers * epochs):
+  for i in range(iterations * num_workers * epochs):
     ready_gradient_list, _ = ray.wait(gradients)
     ready_gradient_id = ready_gradient_list[0]
     gradients.remove(ready_gradient_id)
@@ -39,12 +30,11 @@ def run_async(model, num_workers=1, epochs=5, server_kill_timeout=10, server_rec
     current_weights = ps.apply_gradients.remote([ready_gradient_id])
     gradients.append(compute_gradients.remote(current_weights, metric_exporter=metric_exporter))
 
-    evaluator_state.weights_lock.acquire()
-    evaluator_state.CURRENT_WEIGHTS = ray.get(current_weights)
-    evaluator_state.weights_lock.release()
+    if i % 10 == 0:
+      # Evaluate the current model after every 10 updates.
+      model.set_weights(ray.get(current_weights))
+      accuracy = evaluate(model, test_loader)
+      print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
+      metric_exporter.set_accuracy.remote(accuracy)
 
-  timer_runs.clear()
-  eval_thread.join()  # Ensure the eval thread has finished
-
-  # Clean up Ray resources and processes before the next example.
-  ray.shutdown()
+  print("Final accuracy is {:.1f}.".format(accuracy))

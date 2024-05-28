@@ -3,7 +3,8 @@ import numpy as np
 import torch
 import ray
 # from models.test_model import get_data_loader, evaluate
-from models.fashion_mnist import get_data_loader, evaluate
+from models.fashion_mnist import fashion_mnist_get_data_loader
+from models.model_common import evaluate
 from kazoo.client import KazooClient
 from kazoo.exceptions import NodeExistsError, NoNodeError
 
@@ -33,7 +34,7 @@ class ParamServerTaskActor:
   def run_parameter_server_task(self, model, num_workers, lr, weight_saver, metric_exporter):
     print("Parameter Server is starting")
     then = time.time()
-    test_loader = get_data_loader()[1]
+    test_loader = fashion_mnist_get_data_loader[1]
 
     zk = self._start_zk()
     model, optimizer = self._load_weights_for_optimizer(zk, model, lr)

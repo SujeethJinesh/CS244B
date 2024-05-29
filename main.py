@@ -16,7 +16,7 @@ from experiments.chain_replication import run_async_chain_replication, run_sync_
 from experiments.debug_no_checkpointing import run_debug_no_checkpointing
 from experiments.debug_disk_checkpointing import run_debug_disk_checkpointing
 from experiments.debug_object_store_checkpointing import run_debug_object_store_checkpointing
-# from models.test_model import ConvNet
+from models.test_model import TestModel
 from models.fashion_mnist import FashionMNISTConvNet
 
 num_workers = 2
@@ -34,8 +34,8 @@ EXPERIMENT_MAP = {
 }
 
 MODEL_MAP = {
-  "IMAGENET": None,
-  "DEBUG": FashionMNISTConvNet()
+  "DEBUG": TestModel(),
+  "FASHION": FashionMNISTConvNet()
 }
 
 # TODO: This doesn't seem to make the randomness consistent
@@ -57,7 +57,7 @@ def main():
   print(ray.init(ignore_reinit_error=True, _metrics_export_port=8081, runtime_env=runtime_env))
 
   # Ensure consistency across experiments when it comes to randomness
-  # init_random_seeds()
+  init_random_seeds()
 
   # Use flags for argument parsing
   parser = argparse.ArgumentParser()
@@ -82,7 +82,7 @@ def main():
 
   # Run appropriate experiment
   print(f"Starting {experiment_name} experiment with model {model_name}.")
-  experiment(model, num_workers=workers, epochs=epochs, server_kill_timeout=server_kill_timeout, server_recovery_timeout=server_recovery_timeout)
+  experiment(model_name, num_workers=workers, epochs=epochs, server_kill_timeout=server_kill_timeout, server_recovery_timeout=server_recovery_timeout)
   print(f"Completed {experiment_name} experiment.")
 
 

@@ -1,11 +1,10 @@
 import torch
 import numpy as np
-from models.test_model import ConvNet
 import ray
 import time
 import os
 from workers.worker_task import compute_gradients
-# from models.test_model import ConvNet, get_data_loader, evaluate
+from models.test_model import TestModel, test_model_get_data_loader
 from models.fashion_mnist import FashionMNISTConvNet, fashion_mnist_get_data_loader
 from models.model_common import evaluate
 # from models.cifar10 import ResNet, get_data_loader, evaluate
@@ -19,8 +18,12 @@ WEIGHT_UPDATE_FREQUENCY = 10
 
 @ray.remote(max_restarts=0)
 class ParameterServer(object):
-    def __init__(self, lr, node_id=None, metric_exporter=None):
-        self.model = FashionMNISTConvNet()
+    def __init__(self, model_name, lr, node_id=None, metric_exporter=None):
+        if model_name == "FASHION":
+          self.model = FashionMNISTConvNet()
+        else:
+          self.model = TestModel()
+        self.model_name = model_name
         self.start_iteration = 0
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
         self.start_iteration = 0
@@ -71,12 +74,17 @@ class ParameterServer(object):
         self.chain_node.zk.exists("/exp3/"+str(node_id), watch=self.chain_node.handle_delete_or_change_event)
 
     def run_synch_chain_node_experiment(self, num_workers):
-      test_loader = fashion_mnist_get_data_loader[1]
+      data_loader_fn = fashion_mnist_get_data_loader
+      if self.model_name == "FASHION":
+        data_loader_fn = fashion_mnist_get_data_loader
+      else:
+        data_loader_fn = test_model_get_data_loader
+      test_loader = data_loader_fn()[1]
 
       print("Running synchronous parameter server training.")
       current_weights = self.get_weights()
       for i in range(self.start_iteration, iterations):
-          gradients = [compute_gradients.remote(current_weights, self.metric_exporter) for _ in range(num_workers)]
+          gradients = [compute_gradients.remote(self.model_name, current_weights, self.metric_exporter) for _ in range(num_workers)]
           # Calculate update after all gradients are available.
           current_weights = self.apply_gradients(gradients)
           
@@ -97,7 +105,7 @@ class ParameterServer(object):
       current_weights = self.get_weights()
       gradients = []
       for _ in range(num_workers):
-          gradients.append(compute_gradients.remote(current_weights, self.metric_exporter))
+          gradients.append(compute_gradients.remote(self.model_name, current_weights, self.metric_exporter))
 
       for i in range(self.start_iteration, iterations * num_workers):
           ready_gradient_list, _ = ray.wait(gradients)

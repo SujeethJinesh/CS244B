@@ -4,16 +4,22 @@ from workers.worker_task import compute_gradients
 from metrics.metric_exporter import MetricExporter
 # from models.test_model import get_data_loader, evaluate
 from models.fashion_mnist import fashion_mnist_get_data_loader
+from models.test_model import TestModel
 from models.model_common import evaluate
 
 iterations = 200
 num_workers = 2
 
-def run_async(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
+def run_async(model_name, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
   metric_exporter = MetricExporter.remote("async control")
-  ps = ParameterServer.remote(1e-2)
-
-  test_loader = fashion_mnist_get_data_loader[1]
+  ps = ParameterServer.remote(model_name, 1e-2)
+  data_loader_fn = fashion_mnist_get_data_loader
+  if model_name == "FASHION":
+    model = FashionMNISTConvNet()
+  else:
+    model = TestModel()
+  # TODO Update data_loader_fn
+  test_loader = data_loader_fn()[1]
 
   print("Running Asynchronous Parameter Server Training.")
   current_weights = ps.get_weights.remote()

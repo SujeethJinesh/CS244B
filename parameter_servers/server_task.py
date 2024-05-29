@@ -4,6 +4,7 @@ import torch
 import ray
 # from models.test_model import get_data_loader, evaluate
 from models.fashion_mnist import fashion_mnist_get_data_loader
+from models.test_model import test_model_get_data_loader
 from models.model_common import evaluate
 from kazoo.client import KazooClient
 from kazoo.exceptions import NodeExistsError, NoNodeError
@@ -14,8 +15,8 @@ weight_update_frequency = 10
 @ray.remote
 class ParamServerTaskActor:
   
-  def __init__(self):
-    pass
+  def __init__(self, model_name):
+    self.model_name = model_name
 
   def _start_zk(self):
     zk = KazooClient(hosts='127.0.0.1:2181', timeout=1.0)
@@ -34,7 +35,11 @@ class ParamServerTaskActor:
   def run_parameter_server_task(self, model, num_workers, lr, weight_saver, metric_exporter):
     print("Parameter Server is starting")
     then = time.time()
-    test_loader = fashion_mnist_get_data_loader[1]
+    if self.model_name == "FASHION":
+      data_loader_fn = fashion_mnist_get_data_loader
+    else:
+      data_loader_fn = test_model_get_data_loader
+    test_loader = data_loader_fn()[1]
 
     zk = self._start_zk()
     model, optimizer = self._load_weights_for_optimizer(zk, model, lr)

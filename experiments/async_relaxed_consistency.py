@@ -9,6 +9,8 @@ from parameter_servers.server_killer import kill_server
 from parameter_servers.server_task import ParamServerTaskActor
 from metrics.metric_exporter import MetricExporter
 from workers.worker_task import compute_gradients_relaxed_consistency
+from models.fashion_mnist import FashionMNISTConvNet
+from models.test_model import TestModel
 
 WEIGHTS_ZK_PATH = "/base/weights"
 
@@ -35,7 +37,11 @@ def initialize_zk_with_weights(model):
   try_delete_zookeeper_weights_node()
   zk.create(WEIGHTS_ZK_PATH, weight_ref_string, ephemeral=False, makepath=True)
 
-def run_async_relaxed_consistency(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
+def run_async_relaxed_consistency(model_name, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
+  if model_name == "FASHION":
+    model = FashionMNISTConvNet()
+  else:
+    model = TestModel()
   initialize_zk_with_weights(model)
 
   metric_exporter = MetricExporter.remote("relaxed consistency")
@@ -46,12 +52,12 @@ def run_async_relaxed_consistency(model, num_workers=1, epochs=5, server_kill_ti
   weight_saver_ref = ModelSaver.remote()
 
   # 1. Create parameter server.
-  ps_actor_ref = ParamServerTaskActor.remote()
+  ps_actor_ref = ParamServerTaskActor.remote(model_name)
   ps_ref = ps_actor_ref.run_parameter_server_task.remote(model, num_workers, 1e-3, weight_saver_ref, metric_exporter)
   ray.get([ps_ref])
 
   # 2. Create workers.
-  worker_refs = [compute_gradients_relaxed_consistency.remote(model, i, epochs=epochs, metric_exporter=metric_exporter) for i in range(num_workers)]
+  worker_refs = [compute_gradients_relaxed_consistency.remote(model_name, model, i, epochs=epochs, metric_exporter=metric_exporter) for i in range(num_workers)]
   training_tasks.extend(worker_refs)
 
   # 3. Kill Server.

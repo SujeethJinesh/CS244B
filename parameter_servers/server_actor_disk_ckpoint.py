@@ -7,7 +7,7 @@ from ray import train
 from workers.worker_task import compute_gradients
 # from models.test_model import ConvNet
 # from models.test_model import ConvNet, get_data_loader, evaluate
-from models.fashion_mnist import FashionMNIST, fashion_mnist_get_data_loader
+from models.fashion_mnist import FashionMNISTConvNet, fashion_mnist_get_data_loader
 from models.model_common import evaluate
 
 iterations = 200
@@ -16,7 +16,7 @@ num_workers = 2
 @ray.remote(max_restarts=-1, max_task_retries=-1)
 class ParameterServerDiskCkpoint(object):
     def __init__(self, lr, checkpoint_dir):
-        self.model = ConvNet()
+        self.model = FashionMNISTConvNet()
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
         self.checkpoint_dir = checkpoint_dir
 

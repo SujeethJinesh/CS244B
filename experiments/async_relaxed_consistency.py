@@ -1,5 +1,4 @@
 import subprocess
-import time
 
 import ray
 from kazoo.client import KazooClient
@@ -25,7 +24,7 @@ def try_delete_zookeeper_weights_node():
   except Exception as e:
     pass
 
-def initialize_zk_with_weights(model):
+def initialize_zk_with_weights(model, metric_exporter):
   zk = KazooClient(hosts='127.0.0.1:2181', timeout=1.0)
   zk.start()
 
@@ -34,11 +33,11 @@ def initialize_zk_with_weights(model):
 
   try_delete_zookeeper_weights_node()
   zk.create(WEIGHTS_ZK_PATH, weight_ref_string, ephemeral=False, makepath=True)
+  metric_exporter.set_zookeeper_writes.remote(1)  # Update write metric
 
 def run_async_relaxed_consistency(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
-  initialize_zk_with_weights(model)
-
   metric_exporter = MetricExporter.remote("relaxed consistency")
+  initialize_zk_with_weights(model, metric_exporter)
 
   training_tasks = []
 

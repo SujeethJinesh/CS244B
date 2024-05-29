@@ -16,9 +16,27 @@ iterations = 4000
 # Used for model evaluation.
 WEIGHT_UPDATE_FREQUENCY = 10
 
+@ray.remote
+class DataLoaderActor(object):
+  def __init__(self, model_name):
+    if model_name == "FASHION":
+      self.data_loader_fn = fashion_mnist_get_data_loader
+    else:
+      self.data_loader_fn = test_model_get_data_loader
+    self.train_data_iterator = iter(self.data_loader_fn()[0])
+    self.test_data_iterator = iter(self.data_loader_fn()[1])
+
+  # Returns data, target
+  def get_data(self):
+      try:
+        return next(self.train_data_iterator)
+      except StopIteration:  # When the epoch ends, start a new epoch.
+        self.train_data_iter = iter(self.data_loader_fn()[0])
+        return next(self.train_data_iterator)
+
 @ray.remote(max_restarts=0)
 class ParameterServer(object):
-    def __init__(self, model_name, lr, node_id=None, metric_exporter=None):
+    def __init__(self, model_name, lr, node_id=None, metric_exporter=None, data_loader_actor=None):
         if model_name == "FASHION":
           self.model = FashionMNISTConvNet()
         else:
@@ -27,6 +45,8 @@ class ParameterServer(object):
         self.start_iteration = 0
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
         self.start_iteration = 0
+        if data_loader_actor is not None:
+          self.data_loader_actor = data_loader_actor
         if metric_exporter is not None:
           self.metric_exporter = metric_exporter
         if node_id is not None:
@@ -84,7 +104,7 @@ class ParameterServer(object):
       print("Running synchronous parameter server training.")
       current_weights = self.get_weights()
       for i in range(self.start_iteration, iterations):
-          gradients = [compute_gradients.remote(self.model_name, current_weights, self.metric_exporter) for _ in range(num_workers)]
+          gradients = [compute_gradients.remote(self.model_name, self.data_loader_actor, current_weights, self.metric_exporter) for _ in range(num_workers)]
           # Calculate update after all gradients are available.
           current_weights = self.apply_gradients(gradients)
           
@@ -105,7 +125,7 @@ class ParameterServer(object):
       current_weights = self.get_weights()
       gradients = []
       for _ in range(num_workers):
-          gradients.append(compute_gradients.remote(self.model_name, current_weights, self.metric_exporter))
+          gradients.append(compute_gradients.remote(self.model_name, self.data_loader_actor, current_weights, self.metric_exporter))
 
       for i in range(self.start_iteration, iterations * num_workers):
           ready_gradient_list, _ = ray.wait(gradients)
@@ -114,7 +134,7 @@ class ParameterServer(object):
 
           # Compute and apply gradients.
           current_weights = self.apply_gradients([ready_gradient_id])
-          gradients.append(compute_gradients.remote(current_weights))
+          gradients.append(compute_gradients.remote(self.model_name, self.data_loader_actor, current_weights, self.metric_exporter))
 
           if i % WEIGHT_UPDATE_FREQUENCY == 0:
               # Evaluate the current model after every 10 updates.

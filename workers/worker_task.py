@@ -10,26 +10,20 @@ import json
 from threading import Thread
 
 @ray.remote
-def compute_gradients(model_name, weights, metric_exporter=None):
+def compute_gradients(model_name, data_loader_actor, weights, metric_exporter=None):
     if model_name == "FASHION":
       model = FashionMNISTConvNet()
-      data_loader_fn = fashion_mnist_get_data_loader
     else:
       model = TestModel()
-      data_loader_fn = test_model_get_data_loader
-    data_iterator = iter(data_loader_fn()[0])
 
     model.train()
     model.set_weights(weights)
-    try:
-        data, target = next(data_iterator)
-    except StopIteration:  # When the epoch ends, start a new epoch.
-        data_iterator = iter(data_loader_fn()[0])
-        data, target = next(data_iterator)
+    data, target = ray.get(data_loader_actor.get_data.remote())
     model.zero_grad()
     output = model(data)
     loss_fn = nn.CrossEntropyLoss()
     loss = loss_fn(output, target)
+    print(loss)
     if metric_exporter is not None:
       metric_exporter.set_loss.remote(loss.item())
     loss.backward()
@@ -96,6 +90,7 @@ def compute_gradients_relaxed_consistency(model_name, model, worker_index, epoch
     nonlocal data_iterator, model
     try:
         data, target = next(data_iterator)
+        print(data)
     except StopIteration:  # When the epoch ends, start a new epoch.
         data_iterator = iter(data_loader_fn()[0])
         data, target = next(data_iterator)

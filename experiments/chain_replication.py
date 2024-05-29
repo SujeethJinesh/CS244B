@@ -5,7 +5,7 @@ from kazoo.client import KazooClient
 from kazoo.recipe.barrier import Barrier
 
 from parameter_servers.model_saver import PartitionedStore
-from parameter_servers.server_actor import ParameterServer
+from parameter_servers.server_actor import ParameterServer, DataLoaderActor
 from parameter_servers.server_killer import kill_server
 from metrics.metric_exporter import MetricExporter
 
@@ -16,11 +16,12 @@ def run_chain_replication(model_name, num_workers=1, epochs=5, server_kill_timeo
   zk.start()
 
   metric_exporter = MetricExporter.remote("chain replication")
+  data_loader_actor = DataLoaderActor.remote(model_name)
 
   ps_dict = {}
 
   for i in range(num_chain_nodes):
-      ps = ParameterServer.remote(model_name, 1e-2, node_id=i, metric_exporter=metric_exporter)
+      ps = ParameterServer.remote(model_name, 1e-2, node_id=i, metric_exporter=metric_exporter, data_loader_actor=data_loader_actor)
       ps_dict[i] = ps
       # Ensures all zookeeper paths associated with the chain nodes exist.
       while not zk.exists("/exp3/" + str(i)):

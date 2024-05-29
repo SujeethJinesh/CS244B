@@ -46,7 +46,7 @@ def run_async_relaxed_consistency(model, num_workers=1, epochs=5, server_kill_ti
 
   # 1. Create parameter server.
   ps_actor_ref = ParamServerTaskActor.remote()
-  ps_ref = ps_actor_ref.run_parameter_server_task.remote(model, num_workers, 1e-3, weight_saver_ref, metric_exporter)
+  ps_ref = ps_actor_ref.run_parameter_server_task.remote(model, num_workers, 1e-1, weight_saver_ref, metric_exporter)
   ray.get([ps_ref])
 
   # 2. Create workers.

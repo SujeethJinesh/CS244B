@@ -28,9 +28,45 @@ class MetricExporter:
         )
         self.loss_gauge.set_default_tags({"Experiment": experiment_name})
 
+        self.gradients_gauge = Gauge(
+            "processed_gradients",
+            description="Cumulative number of gradients processed in the weight update.",
+            tag_keys=("Experiment",)
+        )
+        self.gradients_gauge.set_default_tags({"Experiment": experiment_name})
+
+        self.zookeeper_reads_gauge = Gauge(
+            "zookeeper_reads",
+            description="Number of read hits to Zookeeper.",
+            tag_keys=("Experiment",)
+        )
+        self.zookeeper_reads_gauge.set_default_tags({"Experiment": experiment_name})
+
+        self.zookeeper_writes_gauge = Gauge(
+            "zookeeper_writes",
+            description="Number of write hits to Zookeeper.",
+            tag_keys=("Experiment",)
+        )
+        self.zookeeper_writes_gauge.set_default_tags({"Experiment": experiment_name})
+
+        self.cumulative_gradients = 0
+        self.zookeeper_reads = 0
+        self.zookeeper_writes = 0
+
     def set_accuracy(self, accuracy):
         self.accuracy_gauge.set(accuracy)
 
     def set_loss(self, loss):
         self.loss_gauge.set(loss)
 
+    def set_gradients_processed(self, count):
+        self.cumulative_gradients += count
+        self.gradients_gauge.set(self.cumulative_gradients)
+
+    def set_zookeeper_reads(self, count):
+        self.zookeeper_reads += count
+        self.zookeeper_reads_gauge.set(self.zookeeper_reads)
+
+    def set_zookeeper_writes(self, count):
+        self.zookeeper_writes += count
+        self.zookeeper_writes_gauge.set(self.zookeeper_writes)

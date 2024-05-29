@@ -43,10 +43,14 @@ def compute_gradients_relaxed_consistency(model, worker_index, epochs=5, metric_
   worker_grad_path = f"/base/gradients/{worker_index}"
   worker_grad_lock_path = f"/base/gradients/lock/{worker_index}"
   zk.create(worker_grad_path, b"", ephemeral=True, makepath=True)
+  if metric_exporter is not None:
+    metric_exporter.set_zookeeper_writes.remote(1)  # Update write metric
 
   def get_weights():
     nonlocal zk
     retrieved_data = zk.get("/base/weights")
+    if metric_exporter is not None:
+      metric_exporter.set_zookeeper_reads.remote(1)  # Update read metric
     unpickled_w_string = ray.cloudpickle.loads(retrieved_data[0])
     return ray.get(unpickled_w_string)
 
@@ -56,6 +60,8 @@ def compute_gradients_relaxed_consistency(model, worker_index, epochs=5, metric_
     try:
       # Lock the gradient update node
       zk.create(worker_grad_lock_path, ephemeral=True, makepath=True)
+      if metric_exporter is not None:
+        metric_exporter.set_zookeeper_writes.remote(1)  # Update write metric
 
       # Read the current list of gradient updates in the zookeeper node
       remote_grad_updates = []
@@ -73,9 +79,13 @@ def compute_gradients_relaxed_consistency(model, worker_index, epochs=5, metric_
       id_grads = ray.put(remote_grad_updates)
       pickled_grad_id = ray.cloudpickle.dumps(id_grads)
       zk.set(worker_grad_path, pickled_grad_id)
+      if metric_exporter is not None:
+        metric_exporter.set_zookeeper_writes.remote(1)  # Update write metric
 
       # Unlock the gradient update node and reset local gradient updates
       zk.delete_async(worker_grad_lock_path)
+      if metric_exporter is not None:
+        metric_exporter.set_zookeeper_writes.remote(1)  # Update write metric
       local_gradient_updates = []
     except NodeExistsError:
       # We'll get em next time
@@ -84,10 +94,10 @@ def compute_gradients_relaxed_consistency(model, worker_index, epochs=5, metric_
   def compute_grads(data, target):
     nonlocal data_iterator, model
     try:
-        data, target = next(data_iterator)
+      data, target = next(data_iterator)
     except StopIteration:  # When the epoch ends, start a new epoch.
-        data_iterator = iter(fashion_mnist_get_data_loader()[0])
-        data, target = next(data_iterator)
+      data_iterator = iter(fashion_mnist_get_data_loader()[0])
+      data, target = next(data_iterator)
     model.zero_grad()
     output = model(data)
     loss_fn = nn.CrossEntropyLoss()
@@ -123,4 +133,6 @@ def compute_gradients_relaxed_consistency(model, worker_index, epochs=5, metric_
 
     # Parameter server is done doing work on the gradients
     if not zk.exists(worker_grad_lock_path):
+      if metric_exporter is not None:
+        metric_exporter.set_zookeeper_reads.remote(1)  # Update write metric
       put_gradients()

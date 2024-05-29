@@ -13,7 +13,7 @@ def run_async(model, num_workers=1, epochs=5, server_kill_timeout=10, server_rec
   metric_exporter = MetricExporter.remote("async control")
   ps = ParameterServer.remote(1e-2)
 
-  test_loader = fashion_mnist_get_data_loader[1]
+  test_loader = fashion_mnist_get_data_loader()[1]
 
   print("Running Asynchronous Parameter Server Training.")
   current_weights = ps.get_weights.remote()

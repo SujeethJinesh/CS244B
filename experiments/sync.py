@@ -20,7 +20,7 @@ def run_sync(model, num_workers=1, epochs=5, server_kill_timeout=10, server_reco
   for i in range(iterations * epochs):
     gradients = [compute_gradients.remote(current_weights, metric_exporter=metric_exporter) for _ in range(num_workers)]
     # Calculate update after all gradients are available.
-    current_weights = ps.apply_gradients.remote(gradients)
+    current_weights = ps.apply_gradients.remote(gradients, metric_exporter)
 
     if i % 10 == 0:
         # Evaluate the current model.

@@ -99,7 +99,7 @@ class ParameterServerDiskCkpoint(object):
           gradients.remove(ready_gradient_id)
 
           # Compute and apply gradients.
-          current_weights = self.apply_gradients([ready_gradient_id])
+          current_weights = self.apply_gradients([ready_gradient_id],)
           gradients.append(compute_gradients.remote(current_weights))
 
           if i % 10 == 0:

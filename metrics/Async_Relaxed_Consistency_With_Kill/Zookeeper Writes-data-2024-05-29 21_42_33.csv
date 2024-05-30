@@ -1,0 +1,7 @@
+﻿"Time","{Component=""core_worker"", Experiment=""relaxed consistency"", NodeAddress=""127.0.0.1"", SessionName=""session_2024-05-29_21-40-17_376307_60965"", Version=""2.22.0"", WorkerId=""77f2a0cd705853841a0f6800df1d187d4c5d32096318278e1adcda88"", __name__=""ray_zookeeper_writes"", instance=""127.0.0.1:8081"", job=""ray""}"
+2024-05-29 21:41:00,1275
+2024-05-29 21:41:15,2062
+2024-05-29 21:41:30,3641
+2024-05-29 21:41:45,4895
+2024-05-29 21:42:00,7443
+2024-05-29 21:42:15,8761

@@ -19,17 +19,19 @@ WEIGHT_UPDATE_FREQUENCY = 10
 
 @ray.remote(max_restarts=0)
 class ParameterServer(object):
-    def __init__(self, lr, node_id=None, metric_exporter=None):
+    def __init__(self, lr, node_id=None, metric_exporter=None, model_saver=None):
         self.model = FashionMNISTConvNet()
         self.start_iteration = 0
-        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
         self.start_iteration = 0
+        if model_saver is not None:
+          self.model_saver = model_saver
         if metric_exporter is not None:
           self.metric_exporter = metric_exporter
         if node_id is not None:
           self.chain_node = KazooChainNode(node_id, [], self.retrieve_weights_from_zookeeper)
 
-    def apply_gradients(self, gradients, metric_exporter):
+    def apply_gradients(self, gradients):
         grad = ray.get(gradients)
         summed_gradients = [
             np.stack(gradient_zip).sum(axis=0) for gradient_zip in zip(*grad)
@@ -37,8 +39,8 @@ class ParameterServer(object):
         self.optimizer.zero_grad()
         self.model.set_gradients(summed_gradients)
         self.optimizer.step()
-        if metric_exporter is not None:
-            metric_exporter.set_gradients_processed.remote(len(grad))
+        if self.metric_exporter is not None:
+            self.metric_exporter.set_gradients_processed.remote(len(grad))
         return self.model.get_weights()
 
     def set_weights(self, weights, iteration_count):
@@ -79,7 +81,7 @@ class ParameterServer(object):
         if self.metric_exporter is not None:
             self.metric_exporter.set_zookeeper_reads.remote(1)  # Update read metric
 
-    def run_synch_chain_node_experiment(self, num_workers, metric_exporter):
+    def run_synch_chain_node_experiment(self, num_workers):
       test_loader = fashion_mnist_get_data_loader()[1]
 
       print("Running synchronous parameter server training.")
@@ -87,7 +89,7 @@ class ParameterServer(object):
       for i in range(self.start_iteration, iterations):
           gradients = [compute_gradients.remote(current_weights, self.metric_exporter) for _ in range(num_workers)]
           # Calculate update after all gradients are available.
-          current_weights = self.apply_gradients(gradients, metric_exporter=metric_exporter)
+          current_weights = self.apply_gradients(gradients, metric_exporter=self.metric_exporter)
           
           if i % WEIGHT_UPDATE_FREQUENCY == 0:
               self.store_weights_in_zookeeper(current_weights, i)
@@ -99,7 +101,7 @@ class ParameterServer(object):
 
       print("Final accuracy is {:.3f}.".format(accuracy))
 
-    def run_asynch_chain_node_experiment(self, num_workers, metric_exporter):
+    def run_asynch_chain_node_experiment(self, num_workers):
       test_loader = fashion_mnist_get_data_loader()[1]
 
       print("Running Asynchronous Parameter Server Training.")
@@ -113,7 +115,7 @@ class ParameterServer(object):
           gradients.remove(ready_gradient_id)
 
           # Compute and apply gradients.
-          current_weights = self.apply_gradients([ready_gradient_id], metric_exporter=metric_exporter)
+          current_weights = self.apply_gradients([ready_gradient_id], metric_exporter=self.metric_exporter)
           gradients.append(compute_gradients.remote(current_weights))
 
           if i % WEIGHT_UPDATE_FREQUENCY == 0:
@@ -124,4 +126,59 @@ class ParameterServer(object):
               self.metric_exporter.set_accuracy.remote(accuracy)
               print("Iter {}: \taccuracy is {:.3f}".format(i, accuracy))
 
-      print("Final accuracy is {:.3f}.".format(accuracy))
+      print("Final accuracy is {:.1f}.".format(accuracy))
+    
+    def run_synch_experiment(self, num_workers):
+      test_loader = fashion_mnist_get_data_loader()[1]
+
+      print("Running synchronous parameter server training.")
+      current_weights = self.get_weights()
+      for i in range(self.start_iteration, iterations):
+          gradients = [compute_gradients.remote(current_weights, self.metric_exporter) for _ in range(num_workers)]
+          # Calculate update after all gradients are available.
+          current_weights = self.apply_gradients(gradients)
+          
+          if i % WEIGHT_UPDATE_FREQUENCY == 0:
+              # Evaluate the current model.
+              self.set_weights(current_weights, i)
+              accuracy = evaluate(self.model, test_loader)
+              print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
+
+          if i % 100 == 0:
+            # save checkpoint
+            self.model_saver.set_weights_iteration_count.remote(current_weights, i)
+
+
+      print("Final accuracy is {:.1f}.".format(accuracy))
+
+    def run_asynch_experiment(self, num_workers):
+      test_loader = fashion_mnist_get_data_loader()[1]
+
+      print("Running Asynchronous Parameter Server Training.")
+      current_weights = self.get_weights()
+      gradients = []
+      for _ in range(num_workers):
+          gradients.append(compute_gradients.remote(current_weights, self.metric_exporter))
+      for i in range(self.start_iteration, iterations * num_workers):
+          ready_gradient_list, _ = ray.wait(gradients)
+          ready_gradient_id = ready_gradient_list[0]
+          gradients.remove(ready_gradient_id)
+
+          # Compute and apply gradients.
+          current_weights = self.apply_gradients([ready_gradient_id])
+          gradients.append(compute_gradients.remote(current_weights))
+
+          if i % WEIGHT_UPDATE_FREQUENCY == 0:
+              # Evaluate the current model after every 10 updates.
+              self.set_weights(current_weights, i)
+              accuracy = evaluate(self.model, test_loader)
+              self.metric_exporter.set_accuracy.remote(accuracy)
+              print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
+          
+          if i % 100 == 0:
+            # save checkpoint
+            self.model_saver.set_weights_iteration_count.remote(current_weights, i)
+            
+
+
+      print("Final accuracy is {:.1f}.".format(accuracy))

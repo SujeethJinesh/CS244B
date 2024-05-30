@@ -14,8 +14,8 @@ from experiments.async_relaxed_consistency import run_async_relaxed_consistency
 
 from experiments.chain_replication import run_async_chain_replication, run_sync_chain_replication
 from experiments.debug_no_checkpointing import run_debug_no_checkpointing
-from experiments.debug_disk_checkpointing import run_debug_disk_checkpointing
-from experiments.debug_object_store_checkpointing import run_debug_object_store_checkpointing
+# from experiments.debug_disk_checkpointing import run_debug_disk_checkpointing
+from experiments.object_store_checkpointing import run_sync_object_store_checkpointing, run_async_object_store_checkpointing
 # from models.test_model import ConvNet
 from models.fashion_mnist import FashionMNISTConvNet
 
@@ -24,13 +24,14 @@ num_workers = 2
 EXPERIMENT_MAP = {
   "SYNC_CONTROL": run_sync,
   "ASYNC_CONTROL": run_async,
+  "SYNC_CHECKPOINTING": run_sync_object_store_checkpointing,
+  "ASYNC_CHECKPOINTING": run_async_object_store_checkpointing,
   "SYNC_CHAIN_REPLICATION": run_sync_chain_replication,
   "ASYNC_CHAIN_REPLICATION": run_async_chain_replication,
   "ASYNC_RELAXED_CONSISTENCY": run_async_relaxed_consistency,
 
   "DEBUG_NO_CHECKPOINTING": run_debug_no_checkpointing,
-  "DEBUG_DISK_CHECKPOINTING": run_debug_disk_checkpointing,
-  "DEBUG_OBJECT_STORE_CHECKPOINTING": run_debug_object_store_checkpointing,
+  # "DEBUG_DISK_CHECKPOINTING": run_debug_disk_checkpointing,
 }
 
 MODEL_MAP = {

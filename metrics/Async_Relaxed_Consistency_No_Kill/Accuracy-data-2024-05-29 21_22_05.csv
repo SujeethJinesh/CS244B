@@ -1,0 +1,7 @@
+﻿"Time","{Component=""core_worker"", Experiment=""relaxed consistency"", NodeAddress=""127.0.0.1"", SessionName=""session_2024-05-29_21-18-43_565204_54800"", Version=""2.22.0"", WorkerId=""49b815d09cead9163d8f281ba3f5c915623de81d8897aa7787ac6e28"", __name__=""ray_training_accuracy"", instance=""127.0.0.1:8081"", job=""ray""}"
+2024-05-29 21:19:15,0.307
+2024-05-29 21:19:30,0.678
+2024-05-29 21:19:45,0.709
+2024-05-29 21:20:00,0.761
+2024-05-29 21:20:15,0.765
+2024-05-29 21:20:30,0.777

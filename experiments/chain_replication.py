@@ -20,14 +20,14 @@ def run_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10
   ps_dict = {}
 
   for i in range(num_chain_nodes):
-    ps = ParameterServer.remote(1e-2, node_id=i, metric_exporter=metric_exporter)
-    ps_dict[i] = ps
-    # Ensures all zookeeper paths associated with the chain nodes exist.
-    while True:
-      if zk.exists("/exp3/" + str(i)):
-        metric_exporter.set_zookeeper_reads.remote(1)  # Update read metric
-        break
-      time.sleep(2)
+      ps = ParameterServer.remote(1e-2, node_id=i, metric_exporter=metric_exporter)
+      ps_dict[i] = ps
+      # Ensures all zookeeper paths associated with the chain nodes exist.
+      while True:
+        if zk.exists("/exp3/" + str(i)):
+          metric_exporter.set_zookeeper_reads.remote(1)  # Update read metric
+          break
+        time.sleep(2)
 
   def run_new_primary():
     print("New primary runs")
@@ -41,10 +41,16 @@ def run_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10
       primary = ps_dict[minimum]
       try:
         if sync:
-          ray.get([primary.run_synch_chain_node_experiment.remote(num_workers, metric_exporter), kill_server.remote([primary], server_kill_timeout)])
+          if server_kill_timeout <= 0:
+            ray.get([primary.run_synch_chain_node_experiment.remote(num_workers)])
+          else:
+            ray.get([primary.run_synch_chain_node_experiment.remote(num_workers), kill_server.remote([primary], server_kill_timeout)])
         else:
-          # ray.get([primary.run_asynch_chain_node_experiment.remote(num_workers), kill_server.remote([primary], server_kill_timeout)])
-          ray.get([primary.run_asynch_chain_node_experiment.remote(num_workers, metric_exporter)])
+          if server_kill_timeout <= 0:
+             ray.get([primary.run_asynch_chain_node_experiment.remote(num_workers)])
+          else: 
+            ray.get([primary.run_asynch_chain_node_experiment.remote(num_workers), kill_server.remote([primary], server_kill_timeout)])
+         
       except Exception as e:
         print("Catching exception", e)
         # Ray and Zookeeper uses different communication channels, 

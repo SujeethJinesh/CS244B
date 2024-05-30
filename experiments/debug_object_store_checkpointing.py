@@ -6,7 +6,7 @@ from parameter_servers.server_killer import kill_server
 
 LEARNING_RATE = 1e-2
 
-def run_debug_object_store_checkpointing(model, ckpoint_period_sec: float = 10):
+def run_debug_object_store_checkpointing(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5, ckpoint_period_sec: float = 10):
   ms = ModelSaver.remote()
   def _run_experiment(first_run=True):
     try:

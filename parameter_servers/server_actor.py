@@ -123,7 +123,6 @@ class ParameterServer(object):
 
           if i % WEIGHT_UPDATE_FREQUENCY == 0:
               # Evaluate the current model after every 10 updates.
-              self.store_weights_in_zookeeper(current_weights, i)
               self.set_weights(current_weights, i)
               accuracy = evaluate(self.model, test_loader)
               self.metric_exporter.set_accuracy.remote(accuracy)

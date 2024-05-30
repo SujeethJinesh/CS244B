@@ -20,14 +20,14 @@ def run_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10
   ps_dict = {}
 
   for i in range(num_chain_nodes):
-      ps = ParameterServer.remote(1e-2, node_id=i, metric_exporter=metric_exporter)
-      ps_dict[i] = ps
-      # Ensures all zookeeper paths associated with the chain nodes exist.
-      while True:
-        if zk.exists("/exp3/" + str(i)):
-          metric_exporter.set_zookeeper_reads.remote(1)  # Update read metric
-          break
-        time.sleep(2)
+    ps = ParameterServer.remote(1e-2, node_id=i, metric_exporter=metric_exporter)
+    ps_dict[i] = ps
+    # Ensures all zookeeper paths associated with the chain nodes exist.
+    while True:
+      if zk.exists("/exp3/" + str(i)):
+        metric_exporter.set_zookeeper_reads.remote(1)  # Update read metric
+        break
+      time.sleep(2)
 
   def run_new_primary():
     print("New primary runs")
@@ -63,7 +63,7 @@ def run_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10
 
   for i in range(num_chain_nodes - 1):
     run_new_primary()
-    ps =  ps = ParameterServer.remote(1e-2, node_id=num_chain_nodes + i, metric_exporter=metric_exporter)
+    ps = ParameterServer.remote(1e-2, node_id=num_chain_nodes + i, metric_exporter=metric_exporter)
     time.sleep(server_recovery_timeout)
   run_new_primary()
 

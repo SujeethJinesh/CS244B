@@ -109,7 +109,7 @@ class ParamServerTaskActor:
     def evaluate_model():
       nonlocal then, model, test_loader
       accuracy = evaluate(model, test_loader)
-      print("accuracy is {:.1f}".format(accuracy))
+      print("accuracy is {:.3f}".format(accuracy))
       metric_exporter.set_accuracy.remote(accuracy)
 
     def handle_gradient_update(event):

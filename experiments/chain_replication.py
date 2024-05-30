@@ -32,7 +32,9 @@ def run_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10
   def run_new_primary():
     print("New primary runs")
     minimum = 100
-    for node in zk.get_children('/exp3'):
+    children = zk.get_children('/exp3')
+    metric_exporter.set_zookeeper_reads.remote(1)  # Update read metric
+    for node in children:
       if int(node) < minimum:
         minimum = int(node)
     if minimum in ps_dict:

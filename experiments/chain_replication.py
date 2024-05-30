@@ -1,3 +1,4 @@
+import threading
 import time
 
 import ray
@@ -41,12 +42,12 @@ def run_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10
       primary = ps_dict[minimum]
       try:
         if sync:
-          if server_kill_timeout <= 0:
+          if minimum > 0 or server_kill_timeout <= 0:
             ray.get([primary.run_synch_chain_node_experiment.remote(num_workers)])
           else:
             ray.get([primary.run_synch_chain_node_experiment.remote(num_workers), kill_server.remote([primary], server_kill_timeout)])
         else:
-          if server_kill_timeout <= 0:
+          if minimum > 0 or server_kill_timeout <= 0:
              ray.get([primary.run_asynch_chain_node_experiment.remote(num_workers)])
           else: 
             ray.get([primary.run_asynch_chain_node_experiment.remote(num_workers), kill_server.remote([primary], server_kill_timeout)])
@@ -63,10 +64,19 @@ def run_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10
       print("nothing gets run")
     return True
 
+  def recover_server(timeout, node_id, metric_exporter, ps_dict):
+      time.sleep(timeout)
+      ps = ParameterServer.remote(1e-2, node_id=node_id, metric_exporter=metric_exporter)
+      ps_dict[node_id] = ps
+
   for i in range(num_chain_nodes - 1):
     run_new_primary()
-    ps = ParameterServer.remote(1e-2, node_id=num_chain_nodes + i, metric_exporter=metric_exporter)
-    time.sleep(server_recovery_timeout)
+    
+    threading.Thread(
+        target=recover_server, 
+        args=(server_recovery_timeout, num_chain_nodes + i, metric_exporter, ps_dict)
+    ).start()
+
   run_new_primary()
 
 def run_async_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):

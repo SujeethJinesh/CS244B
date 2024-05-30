@@ -80,9 +80,9 @@ class ParameterServerDiskCkpoint(object):
               # Evaluate the current model.
               self.set_weights(current_weights, i)
               accuracy = evaluate(self.model, test_loader)
-              print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
+              print("Iter {}: \taccuracy is {:0.3f}".format(i, accuracy))
 
-      print("Final accuracy is {:.1f}.".format(accuracy))
+      print("Final accuracy is {:0.3f}.".format(accuracy))
 
     def run_asynch_training(self):
       test_loader = fashion_mnist_get_data_loader()[1]
@@ -106,9 +106,9 @@ class ParameterServerDiskCkpoint(object):
               # Evaluate the current model after every 10 updates.
               self.set_weights(current_weights, i)
               accuracy = evaluate(self.model, test_loader)
-              print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
+              print("Iter {}: \taccuracy is {:0.3f}".format(i, accuracy))
 
-      print("Final accuracy is {:.1f}.".format(accuracy))
+      print("Final accuracy is {:0.3f}.".format(accuracy))
 
     def exit(self, sleep_sec):
         print("in exit method")

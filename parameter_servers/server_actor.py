@@ -92,12 +92,15 @@ class ParameterServer(object):
           current_weights = self.apply_gradients(gradients)
           
           if i % WEIGHT_UPDATE_FREQUENCY == 0:
-              self.store_weights_in_zookeeper(current_weights, i)
               # Evaluate the current model.
               self.set_weights(current_weights, i)
               accuracy = evaluate(self.model, test_loader)
               self.metric_exporter.set_accuracy.remote(accuracy)
               print("Iter {}: \taccuracy is {:.3f}".format(i, accuracy))
+
+          if i % 100 == 0:
+            # save checkpoint
+            self.store_weights_in_zookeeper(current_weights, i)
 
       print("Final accuracy is {:.3f}.".format(accuracy))
 
@@ -125,6 +128,10 @@ class ParameterServer(object):
               accuracy = evaluate(self.model, test_loader)
               self.metric_exporter.set_accuracy.remote(accuracy)
               print("Iter {}: \taccuracy is {:.3f}".format(i, accuracy))
+          
+          if i % 100 == 0:
+            # save checkpoint
+            self.store_weights_in_zookeeper(current_weights, i)
 
       print("Final accuracy is {:.1f}.".format(accuracy))
     
@@ -142,6 +149,7 @@ class ParameterServer(object):
               # Evaluate the current model.
               self.set_weights(current_weights, i)
               accuracy = evaluate(self.model, test_loader)
+              self.metric_exporter.set_accuracy.remote(accuracy)
               print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
 
           if i % 100 == 0:

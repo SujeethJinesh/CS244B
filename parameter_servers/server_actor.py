@@ -22,7 +22,7 @@ class ParameterServer(object):
     def __init__(self, lr, node_id=None, metric_exporter=None, model_saver=None):
         self.model = FashionMNISTConvNet()
         self.start_iteration = 0
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
+        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
         self.start_iteration = 0
         if model_saver is not None:
           self.model_saver = model_saver

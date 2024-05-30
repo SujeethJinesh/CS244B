@@ -22,7 +22,7 @@ class ParameterServer(object):
     def __init__(self, lr, node_id=None, metric_exporter=None, model_saver=None):
         self.model = FashionMNISTConvNet()
         self.start_iteration = 0
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
+        self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
         self.start_iteration = 0
         if model_saver is not None:
           self.model_saver = model_saver
@@ -142,6 +142,7 @@ class ParameterServer(object):
               # Evaluate the current model.
               self.set_weights(current_weights, i)
               accuracy = evaluate(self.model, test_loader)
+              self.metric_exporter.set_accuracy.remote(accuracy)
               print("Iter {}: \taccuracy is {:0.3f}".format(i, accuracy))
 
           if i % 100 == 0:

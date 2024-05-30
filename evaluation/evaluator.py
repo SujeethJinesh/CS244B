@@ -9,7 +9,7 @@ def async_eval(timer_runs, model, test_loader, metric_exporter, evaluate):
       evaluator_state.weights_lock.release()
       
       accuracy = evaluate(model, test_loader)
-      print("accuracy is {:.1f}".format(accuracy))
+      print("accuracy is {:.3f}".format(accuracy))
       metric_exporter.set_accuracy.remote(accuracy)
 
     time.sleep(2)

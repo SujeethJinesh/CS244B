@@ -95,9 +95,9 @@ class ParameterServer(object):
               self.set_weights(current_weights, i)
               accuracy = evaluate(self.model, test_loader)
               self.metric_exporter.set_accuracy.remote(accuracy)
-              print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
+              print("Iter {}: \taccuracy is {:.3f}".format(i, accuracy))
 
-      print("Final accuracy is {:.1f}.".format(accuracy))
+      print("Final accuracy is {:.3f}.".format(accuracy))
 
     def run_asynch_chain_node_experiment(self, num_workers, metric_exporter):
       test_loader = fashion_mnist_get_data_loader()[1]
@@ -122,6 +122,6 @@ class ParameterServer(object):
               self.set_weights(current_weights, i)
               accuracy = evaluate(self.model, test_loader)
               self.metric_exporter.set_accuracy.remote(accuracy)
-              print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
+              print("Iter {}: \taccuracy is {:.3f}".format(i, accuracy))
 
-      print("Final accuracy is {:.1f}.".format(accuracy))
+      print("Final accuracy is {:.3f}.".format(accuracy))

@@ -26,10 +26,10 @@ def run_sync(model, num_workers=1, epochs=5, server_kill_timeout=10, server_reco
         # Evaluate the current model.
         model.set_weights(ray.get(current_weights))
         accuracy = evaluate(model, test_loader)
-        print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
+        print("Iter {}: \taccuracy is {:.3f}".format(i, accuracy))
         metric_exporter.set_accuracy.remote(accuracy)
 
-  print("Final accuracy is {:.1f}.".format(accuracy))
+  print("Final accuracy is {:.3f}.".format(accuracy))
 
   # Clean up Ray resources and processes before the next example.
   ray.shutdown()

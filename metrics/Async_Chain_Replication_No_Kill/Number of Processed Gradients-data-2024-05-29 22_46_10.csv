@@ -1,0 +1,8 @@
+﻿"Time","{Component=""core_worker"", Experiment=""chain replication"", NodeAddress=""127.0.0.1"", SessionName=""session_2024-05-29_22-42-44_768927_80068"", Version=""2.22.0"", WorkerId=""58d65f309a1e9ac855e22083ccdd894549810c66e414bfb244c307c8"", __name__=""ray_processed_gradients"", instance=""127.0.0.1:8081"", job=""ray""}"
+2024-05-29 22:43:15,21
+2024-05-29 22:43:30,281
+2024-05-29 22:43:45,411
+2024-05-29 22:44:00,678
+2024-05-29 22:44:15,811
+2024-05-29 22:44:30,1071
+2024-05-29 22:44:45,1201

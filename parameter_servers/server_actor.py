@@ -89,7 +89,7 @@ class ParameterServer(object):
       for i in range(self.start_iteration, iterations):
           gradients = [compute_gradients.remote(current_weights, self.metric_exporter) for _ in range(num_workers)]
           # Calculate update after all gradients are available.
-          current_weights = self.apply_gradients(gradients, metric_exporter=self.metric_exporter)
+          current_weights = self.apply_gradients(gradients)
           
           if i % WEIGHT_UPDATE_FREQUENCY == 0:
               self.store_weights_in_zookeeper(current_weights, i)
@@ -115,7 +115,7 @@ class ParameterServer(object):
           gradients.remove(ready_gradient_id)
 
           # Compute and apply gradients.
-          current_weights = self.apply_gradients([ready_gradient_id], metric_exporter=self.metric_exporter)
+          current_weights = self.apply_gradients([ready_gradient_id])
           gradients.append(compute_gradients.remote(current_weights))
 
           if i % WEIGHT_UPDATE_FREQUENCY == 0:

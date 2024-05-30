@@ -41,10 +41,16 @@ def run_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10
       primary = ps_dict[minimum]
       try:
         if sync:
-          ray.get([primary.run_synch_chain_node_experiment.remote(num_workers, metric_exporter), kill_server.remote([primary], server_kill_timeout)])
+          if server_kill_timeout <= 0:
+            ray.get([primary.run_synch_chain_node_experiment.remote(num_workers)])
+          else:
+            ray.get([primary.run_synch_chain_node_experiment.remote(num_workers), kill_server.remote([primary], server_kill_timeout)])
         else:
-          # ray.get([primary.run_asynch_chain_node_experiment.remote(num_workers), kill_server.remote([primary], server_kill_timeout)])
-          ray.get([primary.run_asynch_chain_node_experiment.remote(num_workers, metric_exporter)])
+          if server_kill_timeout <= 0:
+             ray.get([primary.run_asynch_chain_node_experiment.remote(num_workers)])
+          else: 
+            ray.get([primary.run_asynch_chain_node_experiment.remote(num_workers), kill_server.remote([primary], server_kill_timeout)])
+         
       except Exception as e:
         print("Catching exception", e)
         # Ray and Zookeeper uses different communication channels, 

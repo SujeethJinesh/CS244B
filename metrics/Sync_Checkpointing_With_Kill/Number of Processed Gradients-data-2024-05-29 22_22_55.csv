@@ -1,0 +1,7 @@
+﻿"Time","{Component=""core_worker"", Experiment=""sync checkpointing"", NodeAddress=""127.0.0.1"", SessionName=""session_2024-05-29_22-19-28_346255_73257"", Version=""2.22.0"", WorkerId=""a3cb5456674d41760657d5a4d431ea9f452b227b355cd3c55534c612"", __name__=""ray_processed_gradients"", instance=""127.0.0.1:8081"", job=""ray""}"
+2024-05-29 22:20:00,101
+2024-05-29 22:20:15,107
+2024-05-29 22:20:30,362
+2024-05-29 22:20:45,492
+2024-05-29 22:21:00,758
+2024-05-29 22:21:15,886

@@ -1,0 +1,7 @@
+﻿"Time","{Component=""core_worker"", Experiment=""chain replication"", NodeAddress=""127.0.0.1"", SessionName=""session_2024-05-29_22-38-55_919000_79029"", Version=""2.22.0"", WorkerId=""4e2f619682ac52cf81dcd0825fc0f002256014b535dcf6d6dbc97296"", __name__=""ray_training_loss"", instance=""127.0.0.1:8081"", job=""ray""}"
+2024-05-29 22:39:30,1.83
+2024-05-29 22:39:45,1.45
+2024-05-29 22:40:00,1.31
+2024-05-29 22:40:15,1.56
+2024-05-29 22:40:30,1.12
+2024-05-29 22:40:45,0.633

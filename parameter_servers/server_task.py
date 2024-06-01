@@ -83,7 +83,6 @@ class ParamServerTaskActor:
 
     def apply_gradients(grad):
       nonlocal model, optimizer
-      # print(f"Applying gradients of length {len(grad)}")
       if grad:
         temp_optimizer = optimizer
         if len(grad) > 30:

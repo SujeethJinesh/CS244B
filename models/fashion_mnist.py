@@ -4,13 +4,21 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
-from torchvision.transforms import Normalize, ToTensor
+from torchvision.transforms import Normalize, ToTensor, Resize, InterpolationMode
 from filelock import FileLock
 
 def fashion_mnist_get_data_loader():
-    batch_size = 32
+    batch_size = 16
     # Transform to normalize the input images
-    transform = transforms.Compose([ToTensor(), Normalize((0.5,), (0.5,))])
+    # transform = transforms.Compose([ToTensor(), Normalize((0.5,), (0.5,))])
+    transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Resize(112, interpolation=InterpolationMode.BILINEAR),
+        transforms.RandomHorizontalFlip(),    
+        transforms.RandomRotation(15),
+        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2), 
+        transforms.Normalize((0.5,), (0.5,)),
+    ])
 
     with FileLock(os.path.expanduser("~/data.lock")):
         # Download training data from open datasets
@@ -40,7 +48,7 @@ class FashionMNISTConvNet(nn.Module):
         super(FashionMNISTConvNet, self).__init__()
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(28 * 28, 512),
+            nn.Linear(112 * 112, 512),
             nn.ReLU(),
             nn.Dropout(0.25),
             nn.Linear(512, 512),

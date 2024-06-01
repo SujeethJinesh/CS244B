@@ -25,6 +25,11 @@ while getopts "ho:d:k:r:" opt; do
             ;;
         o)
             output_file=$OPTARG
+            if [ -z "$output_file" ]; then
+                :
+            elif [ ! -e "$output_file" ]; then
+                touch "$output_file"
+            fi
             ;;
         d)
             experiment_duration=$OPTARG
@@ -42,11 +47,7 @@ while getopts "ho:d:k:r:" opt; do
     esac
 done
 
-if [ -n "$output_file" ]; then
-    : > "$output_file"
-fi
-
-experiments=("SYNC_CONTROL" "ASYNC_CONTROL")
+experiments=("SYNC_CONTROL" "ASYNC_CONTROL", "SYNC_CHECKPOINTING", "ASYNC_CHECKPOINTING", "SYNC_CHAIN_REPLICATION", "ASYNC_CHAIN_REPLICATION", "ASYNC_RELAXED_CONSISTENCY")
 
 run_experiment() {
     local exp=$1
@@ -68,19 +69,3 @@ for exp in "${experiments[@]}"; do
     echo "Cooldown for 10 seconds..."
     sleep 10
 done
-
-
-# "SYNC_CONTROL": run_sync,
-#   "ASYNC_CONTROL": run_async,
-#   "SYNC_CHECKPOINTING": run_sync_object_store_checkpointing,
-#   "ASYNC_CHECKPOINTING": run_async_object_store_checkpointing,
-#   "SYNC_CHAIN_REPLICATION": run_sync_chain_replication,
-#   "ASYNC_CHAIN_REPLICATION": run_async_chain_replication,
-#   "ASYNC_RELAXED_CONSISTENCY": run_async_relaxed_consistency,
-
-
-
-# python3.11 main.py --experiment SYNC_CONTROL --epochs=1000 --server_kill_timeout=15 --server_recovery_timeout=15
-# python3.11 main.py --experiment ASYNC_CONTROL --epochs=1000 --server_kill_timeout=15 --server_recovery_timeout=15
-# python3.11 main.py --experiment SYNC_CHECKPOINTING --epochs=1000 --server_kill_timeout=15 --server_recovery_timeout=15
-# python3.11 main.py --experiment ASYNC_CHECKPOINTING --epochs=1000 --server_kill_timeout=15 --server_recovery_timeout=15

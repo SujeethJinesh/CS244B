@@ -11,7 +11,7 @@ def evaluate(model, test_loader):
     with torch.no_grad():
         for batch, (X, y) in enumerate(test_loader):
             pred = model(X)
-            loss = loss_fn(pred, y)
+            loss = loss_fn(pred, y) + 0.001 * torch.norm(model.linear_relu_stack[0].weight, p=2)
 
             test_loss += loss.item()
             num_total += y.shape[0]

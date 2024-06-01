@@ -31,7 +31,7 @@ class ParameterServer(object):
         if node_id is not None:
           self.chain_node = KazooChainNode(node_id, [], self.retrieve_weights_from_zookeeper)
 
-    def apply_gradients(self, gradients):
+    def apply_gradients(self, gradients, metric_exporter=None):
         grad = ray.get(gradients)
         summed_gradients = [
             np.stack(gradient_zip).sum(axis=0) for gradient_zip in zip(*grad)
@@ -39,8 +39,13 @@ class ParameterServer(object):
         self.optimizer.zero_grad()
         self.model.set_gradients(summed_gradients)
         self.optimizer.step()
-        if self.metric_exporter is not None:
-            self.metric_exporter.set_gradients_processed.remote(len(grad))
+        exporter = None
+        if metric_exporter is not None:
+          exporter = metric_exporter
+        elif self.metric_exporter is not None:
+          exporter = self.metric_exporter
+        if exporter is not None:
+          exporter.set_gradients_processed.remote(len(grad))
         return self.model.get_weights()
 
     def set_weights(self, weights, iteration_count):
@@ -132,7 +137,7 @@ class ParameterServer(object):
             # save checkpoint
             self.store_weights_in_zookeeper(current_weights, i)
 
-      print("Final accuracy is {:.1f}.".format(accuracy))
+      print("Final accuracy is {:.3f}.".format(accuracy))
     
     def run_synch_experiment(self, num_workers):
       test_loader = fashion_mnist_get_data_loader()[1]
@@ -149,14 +154,14 @@ class ParameterServer(object):
               self.set_weights(current_weights, i)
               accuracy = evaluate(self.model, test_loader)
               self.metric_exporter.set_accuracy.remote(accuracy)
-              print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
+              print("Iter {}: \taccuracy is {:.3f}".format(i, accuracy))
 
           if i % 100 == 0:
             # save checkpoint
             self.model_saver.set_weights_iteration_count.remote(current_weights, i)
 
 
-      print("Final accuracy is {:.1f}.".format(accuracy))
+      print("Final accuracy is {:.3f}.".format(accuracy))
 
     def run_asynch_experiment(self, num_workers):
       test_loader = fashion_mnist_get_data_loader()[1]
@@ -180,7 +185,7 @@ class ParameterServer(object):
               self.set_weights(current_weights, i)
               accuracy = evaluate(self.model, test_loader)
               self.metric_exporter.set_accuracy.remote(accuracy)
-              print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
+              print("Iter {}: \taccuracy is {:.3f}".format(i, accuracy))
           
           if i % 100 == 0:
             # save checkpoint
@@ -188,4 +193,4 @@ class ParameterServer(object):
             
 
 
-      print("Final accuracy is {:.1f}.".format(accuracy))
+      print("Final accuracy is {:.3f}.".format(accuracy))

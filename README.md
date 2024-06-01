@@ -5,7 +5,7 @@
 ## Running Experiments (Quick Start)
 
 In order to run an experiment, you need to run the following script. This script
- will set up the runtime environment, zookeeper server, Prometheus, and Grafana.
+will set up the runtime environment, zookeeper server, Prometheus, and Grafana.
 
 ### Start Zookeeper
 
@@ -16,8 +16,10 @@ setup_experiment.sh
 ### Run Experiment
 
 ```
-python3 main.py --experiment {SYNC_CONTROL,ASYNC_CONTROL,ASYNC_CHAIN_REPLICATION,ASYNC_RELAXED_CONSISTENCY,DEBUG_NO_CHECKPOINTING,DEBUG_DISK_CHECKPOINTING,DEBUG_OBJECT_STORE_CHECKPOINTING} [--model {IMAGENET,DEBUG}]
+python3 main.py --experiment {SYNC_CONTROL,ASYNC_CONTROL,ASYNC_CHAIN_REPLICATION,ASYNC_RELAXED_CONSISTENCY,DEBUG_NO_CHECKPOINTING,DEBUG_DISK_CHECKPOINTING,DEBUG_OBJECT_STORE_CHECKPOINTING} [--model {IMAGENET,DEBUG}] [--kill_times 1]
 ```
+
+Specify `--kill_times` to enumerate the number of times to kill the parameter server.
 
 ## Runtime Environment
 

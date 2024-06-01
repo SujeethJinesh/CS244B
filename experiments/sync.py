@@ -9,7 +9,7 @@ from models.model_common import evaluate
 iterations = 200
 num_workers = 2
 
-def run_sync(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
+def run_sync(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5, kill_times=1):
   metric_exporter = MetricExporter.remote("sync control")
   ps = ParameterServer.remote(1e-2)
 

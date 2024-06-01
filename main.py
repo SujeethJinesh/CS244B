@@ -30,7 +30,7 @@ EXPERIMENT_MAP = {
   "ASYNC_CHAIN_REPLICATION": run_async_chain_replication,
   "ASYNC_RELAXED_CONSISTENCY": run_async_relaxed_consistency,
 
-  "DEBUG_NO_CHECKPOINTING": run_debug_no_checkpointing,
+  # "DEBUG_NO_CHECKPOINTING": run_debug_no_checkpointing,
   # "DEBUG_DISK_CHECKPOINTING": run_debug_disk_checkpointing,
 }
 
@@ -68,6 +68,7 @@ def main():
   parser.add_argument('--epochs', type=int, default=5, help="Number of epochs to run")
   parser.add_argument('--server_kill_timeout', type=int, default=10, help="Time before parameter server is killed")
   parser.add_argument('--server_recovery_timeout', type=int, default=5, help="Time after parameter server is killed to recover")
+  parser.add_argument('--kill_times', type=int, default=1, help="Number of times to kill the server during the experiment")
   args = parser.parse_args()
   
   # Parse the flags
@@ -80,10 +81,11 @@ def main():
   epochs = args.epochs
   server_kill_timeout = args.server_kill_timeout
   server_recovery_timeout = args.server_recovery_timeout
+  kill_times = args.kill_times
 
   # Run appropriate experiment
   print(f"Starting {experiment_name} experiment with model {model_name}.")
-  experiment(model, num_workers=workers, epochs=epochs, server_kill_timeout=server_kill_timeout, server_recovery_timeout=server_recovery_timeout)
+  experiment(model, num_workers=workers, epochs=epochs, server_kill_timeout=server_kill_timeout, server_recovery_timeout=server_recovery_timeout, kill_times=kill_times)
   print(f"Completed {experiment_name} experiment.")
 
 

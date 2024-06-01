@@ -20,4 +20,3 @@ cd grafana-v11.0.0
 cp ../metrics/grafana.ini grafana.ini
 ./bin/grafana server --config grafana.ini web
 
-

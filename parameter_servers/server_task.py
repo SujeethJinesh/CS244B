@@ -86,7 +86,8 @@ class ParamServerTaskActor:
       # print(f"Applying gradients of length {len(grad)}")
       if grad:
         temp_optimizer = optimizer
-        if len(grad) > 10:
+        if len(grad) > 30:
+          print(f"Applying {len(grad)} gradients")
           temp_optimizer = torch.optim.SGD(model.parameters(), lr=1e-5)
         summed_gradients = [
             np.stack(gradient_zip).sum(axis=0) for gradient_zip in zip(*grad)
@@ -128,8 +129,8 @@ class ParamServerTaskActor:
       zk.exists(event.path, watch=handle_gradient_update)
       metric_exporter.set_zookeeper_reads.remote(1)  # Update write metric
 
-    print("Running initial evaluation")
-    evaluate_model()
+    # print("Running initial evaluation")
+    # evaluate_model()
 
     for worker_index in range(num_workers):
       zk.exists(f"/base/gradients/lock/{worker_index}", watch=handle_gradient_update)

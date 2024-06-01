@@ -132,7 +132,7 @@ class ParameterServer(object):
             # save checkpoint
             self.store_weights_in_zookeeper(current_weights, i)
 
-      print("Final accuracy is {:.1f}.".format(accuracy))
+      print("Final accuracy is {:.3f}.".format(accuracy))
     
     def run_synch_experiment(self, num_workers):
       test_loader = fashion_mnist_get_data_loader()[1]
@@ -149,14 +149,14 @@ class ParameterServer(object):
               self.set_weights(current_weights, i)
               accuracy = evaluate(self.model, test_loader)
               self.metric_exporter.set_accuracy.remote(accuracy)
-              print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
+              print("Iter {}: \taccuracy is {:.3f}".format(i, accuracy))
 
           if i % 100 == 0:
             # save checkpoint
             self.model_saver.set_weights_iteration_count.remote(current_weights, i)
 
 
-      print("Final accuracy is {:.1f}.".format(accuracy))
+      print("Final accuracy is {:.3f}.".format(accuracy))
 
     def run_asynch_experiment(self, num_workers):
       test_loader = fashion_mnist_get_data_loader()[1]
@@ -180,7 +180,7 @@ class ParameterServer(object):
               self.set_weights(current_weights, i)
               accuracy = evaluate(self.model, test_loader)
               self.metric_exporter.set_accuracy.remote(accuracy)
-              print("Iter {}: \taccuracy is {:.1f}".format(i, accuracy))
+              print("Iter {}: \taccuracy is {:.3f}".format(i, accuracy))
           
           if i % 100 == 0:
             # save checkpoint
@@ -188,4 +188,4 @@ class ParameterServer(object):
             
 
 
-      print("Final accuracy is {:.1f}.".format(accuracy))
+      print("Final accuracy is {:.3f}.".format(accuracy))

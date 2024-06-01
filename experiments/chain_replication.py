@@ -10,7 +10,7 @@ from parameter_servers.server_actor import ParameterServer
 from parameter_servers.server_killer import kill_server
 from metrics.metric_exporter import MetricExporter
 
-def run_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5, sync=False):
+def run_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5, sync=False, kill_times=1):
   num_chain_nodes = 3
 
   zk = KazooClient(hosts='127.0.0.1:2181')
@@ -31,6 +31,8 @@ def run_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10
       time.sleep(2)
 
   def run_new_primary():
+    nonlocal kill_times
+    print(f"*** Kill times is {kill_times}")
     print("New primary runs")
     minimum = 100
     children = zk.get_children('/exp3')
@@ -42,14 +44,16 @@ def run_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10
       primary = ps_dict[minimum]
       try:
         if sync:
-          if minimum > 0 or server_kill_timeout <= 0:
+          if kill_times <= 0 or server_kill_timeout <= 0:
             ray.get([primary.run_synch_chain_node_experiment.remote(num_workers)])
           else:
+            kill_times -= 1
             ray.get([primary.run_synch_chain_node_experiment.remote(num_workers), kill_server.remote([primary], server_kill_timeout)])
         else:
-          if minimum > 0 or server_kill_timeout <= 0:
+          if kill_times <= 0 or server_kill_timeout <= 0:
              ray.get([primary.run_asynch_chain_node_experiment.remote(num_workers)])
           else: 
+            kill_times -= 1
             ray.get([primary.run_asynch_chain_node_experiment.remote(num_workers), kill_server.remote([primary], server_kill_timeout)])
          
       except Exception as e:
@@ -79,8 +83,8 @@ def run_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10
 
   run_new_primary()
 
-def run_async_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
-  run_chain_replication(model, num_workers, epochs, server_kill_timeout, server_kill_timeout, False)
+def run_async_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5, kill_times=1):
+  run_chain_replication(model, num_workers, epochs, server_kill_timeout, server_kill_timeout, False, kill_times=kill_times)
 
-def run_sync_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5):
-  run_chain_replication(model, num_workers, epochs, server_kill_timeout, server_kill_timeout, True)
+def run_sync_chain_replication(model, num_workers=1, epochs=5, server_kill_timeout=10, server_recovery_timeout=5, kill_times=1):
+  run_chain_replication(model, num_workers, epochs, server_kill_timeout, server_kill_timeout, True, kill_times=kill_times)

@@ -17,4 +17,3 @@ tar -zxvf grafana-11.0.0.darwin-amd64.tar.gz
 cd grafana-v11.0.0
 ./bin/grafana server --config /tmp/ray/session_latest/metrics/grafana/grafana.ini web
 
-

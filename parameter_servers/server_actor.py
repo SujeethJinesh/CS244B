@@ -31,7 +31,7 @@ class ParameterServer(object):
         if node_id is not None:
           self.chain_node = KazooChainNode(node_id, [], self.retrieve_weights_from_zookeeper)
 
-    def apply_gradients(self, gradients):
+    def apply_gradients(self, gradients, metric_exporter=None):
         grad = ray.get(gradients)
         summed_gradients = [
             np.stack(gradient_zip).sum(axis=0) for gradient_zip in zip(*grad)
@@ -39,8 +39,13 @@ class ParameterServer(object):
         self.optimizer.zero_grad()
         self.model.set_gradients(summed_gradients)
         self.optimizer.step()
-        if self.metric_exporter is not None:
-            self.metric_exporter.set_gradients_processed.remote(len(grad))
+        exporter = None
+        if metric_exporter is not None:
+          exporter = metric_exporter
+        elif self.metric_exporter is not None:
+          exporter = self.metric_exporter
+        if exporter is not None:
+          exporter.set_gradients_processed.remote(len(grad))
         return self.model.get_weights()
 
     def set_weights(self, weights, iteration_count):

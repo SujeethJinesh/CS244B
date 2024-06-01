@@ -14,9 +14,24 @@ show_help() {
 experiment_duration=120
 server_kill_timeout=15
 server_recovery_timeout=15
+output_file=""
+
+# Current experiment process ID
+current_experiment_pid=""
+
+# Trap SIGTERM signal and perform cleanup
+trap 'cleanup' SIGTERM
+
+cleanup() {
+    echo "Caught SIGTERM signal! Terminating running experiment..."
+    if [ -n "$current_experiment_pid" ]; then
+        kill -9 "$current_experiment_pid"
+        echo "Experiment process $current_experiment_pid terminated."
+    fi
+    exit 1
+}
 
 # Parse command-line arguments
-output_file=""
 while getopts "ho:d:k:r:" opt; do
     case $opt in
         h)
@@ -48,8 +63,6 @@ while getopts "ho:d:k:r:" opt; do
 done
 
 experiments=(
-    "SYNC_CONTROL"
-    "ASYNC_CONTROL"
     "SYNC_CHECKPOINTING"
     "ASYNC_CHECKPOINTING"
     "SYNC_CHAIN_REPLICATION"
@@ -60,10 +73,13 @@ experiments=(
 run_experiment() {
     local exp=$1
     echo "Running experiment: $exp"
-    timeout $experiment_duration python3.11 main.py --experiment "$exp" --epochs=1000 --server_kill_timeout=$server_kill_timeout --server_recovery_timeout=$server_recovery_timeout 2>&1
+    timeout $experiment_duration python3.11 main.py --experiment "$exp" --epochs=1000 --server_kill_timeout=$server_kill_timeout --server_recovery_timeout=$server_recovery_timeout --kill_times=2 2>&1 &
+    current_experiment_pid=$!
+    wait $current_experiment_pid
     if [ $? -eq 124 ]; then
         echo "Experiment $exp timed out after $experiment_duration seconds."
     fi
+    current_experiment_pid=""
 }
 
 for exp in "${experiments[@]}"; do

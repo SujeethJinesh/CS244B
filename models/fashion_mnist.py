@@ -9,15 +9,11 @@ from torchvision.transforms import Normalize, ToTensor, Resize, InterpolationMod
 from filelock import FileLock
 
 def fashion_mnist_get_data_loader():
-    batch_size = 16
+    batch_size = 32
     # Transform to normalize the input images
     # transform = transforms.Compose([ToTensor(), Normalize((0.5,), (0.5,))])
     transform = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Resize(112, interpolation=InterpolationMode.BILINEAR),
-        transforms.RandomHorizontalFlip(),    
-        transforms.RandomRotation(15),
-        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2), 
         transforms.Normalize((0.5,), (0.5,)),
     ])
 

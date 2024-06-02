@@ -7,13 +7,24 @@
 In order to run an experiment, you need to run the following script. This script
 will set up the runtime environment, zookeeper server, Prometheus, and Grafana.
 
-### Start Zookeeper
-
 ```
 setup_experiment.sh
 ```
 
-### Run Experiment
+This following script runs all experiments with 0, 1, and 2, parameter server failures with the given configuration.
+
+```
+run_experiment.sh -o [output_file] -d [experiment_duration] -k [server_kill_timeout] -r [server_recovery_timeout]
+```
+
+Note that if you want to kill the script and the processes that it spawns, you can first run
+
+```
+pskill -f run_experiment.sh 
+```
+and then send a SIGTERM signal to the bash process.
+
+To run individual experiment, you can use the following command.
 
 ```
 python3 main.py --experiment {SYNC_CONTROL,ASYNC_CONTROL,ASYNC_CHAIN_REPLICATION,ASYNC_RELAXED_CONSISTENCY,DEBUG_NO_CHECKPOINTING,DEBUG_DISK_CHECKPOINTING,DEBUG_OBJECT_STORE_CHECKPOINTING} [--model {IMAGENET,DEBUG}] [--kill_times 1]

@@ -8,14 +8,16 @@ from parameter_servers.server_killer import kill_server
 
 LEARNING_RATE = 1e-2
 
-def run_sync_object_store_checkpointing(model, num_workers, epochs, server_kill_timeout, server_recovery_timeout):
+def run_sync_object_store_checkpointing(model, num_workers, epochs, server_kill_timeout, server_recovery_timeout, kill_times=1):
     ms = ModelSaver.remote()
     metric_exporter = MetricExporter.remote("sync checkpointing")
     
-    def _run_experiment(first_run=True):
+    def _run_experiment():
+        nonlocal kill_times
+        print(f"**** kill times is {kill_times}")
         try:
             ps = ParameterServer.remote(LEARNING_RATE, metric_exporter=metric_exporter, model_saver=ms)
-            if not first_run:
+            if not (kill_times > 0):
                 ray.get(ps.set_weights.remote(ms.get_weights.remote(), ms.get_iteration_count.remote()))
             else:
                 server_killer_ref = kill_server.remote([ps], server_kill_timeout)
@@ -24,18 +26,21 @@ def run_sync_object_store_checkpointing(model, num_workers, epochs, server_kill_
             print('catching exception', e)
             ps = None
             time.sleep(server_recovery_timeout)
-            _run_experiment(first_run=False)
+            kill_times -= 1
+            _run_experiment()
     
     _run_experiment()
 
-def run_async_object_store_checkpointing(model, num_workers, epochs, server_kill_timeout, server_recovery_timeout):
+def run_async_object_store_checkpointing(model, num_workers, epochs, server_kill_timeout, server_recovery_timeout, kill_times=1):
     ms = ModelSaver.remote()
     metric_exporter = MetricExporter.remote("async checkpointing")
     
-    def _run_experiment(first_run=True):
+    def _run_experiment():
+        nonlocal kill_times
+        print(f"**** kill times is {kill_times}")
         try:
             ps = ParameterServer.remote(LEARNING_RATE, metric_exporter=metric_exporter, model_saver=ms)
-            if not first_run:
+            if not kill_times > 0:
                 ray.get(ps.set_weights.remote(ms.get_weights.remote(), ms.get_iteration_count.remote()))
             else:
                 server_killer_ref = kill_server.remote([ps], server_kill_timeout)
@@ -44,6 +49,7 @@ def run_async_object_store_checkpointing(model, num_workers, epochs, server_kill
             print('catching exception', e)
             ps = None
             time.sleep(server_recovery_timeout)
-            _run_experiment(first_run=False)
+            kill_times -= 1
+            _run_experiment()
     
     _run_experiment()

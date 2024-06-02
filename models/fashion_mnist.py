@@ -5,8 +5,10 @@ from torchvision import models
 import torch.nn.functional as F
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
-from torchvision.transforms import Normalize, ToTensor, Resize, InterpolationMode
+from torchvision.transforms import Normalize, ToTensor
 from filelock import FileLock
+
+IMAGE_SIZE=28
 
 def fashion_mnist_get_data_loader():
     batch_size = 32

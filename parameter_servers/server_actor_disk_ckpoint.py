@@ -79,8 +79,8 @@ class ParameterServerDiskCkpoint(object):
           if i % 10 == 0:
               # Evaluate the current model.
               self.set_weights(current_weights, i)
-              accuracy = evaluate(self.model, test_loader)
-              print("Iter {}: \taccuracy is {:.3f}".format(i, accuracy))
+              accuracy, loss = evaluate(self.model, test_loader)
+              print("Time {}: \taccuracy is {:.3f}\tloss is {:.3f}".format(int(time.time()), accuracy, loss))
 
       print("Final accuracy is {:.3f}.".format(accuracy))
 
@@ -105,8 +105,8 @@ class ParameterServerDiskCkpoint(object):
           if i % 10 == 0:
               # Evaluate the current model after every 10 updates.
               self.set_weights(current_weights, i)
-              accuracy = evaluate(self.model, test_loader)
-              print("Iter {}: \taccuracy is {:.3f}".format(i, accuracy))
+              accuracy, loss = evaluate(self.model, test_loader)
+              print("Time {}: \taccuracy is {:.3f}\tloss is {:.3f}".format(int(time.time()), accuracy, loss))
 
       print("Final accuracy is {:.3f}.".format(accuracy))
 

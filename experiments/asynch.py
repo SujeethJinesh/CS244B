@@ -1,4 +1,5 @@
 import ray
+import time
 from parameter_servers.server_actor import ParameterServer
 from workers.worker_task import compute_gradients
 from metrics.metric_exporter import MetricExporter
@@ -33,8 +34,9 @@ def run_async(model, num_workers=1, epochs=5, server_kill_timeout=10, server_rec
     if i % 10 == 0:
       # Evaluate the current model after every 10 updates.
       model.set_weights(ray.get(current_weights))
-      accuracy = evaluate(model, test_loader)
-      print("Iter {}: \taccuracy is {:.3f}".format(i, accuracy))
+      accuracy, loss = evaluate(model, test_loader)
+      print("Time {}: \taccuracy is {:.3f}\tloss is {:.3f}".format(int(time.time()), accuracy, loss))
       metric_exporter.set_accuracy.remote(accuracy)
 
-  print("Final accuracy is {:.3f}.".format(accuracy))
+  print("Time {}: \taccuracy is {:.3f}\tloss is {:.3f}".format(int(time.time()), accuracy, loss))
+  

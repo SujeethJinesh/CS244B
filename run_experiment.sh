@@ -15,10 +15,6 @@ experiment_duration=120
 server_kill_timeout=15
 server_recovery_timeout=15
 output_file=""
-
-# Current experiment process ID
-current_experiment_pid=""
-
 # Trap SIGTERM signal and perform cleanup
 trap 'cleanup' SIGTERM
 

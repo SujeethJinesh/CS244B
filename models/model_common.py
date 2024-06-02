@@ -12,11 +12,10 @@ def evaluate(model, test_loader):
         for batch, (X, y) in enumerate(test_loader):
             pred = model(X)
             loss = loss_fn(pred, y)
-            
             test_loss += loss.item()
             num_total += y.shape[0]
             num_correct += (pred.argmax(1) == y).sum().item()
 
     test_loss /= len(test_loader)
     accuracy = num_correct / num_total
-    return accuracy
+    return accuracy, test_loss

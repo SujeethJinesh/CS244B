@@ -8,7 +8,7 @@ show_help() {
     echo "  -d experiment_duration       Specify the experiment duration in seconds."
     echo "  -k server_kill_timeout       Specify the server kill timeout in seconds (default is 15 seconds)."
     echo "  -r server_recovery_timeout   Specify the server recovery timeout in seconds (default is 15 seconds)."
-    echo "  --kill_times kill_times      Specify the number of times to kill the server. (default is 1 times)"
+    # echo "  --kill_times kill_times      Specify the number of times to kill the server. (default is 1 times)"
 }
 
 # Default values
@@ -16,7 +16,7 @@ experiment_duration=120
 server_kill_timeout=15
 server_recovery_timeout=15
 output_file=""
-kill_times = 1
+# kill_times = 1
 
 # Current experiment process ID
 current_experiment_pid=""
@@ -57,18 +57,18 @@ while getopts "ho:d:k:r:" opt; do
         r)
             server_recovery_timeout=$OPTARG
             ;;
-        -)
-            case "${OPTARG}" in
-                kill_times)
-                    kill_times="${!OPTIND}"
-                    OPTIND=$((OPTIND + 1))
-                    ;;
-                *)
-                    echo "Invalid option: --$OPTARG" >&2
-                    exit 1
-                    ;;
-            esac
-            ;;
+        # -)
+            # case "${OPTARG}" in
+            #     kill_times)
+            #         kill_times="${!OPTIND}"
+            #         OPTIND=$((OPTIND + 1))
+            #         ;;
+            #     *)
+            #         echo "Invalid option: --$OPTARG" >&2
+            #         exit 1
+            #         ;;
+            # esac
+            # ;;
         \?)
             show_help
             exit 1
@@ -78,10 +78,10 @@ done
 
 experiments=(
     "SYNC_CHECKPOINTING"
-    "ASYNC_CHECKPOINTING"
-    "SYNC_CHAIN_REPLICATION"
-    "ASYNC_CHAIN_REPLICATION"
-    "ASYNC_RELAXED_CONSISTENCY"
+    # "ASYNC_CHECKPOINTING"
+    # "SYNC_CHAIN_REPLICATION"
+    # "ASYNC_CHAIN_REPLICATION"
+    # "ASYNC_RELAXED_CONSISTENCY"
 )
 
 run_experiment() {
@@ -95,7 +95,8 @@ run_experiment() {
     --epochs=1000 \
     --server_kill_timeout=$server_kill_timeout \
     --server_recovery_timeout=$server_recovery_timeout \
-    --kill_times=$kill_times \
+    # --kill_times=$kill_times \
+    --kill_times=2 \
     2>&1
 
     current_experiment_pid=$!

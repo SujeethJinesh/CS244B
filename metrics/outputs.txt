@@ -1,0 +1,87 @@
+Running experiment: SYNC_CHECKPOINTING
+2024-06-01 17:24:24,017	INFO worker.py:1740 -- Started a local Ray instance. View the dashboard at [1m[32mhttp://127.0.0.1:8265 [39m[22m
+2024-06-01 17:24:24,479	INFO worker.py:1582 -- Calling ray.init() again after it has already been called.
+usage: main.py [-h] --experiment
+               {SYNC_CONTROL,ASYNC_CONTROL,SYNC_CHECKPOINTING,ASYNC_CHECKPOINTING,SYNC_CHAIN_REPLICATION,ASYNC_CHAIN_REPLICATION,ASYNC_RELAXED_CONSISTENCY}
+               [--model {IMAGENET,DEBUG}] [--workers WORKERS]
+               [--epochs EPOCHS] [--server_kill_timeout SERVER_KILL_TIMEOUT]
+               [--server_recovery_timeout SERVER_RECOVERY_TIMEOUT]
+               [--kill_times KILL_TIMES]
+main.py: error: argument --kill_times: invalid int value: ''
+Initializing Ray
+RayContext(dashboard_url='127.0.0.1:8265', python_version='3.11.7', ray_version='2.23.0', ray_commit='a0947ead5cd94b3d8ca5cdeb9422dccb12d03867')
+Running experiment: SYNC_CHECKPOINTING
+2024-06-01 17:25:33,995	INFO worker.py:1740 -- Started a local Ray instance. View the dashboard at [1m[32mhttp://127.0.0.1:8265 [39m[22m
+2024-06-01 17:25:34,415	INFO worker.py:1582 -- Calling ray.init() again after it has already been called.
+usage: main.py [-h] --experiment
+               {SYNC_CONTROL,ASYNC_CONTROL,SYNC_CHECKPOINTING,ASYNC_CHECKPOINTING,SYNC_CHAIN_REPLICATION,ASYNC_CHAIN_REPLICATION,ASYNC_RELAXED_CONSISTENCY}
+               [--model {IMAGENET,DEBUG}] [--workers WORKERS]
+               [--epochs EPOCHS] [--server_kill_timeout SERVER_KILL_TIMEOUT]
+               [--server_recovery_timeout SERVER_RECOVERY_TIMEOUT]
+               [--kill_times KILL_TIMES]
+main.py: error: argument --server_kill_timeout: invalid int value: 'ill_times'
+Initializing Ray
+RayContext(dashboard_url='127.0.0.1:8265', python_version='3.11.7', ray_version='2.23.0', ray_commit='a0947ead5cd94b3d8ca5cdeb9422dccb12d03867')
+Running experiment: SYNC_CHECKPOINTING
+Initializing Ray
+RayContext(dashboard_url='127.0.0.1:8265', python_version='3.11.7', ray_version='2.23.0', ray_commit='a0947ead5cd94b3d8ca5cdeb9422dccb12d03867')
+Starting SYNC_CHECKPOINTING experiment with model DEBUG.
+**** kill times is 1
+[36m(ParameterServer pid=12962)[0m Running synchronous parameter server training.
+[36m(ParameterServer pid=12962)[0m Iter 0: 	accuracy is 0.134
+[36m(ModelSaver pid=12960)[0m saving weights
+[36m(ParameterServer pid=12962)[0m Iter 10: 	accuracy is 0.220
+[36m(ParameterServer pid=12962)[0m Iter 20: 	accuracy is 0.263
+[36m(ParameterServer pid=12962)[0m Iter 30: 	accuracy is 0.303
+[36m(ParameterServer pid=12962)[0m Iter 40: 	accuracy is 0.422
+[36m(ParameterServer pid=12962)[0m Iter 50: 	accuracy is 0.410
+[36m(ParameterServer pid=12962)[0m Iter 60: 	accuracy is 0.441
+[36m(ParameterServer pid=12962)[0m Iter 70: 	accuracy is 0.424
+[36m(ParameterServer pid=12962)[0m Iter 80: 	accuracy is 0.435
+[36m(ParameterServer pid=12962)[0m Iter 90: 	accuracy is 0.429
+[36m(ModelSaver pid=12960)[0m saving weights
+[36m(ParameterServer pid=12962)[0m Iter 100: 	accuracy is 0.467
+[36m(ParameterServer pid=12962)[0m Iter 110: 	accuracy is 0.433
+[36m(ParameterServer pid=12962)[0m Iter 120: 	accuracy is 0.445
+catching exception The actor died unexpectedly before finishing this task.
+	class_name: ParameterServer
+	actor_id: b961d7a7f849b1206a3912e301000000
+	pid: 12962
+	namespace: 958a23b1-364a-4528-88c4-3d133e60a23a
+	ip: 127.0.0.1
+The actor is dead because it was killed by `ray.kill`.
+[36m(kill_server pid=12963)[0m disrupt thread wakes up
+[36m(kill_server pid=12963)[0m killed server successfully
+run_experiment.sh: line 100: --kill_times=2: command not found
+Running experiment: SYNC_CHECKPOINTING
+Initializing Ray
+RayContext(dashboard_url='127.0.0.1:8265', python_version='3.11.7', ray_version='2.23.0', ray_commit='a0947ead5cd94b3d8ca5cdeb9422dccb12d03867')
+Starting SYNC_CHECKPOINTING experiment with model DEBUG.
+**** kill times is 1
+[36m(ParameterServer pid=15664)[0m Running synchronous parameter server training.
+[36m(ParameterServer pid=15664)[0m Time 1717288519: 	accuracy is 0.056	loss is 2.302
+[36m(ModelSaver pid=15662)[0m saving weights
+[36m(ParameterServer pid=15664)[0m Time 1717288521: 	accuracy is 0.150	loss is 2.299
+[36m(ParameterServer pid=15664)[0m Time 1717288523: 	accuracy is 0.229	loss is 2.294
+[36m(ParameterServer pid=15664)[0m Time 1717288525: 	accuracy is 0.211	loss is 2.287
+[36m(ParameterServer pid=15664)[0m Time 1717288527: 	accuracy is 0.277	loss is 2.282
+[36m(ParameterServer pid=15664)[0m Time 1717288530: 	accuracy is 0.296	loss is 2.276
+[36m(ParameterServer pid=15664)[0m Time 1717288532: 	accuracy is 0.271	loss is 2.270
+[36m(ParameterServer pid=15664)[0m Time 1717288534: 	accuracy is 0.321	loss is 2.263
+[36m(ParameterServer pid=15664)[0m Time 1717288536: 	accuracy is 0.345	loss is 2.256
+[36m(ParameterServer pid=15664)[0m Time 1717288538: 	accuracy is 0.339	loss is 2.249
+[36m(ParameterServer pid=15664)[0m Time 1717288540: 	accuracy is 0.353	loss is 2.240
+[36m(ModelSaver pid=15662)[0m saving weights
+[36m(ParameterServer pid=15664)[0m Time 1717288542: 	accuracy is 0.343	loss is 2.230
+[36m(ParameterServer pid=15664)[0m Time 1717288544: 	accuracy is 0.382	loss is 2.219
+catching exception The actor died unexpectedly before finishing this task.
+	class_name: ParameterServer
+	actor_id: d1c478a5b0a2c330ebb3597d01000000
+	pid: 15664
+	namespace: 0fdefb5c-e875-4be2-a7c7-482cee1fb309
+	ip: 127.0.0.1
+The actor is dead because it was killed by `ray.kill`.
+[36m(kill_server pid=15665)[0m disrupt thread wakes up
+[36m(kill_server pid=15665)[0m killed server successfully
+run_experiment.sh: line 100: --kill_times=2: command not found
+Running experiment: SYNC_CHECKPOINTING

@@ -87,7 +87,7 @@ class ParamServerTaskActor:
         temp_optimizer = optimizer
         if len(grad) > 30:
           print(f"Applying {len(grad)} gradients")
-          temp_optimizer = torch.optim.SGD(model.parameters(), lr=1e-5)
+          temp_optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
         summed_gradients = [
             np.stack(gradient_zip).sum(axis=0) for gradient_zip in zip(*grad)
         ]
@@ -110,7 +110,7 @@ class ParamServerTaskActor:
       nonlocal then, model, test_loader
       accuracy = evaluate(model, test_loader)
       print("accuracy is {:.3f}".format(accuracy))
-      metric_exporter.set_accuracy.remote(accuracy)
+      ray.get(metric_exporter.set_accuracy.remote(accuracy))
 
     def handle_gradient_update(event):
       nonlocal then

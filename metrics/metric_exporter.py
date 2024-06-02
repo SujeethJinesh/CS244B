@@ -1,6 +1,9 @@
 import ray
 from ray.util.metrics import Gauge
 
+runtime_env = {"pip": ["kazoo"]}
+ray.init(ignore_reinit_error=True, _metrics_export_port=8081, runtime_env=runtime_env)
+
 @ray.remote
 class MetricExporter:
     def __init__(self, experiment_name):

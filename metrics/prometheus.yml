@@ -1,8 +1,8 @@
 # my global config
 global:
-  scrape_interval: 2s # Set the scrape interval to every 2 seconds. Default is every 1 minute.
-  evaluation_interval: 2s # Evaluate rules every 2 seconds. The default is every 1 minute.
-  # scrape_timeout is set to the global default (10s).
+  scrape_interval: 1s # Set the scrape interval to every 1 second.
+  evaluation_interval: 1s # Evaluate rules every 1 second.
+  scrape_timeout: 1s # Set the scrape timeout to 1 second.
 
 # Alertmanager configuration
 alerting:
@@ -20,10 +20,16 @@ rule_files:
 # Here it's Prometheus itself.
 scrape_configs:
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-  - job_name: "prometheus"
+  - job_name: 'prometheus'
 
     # metrics_path defaults to '/metrics'
     # scheme defaults to 'http'.
-
+    scrape_interval: 1s
     static_configs:
-      - targets: ["localhost:9090"]
+      - targets: ['localhost:9090']
+
+  # Add your Ray metrics job
+  - job_name: 'ray_metrics'
+    scrape_interval: 1s
+    static_configs:
+      - targets: ['localhost:8081']

@@ -9,7 +9,7 @@ bash zoozookeeper_setup.sh
 
 # # Setup Prometheus
 curl -O https://github.com/prometheus/prometheus/releases/download/v2.52.0/prometheus-2.52.0.darwin-amd64.tar.gz
-cd prometheus-*
+cd prometheus-2.52.0.darwin-arm64
 ./prometheus --config.file=../metrics/prometheus.yml
 
 # # Setup Grafana

@@ -39,13 +39,27 @@ def fashion_mnist_get_data_loader():
 class FashionMNISTConvNet(nn.Module):
     def __init__(self, num_classes=10):
         super(FashionMNISTConvNet, self).__init__()
-        self.resnet = models.resnet18()
-        self.resnet.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False)
-        num_ftrs = self.resnet.fc.in_features
-        self.resnet.fc = nn.Linear(num_ftrs, 10)
+        self.conv_layers = nn.Sequential(
+            nn.Conv2d(1, 16, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+        )
+        self.flatten = nn.Flatten()
+        self.linear_layers = nn.Sequential(
+            nn.Linear(32 * 7 * 7, 512),
+            nn.ReLU(),
+            nn.Dropout(0.25),
+            nn.Linear(512, 10),
+            nn.ReLU(),
+        )
 
     def forward(self, x):
-        x = self.resnet(x)
+        x = self.conv_layers(x)
+        x = self.flatten(x)
+        x = self.linear_layers(x)
         return x
 
     # OLD Model

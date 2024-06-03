@@ -8,8 +8,8 @@ def async_eval(timer_runs, model, test_loader, metric_exporter, evaluate):
       model.set_weights(evaluator_state.CURRENT_WEIGHTS)
       evaluator_state.weights_lock.release()
       
-      accuracy = evaluate(model, test_loader)
-      print("accuracy is {:.3f}".format(accuracy))
+      accuracy, loss = evaluate(model, test_loader)
+      print("Time {}: \taccuracy is {:.3f}\tloss is {:.3f}".format(int(time.time()), accuracy, loss))
       metric_exporter.set_accuracy.remote(accuracy)
 
     time.sleep(2)

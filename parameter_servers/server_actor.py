@@ -99,9 +99,9 @@ class ParameterServer(object):
           if i % WEIGHT_UPDATE_FREQUENCY == 0:
               # Evaluate the current model.
               self.set_weights(current_weights, i)
-              accuracy = evaluate(self.model, test_loader)
+              accuracy, loss = evaluate(self.model, test_loader)
               self.metric_exporter.set_accuracy.remote(accuracy)
-              print("Iter {}: \taccuracy is {:.3f}".format(i, accuracy))
+              print("Time {}: \taccuracy is {:.3f}\tloss is {:.3f}".format(int(time.time()), accuracy, loss))
 
           if i % 100 == 0:
             # save checkpoint
@@ -129,9 +129,9 @@ class ParameterServer(object):
           if i % WEIGHT_UPDATE_FREQUENCY == 0:
               # Evaluate the current model after every 10 updates.
               self.set_weights(current_weights, i)
-              accuracy = evaluate(self.model, test_loader)
+              accuracy, loss = evaluate(self.model, test_loader)
               self.metric_exporter.set_accuracy.remote(accuracy)
-              print("Iter {}: \taccuracy is {:.3f}".format(i, accuracy))
+              print("Time {}: \taccuracy is {:.3f}\tloss is {:.3f}".format(int(time.time()), accuracy, loss))
           
           if i % 100 == 0:
             # save checkpoint
@@ -152,9 +152,9 @@ class ParameterServer(object):
           if i % WEIGHT_UPDATE_FREQUENCY == 0:
               # Evaluate the current model.
               self.set_weights(current_weights, i)
-              accuracy = evaluate(self.model, test_loader)
+              accuracy, loss = evaluate(self.model, test_loader)
               self.metric_exporter.set_accuracy.remote(accuracy)
-              print("Iter {}: \taccuracy is {:.3f}".format(i, accuracy))
+              print("Time {}: \taccuracy is {:.3f}\tloss is {:.3f}".format(int(time.time()), accuracy, loss))
 
           if i % 100 == 0:
             # save checkpoint
@@ -183,9 +183,9 @@ class ParameterServer(object):
           if i % WEIGHT_UPDATE_FREQUENCY == 0:
               # Evaluate the current model after every 10 updates.
               self.set_weights(current_weights, i)
-              accuracy = evaluate(self.model, test_loader)
+              accuracy, loss = evaluate(self.model, test_loader)
               self.metric_exporter.set_accuracy.remote(accuracy)
-              print("Iter {}: \taccuracy is {:.3f}".format(i, accuracy))
+              print("Time {}: \taccuracy is {:.3f}\tloss is {:.3f}".format(int(time.time()), accuracy, loss))
           
           if i % 100 == 0:
             # save checkpoint

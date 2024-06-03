@@ -1,0 +1,1014 @@
+Running experiment: SYNC_CHECKPOINTING with --kill_times 2
+2024-06-01 23:26:50,752	INFO worker.py:1740 -- Started a local Ray instance. View the dashboard at [1m[32mhttp://127.0.0.1:8265 [39m[22m
+2024-06-01 23:26:51,161	INFO worker.py:1582 -- Calling ray.init() again after it has already been called.
+Initializing Ray
+RayContext(dashboard_url='127.0.0.1:8265', python_version='3.11.7', ray_version='2.23.0', ray_commit='a0947ead5cd94b3d8ca5cdeb9422dccb12d03867')
+Starting SYNC_CHECKPOINTING experiment with model DEBUG.
+**** kill times is 2
+[36m(ParameterServer pid=96350)[0m Running synchronous parameter server training.
+[36m(ParameterServer pid=96350)[0m Time 1717309633: 	accuracy is 0.098	loss is 2.303
+[36m(ModelSaver pid=96348)[0m saving weights
+[36m(ParameterServer pid=96350)[0m Time 1717309635: 	accuracy is 0.131	loss is 2.300
+[36m(ParameterServer pid=96350)[0m Time 1717309637: 	accuracy is 0.143	loss is 2.297
+[36m(ParameterServer pid=96350)[0m Time 1717309638: 	accuracy is 0.161	loss is 2.294
+[36m(ParameterServer pid=96350)[0m Time 1717309640: 	accuracy is 0.214	loss is 2.290
+[36m(ParameterServer pid=96350)[0m Time 1717309642: 	accuracy is 0.226	loss is 2.286
+[36m(ParameterServer pid=96350)[0m Time 1717309644: 	accuracy is 0.201	loss is 2.281
+[36m(ParameterServer pid=96350)[0m Time 1717309645: 	accuracy is 0.204	loss is 2.275
+[36m(ParameterServer pid=96350)[0m Time 1717309647: 	accuracy is 0.235	loss is 2.268
+[36m(ParameterServer pid=96350)[0m Time 1717309649: 	accuracy is 0.306	loss is 2.260
+[36m(ParameterServer pid=96350)[0m Time 1717309651: 	accuracy is 0.341	loss is 2.253
+[36m(ModelSaver pid=96348)[0m saving weights
+[36m(ParameterServer pid=96350)[0m Time 1717309652: 	accuracy is 0.334	loss is 2.245
+[36m(ParameterServer pid=96350)[0m Time 1717309654: 	accuracy is 0.347	loss is 2.235
+[36m(ParameterServer pid=96350)[0m Time 1717309656: 	accuracy is 0.360	loss is 2.225
+[36m(ParameterServer pid=96350)[0m Time 1717309658: 	accuracy is 0.367	loss is 2.213
+[36m(ParameterServer pid=96350)[0m Time 1717309659: 	accuracy is 0.384	loss is 2.199
+catching exception The actor died unexpectedly before finishing this task.
+	class_name: ParameterServer
+	actor_id: d25e53315dd756a7a256c9ad01000000
+	pid: 96350
+	namespace: 365b3366-f0d9-4e79-ad93-24fdf475ef8c
+	ip: 127.0.0.1
+The actor is dead because it was killed by `ray.kill`.
+[36m(kill_server pid=96351)[0m disrupt thread wakes up
+[36m(kill_server pid=96351)[0m killed server successfully
+**** kill times is 1
+[36m(ParameterServer pid=96598)[0m Running synchronous parameter server training.
+[36m(ModelSaver pid=96348)[0m saving weights
+[36m(ParameterServer pid=96598)[0m Time 1717309683: 	accuracy is 0.108	loss is 2.303
+[36m(ParameterServer pid=96598)[0m Time 1717309685: 	accuracy is 0.215	loss is 2.295
+[36m(ParameterServer pid=96598)[0m Time 1717309687: 	accuracy is 0.152	loss is 2.287
+[36m(ParameterServer pid=96598)[0m Time 1717309689: 	accuracy is 0.228	loss is 2.277
+[36m(ParameterServer pid=96598)[0m Time 1717309690: 	accuracy is 0.304	loss is 2.267
+[36m(ParameterServer pid=96598)[0m Time 1717309692: 	accuracy is 0.314	loss is 2.256
+[36m(ParameterServer pid=96598)[0m Time 1717309694: 	accuracy is 0.396	loss is 2.243
+[36m(ParameterServer pid=96598)[0m Time 1717309696: 	accuracy is 0.432	loss is 2.228
+[36m(ParameterServer pid=96598)[0m Time 1717309697: 	accuracy is 0.448	loss is 2.211
+[36m(ParameterServer pid=96598)[0m Time 1717309699: 	accuracy is 0.430	loss is 2.191
+[36m(ModelSaver pid=96348)[0m saving weights
+[36m(ParameterServer pid=96598)[0m Time 1717309701: 	accuracy is 0.477	loss is 2.169
+[36m(ParameterServer pid=96598)[0m Time 1717309704: 	accuracy is 0.501	loss is 2.144
+[36m(ParameterServer pid=96598)[0m Time 1717309705: 	accuracy is 0.417	loss is 2.108
+[36m(ParameterServer pid=96598)[0m Time 1717309707: 	accuracy is 0.407	loss is 2.067
+[36m(ParameterServer pid=96598)[0m Time 1717309709: 	accuracy is 0.512	loss is 2.015
+catching exception The actor died unexpectedly before finishing this task.
+	class_name: ParameterServer
+	actor_id: b05a524a3efec43bb35e2f0e01000000
+	pid: 96598
+	namespace: 365b3366-f0d9-4e79-ad93-24fdf475ef8c
+	ip: 127.0.0.1
+The actor is dead because it was killed by `ray.kill`.
+[36m(kill_server pid=96351)[0m disrupt thread wakes up
+[36m(kill_server pid=96351)[0m killed server successfully
+**** kill times is 0
+[36m(ParameterServer pid=96817)[0m Running synchronous parameter server training.
+[36m(ModelSaver pid=96348)[0m saving weights
+[36m(ParameterServer pid=96817)[0m Time 1717309733: 	accuracy is 0.475	loss is 2.166
+[36m(ParameterServer pid=96817)[0m Time 1717309735: 	accuracy is 0.525	loss is 2.139
+[36m(ParameterServer pid=96817)[0m Time 1717309737: 	accuracy is 0.516	loss is 2.103
+[36m(ParameterServer pid=96817)[0m Time 1717309738: 	accuracy is 0.489	loss is 2.059
+[36m(ParameterServer pid=96817)[0m Time 1717309740: 	accuracy is 0.454	loss is 2.008
+[36m(ParameterServer pid=96817)[0m Time 1717309742: 	accuracy is 0.487	loss is 1.956
+[36m(ParameterServer pid=96817)[0m Time 1717309744: 	accuracy is 0.524	loss is 1.884
+[36m(ParameterServer pid=96817)[0m Time 1717309745: 	accuracy is 0.540	loss is 1.793
+[36m(ParameterServer pid=96817)[0m Time 1717309747: 	accuracy is 0.453	loss is 1.696
+[36m(ParameterServer pid=96817)[0m Time 1717309749: 	accuracy is 0.494	loss is 1.592
+[36m(ModelSaver pid=96348)[0m saving weights
+[36m(ParameterServer pid=96817)[0m Time 1717309751: 	accuracy is 0.546	loss is 1.486
+[36m(ParameterServer pid=96817)[0m Time 1717309752: 	accuracy is 0.567	loss is 1.373
+[36m(ParameterServer pid=96817)[0m Time 1717309754: 	accuracy is 0.645	loss is 1.271
+[36m(ParameterServer pid=96817)[0m Time 1717309756: 	accuracy is 0.616	loss is 1.234
+[36m(ParameterServer pid=96817)[0m Time 1717309758: 	accuracy is 0.611	loss is 1.156
+[36m(ParameterServer pid=96817)[0m Time 1717309759: 	accuracy is 0.586	loss is 1.135
+[36m(ParameterServer pid=96817)[0m Time 1717309761: 	accuracy is 0.637	loss is 1.070
+[36m(ParameterServer pid=96817)[0m Time 1717309763: 	accuracy is 0.662	loss is 1.014
+[36m(ParameterServer pid=96817)[0m Time 1717309765: 	accuracy is 0.637	loss is 0.989
+[36m(ParameterServer pid=96817)[0m Time 1717309766: 	accuracy is 0.667	loss is 0.945
+[36m(ModelSaver pid=96348)[0m saving weights
+[36m(ParameterServer pid=96817)[0m Time 1717309768: 	accuracy is 0.664	loss is 0.950
+[36m(ParameterServer pid=96817)[0m Time 1717309770: 	accuracy is 0.638	loss is 0.960
+[36m(ParameterServer pid=96817)[0m Time 1717309772: 	accuracy is 0.675	loss is 0.892
+[36m(ParameterServer pid=96817)[0m Time 1717309773: 	accuracy is 0.689	loss is 0.863
+[36m(ParameterServer pid=96817)[0m Time 1717309775: 	accuracy is 0.653	loss is 0.891
+[36m(ParameterServer pid=96817)[0m Time 1717309777: 	accuracy is 0.698	loss is 0.845
+[36m(ParameterServer pid=96817)[0m Time 1717309779: 	accuracy is 0.682	loss is 0.854
+[36m(ParameterServer pid=96817)[0m Time 1717309781: 	accuracy is 0.687	loss is 0.843
+[36m(ParameterServer pid=96817)[0m Time 1717309782: 	accuracy is 0.654	loss is 0.898
+[36m(ParameterServer pid=96817)[0m Time 1717309784: 	accuracy is 0.701	loss is 0.813
+[36m(ModelSaver pid=96348)[0m saving weights
+[36m(ParameterServer pid=96817)[0m Time 1717309786: 	accuracy is 0.694	loss is 0.806
+[36m(ParameterServer pid=96817)[0m Time 1717309788: 	accuracy is 0.714	loss is 0.794
+[36m(ParameterServer pid=96817)[0m Time 1717309789: 	accuracy is 0.720	loss is 0.763
+[36m(ParameterServer pid=96817)[0m Time 1717309791: 	accuracy is 0.692	loss is 0.814
+[36m(ParameterServer pid=96817)[0m Time 1717309793: 	accuracy is 0.728	loss is 0.763
+[36m(ParameterServer pid=96817)[0m Time 1717309795: 	accuracy is 0.725	loss is 0.756
+[36m(ParameterServer pid=96817)[0m Time 1717309796: 	accuracy is 0.720	loss is 0.758
+[36m(ParameterServer pid=96817)[0m Time 1717309798: 	accuracy is 0.699	loss is 0.772
+[36m(ParameterServer pid=96817)[0m Time 1717309800: 	accuracy is 0.729	loss is 0.740
+[36m(ParameterServer pid=96817)[0m Time 1717309802: 	accuracy is 0.704	loss is 0.766
+[36m(ModelSaver pid=96348)[0m saving weights
+[36m(ParameterServer pid=96817)[0m Time 1717309803: 	accuracy is 0.723	loss is 0.742
+[36m(ParameterServer pid=96817)[0m Time 1717309805: 	accuracy is 0.710	loss is 0.754
+[36m(ParameterServer pid=96817)[0m Time 1717309807: 	accuracy is 0.727	loss is 0.730
+[36m(ParameterServer pid=96817)[0m Time 1717309809: 	accuracy is 0.744	loss is 0.707
+[36m(ParameterServer pid=96817)[0m Time 1717309811: 	accuracy is 0.735	loss is 0.708
+[36m(ParameterServer pid=96817)[0m Time 1717309812: 	accuracy is 0.731	loss is 0.717
+[36m(ParameterServer pid=96817)[0m Time 1717309814: 	accuracy is 0.736	loss is 0.708
+[36m(ParameterServer pid=96817)[0m Time 1717309816: 	accuracy is 0.714	loss is 0.733
+[36m(ParameterServer pid=96817)[0m Time 1717309818: 	accuracy is 0.710	loss is 0.741
+[36m(ParameterServer pid=96817)[0m Time 1717309819: 	accuracy is 0.755	loss is 0.680
+[36m(ModelSaver pid=96348)[0m saving weights
+[36m(ParameterServer pid=96817)[0m Time 1717309821: 	accuracy is 0.720	loss is 0.706
+[36m(ParameterServer pid=96817)[0m Time 1717309823: 	accuracy is 0.676	loss is 0.777
+[36m(ParameterServer pid=96817)[0m Time 1717309825: 	accuracy is 0.722	loss is 0.733
+[36m(ParameterServer pid=96817)[0m Time 1717309826: 	accuracy is 0.733	loss is 0.707
+[36m(ParameterServer pid=96817)[0m Time 1717309828: 	accuracy is 0.750	loss is 0.681
+[36m(ParameterServer pid=96817)[0m Time 1717309830: 	accuracy is 0.711	loss is 0.750
+[36m(ParameterServer pid=96817)[0m Time 1717309832: 	accuracy is 0.697	loss is 0.732
+[36m(ParameterServer pid=96817)[0m Time 1717309833: 	accuracy is 0.753	loss is 0.680
+[36m(ParameterServer pid=96817)[0m Time 1717309835: 	accuracy is 0.739	loss is 0.692
+[36m(ParameterServer pid=96817)[0m Time 1717309837: 	accuracy is 0.744	loss is 0.692
+[36m(ModelSaver pid=96348)[0m saving weights
+[36m(ParameterServer pid=96817)[0m Time 1717309839: 	accuracy is 0.753	loss is 0.669
+[36m(ParameterServer pid=96817)[0m Time 1717309840: 	accuracy is 0.749	loss is 0.661
+[36m(ParameterServer pid=96817)[0m Time 1717309842: 	accuracy is 0.724	loss is 0.723
+Running experiment: ASYNC_CHECKPOINTING with --kill_times 2
+2024-06-01 23:30:58,356	INFO worker.py:1740 -- Started a local Ray instance. View the dashboard at [1m[32mhttp://127.0.0.1:8265 [39m[22m
+2024-06-01 23:30:58,737	INFO worker.py:1582 -- Calling ray.init() again after it has already been called.
+Initializing Ray
+RayContext(dashboard_url='127.0.0.1:8265', python_version='3.11.7', ray_version='2.23.0', ray_commit='a0947ead5cd94b3d8ca5cdeb9422dccb12d03867')
+Starting ASYNC_CHECKPOINTING experiment with model DEBUG.
+**** kill times is 2
+[36m(ParameterServer pid=97434)[0m Running Asynchronous Parameter Server Training.
+[36m(ParameterServer pid=97434)[0m Time 1717309877: 	accuracy is 0.074	loss is 2.304
+[36m(ModelSaver pid=97432)[0m saving weights
+[36m(ParameterServer pid=97434)[0m Time 1717309878: 	accuracy is 0.119	loss is 2.302
+[36m(ParameterServer pid=97434)[0m Time 1717309880: 	accuracy is 0.124	loss is 2.301
+[36m(ParameterServer pid=97434)[0m Time 1717309882: 	accuracy is 0.115	loss is 2.299
+[36m(ParameterServer pid=97434)[0m Time 1717309884: 	accuracy is 0.256	loss is 2.296
+[36m(ParameterServer pid=97434)[0m Time 1717309885: 	accuracy is 0.229	loss is 2.291
+[36m(ParameterServer pid=97434)[0m Time 1717309887: 	accuracy is 0.290	loss is 2.285
+[36m(ParameterServer pid=97434)[0m Time 1717309889: 	accuracy is 0.387	loss is 2.279
+[36m(ParameterServer pid=97434)[0m Time 1717309890: 	accuracy is 0.347	loss is 2.272
+[36m(ParameterServer pid=97434)[0m Time 1717309892: 	accuracy is 0.362	loss is 2.264
+[36m(ParameterServer pid=97434)[0m Time 1717309894: 	accuracy is 0.364	loss is 2.255
+[36m(ModelSaver pid=97432)[0m saving weights
+[36m(ParameterServer pid=97434)[0m Time 1717309895: 	accuracy is 0.379	loss is 2.245
+[36m(ParameterServer pid=97434)[0m Time 1717309897: 	accuracy is 0.315	loss is 2.234
+[36m(ParameterServer pid=97434)[0m Time 1717309899: 	accuracy is 0.365	loss is 2.222
+[36m(ParameterServer pid=97434)[0m Time 1717309901: 	accuracy is 0.285	loss is 2.207
+[36m(ParameterServer pid=97434)[0m Time 1717309903: 	accuracy is 0.333	loss is 2.186
+catching exception The actor died unexpectedly before finishing this task.
+	class_name: ParameterServer
+	actor_id: 778fa3f21a148fdd801f841701000000
+	pid: 97434
+	namespace: b9089e1f-30b7-44ea-8b4d-bcbe5b226785
+	ip: 127.0.0.1
+The actor is dead because it was killed by `ray.kill`.
+[36m(kill_server pid=97435)[0m disrupt thread wakes up
+[36m(kill_server pid=97435)[0m killed server successfully
+**** kill times is 1
+[36m(ParameterServer pid=97702)[0m Running Asynchronous Parameter Server Training.
+[36m(ModelSaver pid=97432)[0m saving weights
+[36m(ParameterServer pid=97702)[0m Time 1717309927: 	accuracy is 0.101	loss is 2.301
+[36m(ParameterServer pid=97702)[0m Time 1717309929: 	accuracy is 0.185	loss is 2.292
+[36m(ParameterServer pid=97702)[0m Time 1717309930: 	accuracy is 0.202	loss is 2.280
+[36m(ParameterServer pid=97702)[0m Time 1717309932: 	accuracy is 0.268	loss is 2.270
+[36m(ParameterServer pid=97702)[0m Time 1717309934: 	accuracy is 0.279	loss is 2.258
+[36m(ParameterServer pid=97702)[0m Time 1717309935: 	accuracy is 0.246	loss is 2.246
+[36m(ParameterServer pid=97702)[0m Time 1717309937: 	accuracy is 0.341	loss is 2.229
+[36m(ParameterServer pid=97702)[0m Time 1717309939: 	accuracy is 0.340	loss is 2.213
+[36m(ParameterServer pid=97702)[0m Time 1717309941: 	accuracy is 0.384	loss is 2.190
+[36m(ParameterServer pid=97702)[0m Time 1717309942: 	accuracy is 0.380	loss is 2.167
+[36m(ModelSaver pid=97432)[0m saving weights
+[36m(ParameterServer pid=97702)[0m Time 1717309944: 	accuracy is 0.413	loss is 2.137
+[36m(ParameterServer pid=97702)[0m Time 1717309946: 	accuracy is 0.389	loss is 2.101
+[36m(ParameterServer pid=97702)[0m Time 1717309948: 	accuracy is 0.442	loss is 2.058
+[36m(ParameterServer pid=97702)[0m Time 1717309949: 	accuracy is 0.417	loss is 2.011
+[36m(ParameterServer pid=97702)[0m Time 1717309951: 	accuracy is 0.354	loss is 1.961
+[36m(ParameterServer pid=97702)[0m Time 1717309953: 	accuracy is 0.419	loss is 1.901
+catching exception The actor died unexpectedly before finishing this task.
+	class_name: ParameterServer
+	actor_id: 17036d5f3c1057a009f0d9c201000000
+	pid: 97702
+	namespace: b9089e1f-30b7-44ea-8b4d-bcbe5b226785
+	ip: 127.0.0.1
+The actor is dead because it was killed by `ray.kill`.
+[36m(kill_server pid=97435)[0m disrupt thread wakes up
+[36m(kill_server pid=97435)[0m killed server successfully
+**** kill times is 0
+[36m(ParameterServer pid=97924)[0m Running Asynchronous Parameter Server Training.
+[36m(ModelSaver pid=97432)[0m saving weights
+[36m(ParameterServer pid=97924)[0m Time 1717309977: 	accuracy is 0.418	loss is 2.134
+[36m(ParameterServer pid=97924)[0m Time 1717309978: 	accuracy is 0.371	loss is 2.098
+[36m(ParameterServer pid=97924)[0m Time 1717309980: 	accuracy is 0.422	loss is 2.053
+[36m(ParameterServer pid=97924)[0m Time 1717309982: 	accuracy is 0.446	loss is 2.006
+[36m(ParameterServer pid=97924)[0m Time 1717309984: 	accuracy is 0.447	loss is 1.951
+[36m(ParameterServer pid=97924)[0m Time 1717309985: 	accuracy is 0.442	loss is 1.884
+[36m(ParameterServer pid=97924)[0m Time 1717309987: 	accuracy is 0.525	loss is 1.816
+[36m(ParameterServer pid=97924)[0m Time 1717309989: 	accuracy is 0.506	loss is 1.736
+[36m(ParameterServer pid=97924)[0m Time 1717309991: 	accuracy is 0.526	loss is 1.641
+[36m(ParameterServer pid=97924)[0m Time 1717309992: 	accuracy is 0.543	loss is 1.554
+[36m(ModelSaver pid=97432)[0m saving weights
+[36m(ParameterServer pid=97924)[0m Time 1717309994: 	accuracy is 0.565	loss is 1.482
+[36m(ParameterServer pid=97924)[0m Time 1717309996: 	accuracy is 0.626	loss is 1.422
+[36m(ParameterServer pid=97924)[0m Time 1717309998: 	accuracy is 0.628	loss is 1.348
+[36m(ParameterServer pid=97924)[0m Time 1717309999: 	accuracy is 0.670	loss is 1.297
+[36m(ParameterServer pid=97924)[0m Time 1717310001: 	accuracy is 0.615	loss is 1.282
+[36m(ParameterServer pid=97924)[0m Time 1717310003: 	accuracy is 0.636	loss is 1.229
+[36m(ParameterServer pid=97924)[0m Time 1717310004: 	accuracy is 0.643	loss is 1.206
+[36m(ParameterServer pid=97924)[0m Time 1717310006: 	accuracy is 0.679	loss is 1.163
+[36m(ParameterServer pid=97924)[0m Time 1717310008: 	accuracy is 0.685	loss is 1.117
+[36m(ParameterServer pid=97924)[0m Time 1717310010: 	accuracy is 0.671	loss is 1.110
+[36m(ModelSaver pid=97432)[0m saving weights
+[36m(ParameterServer pid=97924)[0m Time 1717310011: 	accuracy is 0.679	loss is 0.993
+[36m(ParameterServer pid=97924)[0m Time 1717310013: 	accuracy is 0.699	loss is 0.960
+[36m(ParameterServer pid=97924)[0m Time 1717310015: 	accuracy is 0.589	loss is 1.009
+[36m(ParameterServer pid=97924)[0m Time 1717310017: 	accuracy is 0.671	loss is 0.924
+[36m(ParameterServer pid=97924)[0m Time 1717310018: 	accuracy is 0.691	loss is 0.862
+[36m(ParameterServer pid=97924)[0m Time 1717310020: 	accuracy is 0.697	loss is 0.846
+[36m(ParameterServer pid=97924)[0m Time 1717310022: 	accuracy is 0.718	loss is 0.809
+[36m(ParameterServer pid=97924)[0m Time 1717310024: 	accuracy is 0.710	loss is 0.813
+[36m(ParameterServer pid=97924)[0m Time 1717310025: 	accuracy is 0.651	loss is 0.854
+[36m(ParameterServer pid=97924)[0m Time 1717310027: 	accuracy is 0.713	loss is 0.787
+[36m(ModelSaver pid=97432)[0m saving weights
+[36m(ParameterServer pid=97924)[0m Time 1717310029: 	accuracy is 0.722	loss is 0.774
+[36m(ParameterServer pid=97924)[0m Time 1717310031: 	accuracy is 0.715	loss is 0.798
+[36m(ParameterServer pid=97924)[0m Time 1717310032: 	accuracy is 0.725	loss is 0.755
+[36m(ParameterServer pid=97924)[0m Time 1717310034: 	accuracy is 0.678	loss is 0.811
+[36m(ParameterServer pid=97924)[0m Time 1717310036: 	accuracy is 0.713	loss is 0.753
+[36m(ParameterServer pid=97924)[0m Time 1717310037: 	accuracy is 0.734	loss is 0.726
+[36m(ParameterServer pid=97924)[0m Time 1717310039: 	accuracy is 0.723	loss is 0.744
+[36m(ParameterServer pid=97924)[0m Time 1717310041: 	accuracy is 0.710	loss is 0.760
+[36m(ParameterServer pid=97924)[0m Time 1717310043: 	accuracy is 0.656	loss is 0.854
+[36m(ParameterServer pid=97924)[0m Time 1717310044: 	accuracy is 0.738	loss is 0.715
+[36m(ModelSaver pid=97432)[0m saving weights
+[36m(ParameterServer pid=97924)[0m Time 1717310046: 	accuracy is 0.744	loss is 0.696
+[36m(ParameterServer pid=97924)[0m Time 1717310048: 	accuracy is 0.714	loss is 0.765
+[36m(ParameterServer pid=97924)[0m Time 1717310050: 	accuracy is 0.738	loss is 0.697
+[36m(ParameterServer pid=97924)[0m Time 1717310051: 	accuracy is 0.739	loss is 0.706
+[36m(ParameterServer pid=97924)[0m Time 1717310053: 	accuracy is 0.728	loss is 0.737
+[36m(ParameterServer pid=97924)[0m Time 1717310055: 	accuracy is 0.743	loss is 0.693
+[36m(ParameterServer pid=97924)[0m Time 1717310057: 	accuracy is 0.740	loss is 0.695
+[36m(ParameterServer pid=97924)[0m Time 1717310058: 	accuracy is 0.746	loss is 0.685
+[36m(ParameterServer pid=97924)[0m Time 1717310060: 	accuracy is 0.746	loss is 0.703
+[36m(ParameterServer pid=97924)[0m Time 1717310062: 	accuracy is 0.755	loss is 0.680
+[36m(ModelSaver pid=97432)[0m saving weights
+[36m(ParameterServer pid=97924)[0m Time 1717310063: 	accuracy is 0.735	loss is 0.694
+[36m(ParameterServer pid=97924)[0m Time 1717310065: 	accuracy is 0.723	loss is 0.723
+[36m(ParameterServer pid=97924)[0m Time 1717310067: 	accuracy is 0.744	loss is 0.697
+[36m(ParameterServer pid=97924)[0m Time 1717310069: 	accuracy is 0.756	loss is 0.664
+[36m(ParameterServer pid=97924)[0m Time 1717310070: 	accuracy is 0.742	loss is 0.675
+[36m(ParameterServer pid=97924)[0m Time 1717310072: 	accuracy is 0.739	loss is 0.687
+[36m(ParameterServer pid=97924)[0m Time 1717310074: 	accuracy is 0.720	loss is 0.742
+[36m(ParameterServer pid=97924)[0m Time 1717310076: 	accuracy is 0.739	loss is 0.701
+[36m(ParameterServer pid=97924)[0m Time 1717310077: 	accuracy is 0.754	loss is 0.682
+[36m(ParameterServer pid=97924)[0m Time 1717310079: 	accuracy is 0.716	loss is 0.730
+[36m(ModelSaver pid=97432)[0m saving weights
+[36m(ParameterServer pid=97924)[0m Time 1717310081: 	accuracy is 0.761	loss is 0.645
+[36m(ParameterServer pid=97924)[0m Time 1717310083: 	accuracy is 0.743	loss is 0.681
+[36m(ParameterServer pid=97924)[0m Time 1717310085: 	accuracy is 0.758	loss is 0.661
+[36m(ParameterServer pid=97924)[0m Time 1717310086: 	accuracy is 0.756	loss is 0.663
+[36m(ParameterServer pid=97924)[0m Time 1717310088: 	accuracy is 0.741	loss is 0.705
+[36m(ParameterServer pid=97924)[0m Time 1717310090: 	accuracy is 0.755	loss is 0.638
+[36m(ParameterServer pid=97924)[0m Time 1717310091: 	accuracy is 0.743	loss is 0.665
+[36m(ParameterServer pid=97924)[0m Time 1717310093: 	accuracy is 0.730	loss is 0.693
+[36m(ParameterServer pid=97924)[0m Time 1717310095: 	accuracy is 0.738	loss is 0.702
+Running experiment: SYNC_CHAIN_REPLICATION with --kill_times 2
+2024-06-01 23:35:11,382	INFO worker.py:1740 -- Started a local Ray instance. View the dashboard at [1m[32mhttp://127.0.0.1:8265 [39m[22m
+2024-06-01 23:35:11,809	INFO worker.py:1582 -- Calling ray.init() again after it has already been called.
+Initializing Ray
+RayContext(dashboard_url='127.0.0.1:8265', python_version='3.11.7', ray_version='2.23.0', ray_commit='a0947ead5cd94b3d8ca5cdeb9422dccb12d03867')
+Starting SYNC_CHAIN_REPLICATION experiment with model DEBUG.
+[36m(ParameterServer pid=98578)[0m NODE  0  is created
+[36m(ParameterServer pid=98578)[0m New head is node  0
+[36m(ParameterServer pid=98578)[0m event is WatchedEvent(type='CHILD', state='CONNECTED', path='/exp3')
+[36m(ParameterServer pid=98578)[0m New head is node  0
+[36m(ParameterServer pid=98578)[0m event is WatchedEvent(type='CHILD', state='CONNECTED', path='/exp3')
+[36m(ParameterServer pid=98578)[0m New head is node  0
+*** Kill times is 2
+New primary runs
+[36m(ParameterServer pid=98578)[0m Running synchronous parameter server training.
+[36m(ParameterServer pid=98632)[0m NODE  2  is created[32m [repeated 2x across cluster] (Ray deduplicates logs by default. Set RAY_DEDUP_LOGS=0 to disable log deduplication, or see https://docs.ray.io/en/master/ray-observability/user-guides/configure-logging.html#log-deduplication for more options.)[0m
+[36m(ParameterServer pid=98578)[0m Time 1717310136: 	accuracy is 0.056	loss is 2.302
+[36m(ParameterServer pid=98578)[0m Node 0 starts storing weights
+[36m(ParameterServer pid=98578)[0m Node  0  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/1')
+[36m(ParameterServer pid=98578)[0m Node 0 handle changed event
+[36m(ParameterServer pid=98578)[0m after event callback
+[36m(ParameterServer pid=98622)[0m event is WatchedEvent(type='CHILD', state='CONNECTED', path='/exp3')
+[36m(ParameterServer pid=98622)[0m backup receive weights
+[36m(ParameterServer pid=98622)[0m Node  1  handles event. Event is 
+[36m(ParameterServer pid=98622)[0m WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/2')
+[36m(ParameterServer pid=98578)[0m Time 1717310138: 	accuracy is 0.249	loss is 2.291
+[36m(ParameterServer pid=98578)[0m Time 1717310140: 	accuracy is 0.369	loss is 2.278
+[36m(ParameterServer pid=98578)[0m Time 1717310142: 	accuracy is 0.403	loss is 2.268
+[36m(ParameterServer pid=98632)[0m Node 2 starts storing weights[32m [repeated 2x across cluster][0m
+[36m(ParameterServer pid=98632)[0m Node  2  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/1')[32m [repeated 2x across cluster][0m
+[36m(ParameterServer pid=98622)[0m Node 1 handle changed event[32m [repeated 3x across cluster][0m
+[36m(ParameterServer pid=98632)[0m after event callback[32m [repeated 3x across cluster][0m
+[36m(ParameterServer pid=98632)[0m backup receive weights
+[36m(ParameterServer pid=98578)[0m Time 1717310143: 	accuracy is 0.422	loss is 2.258
+[36m(ParameterServer pid=98578)[0m Time 1717310145: 	accuracy is 0.420	loss is 2.246
+[36m(ParameterServer pid=98578)[0m Time 1717310147: 	accuracy is 0.428	loss is 2.232
+[36m(ParameterServer pid=98578)[0m Time 1717310149: 	accuracy is 0.453	loss is 2.218
+[36m(ParameterServer pid=98578)[0m Time 1717310151: 	accuracy is 0.457	loss is 2.199
+[36m(ParameterServer pid=98578)[0m Time 1717310152: 	accuracy is 0.435	loss is 2.177
+[36m(ParameterServer pid=98578)[0m Time 1717310154: 	accuracy is 0.410	loss is 2.153
+[36m(ParameterServer pid=98578)[0m Node 0 starts storing weights
+[36m(ParameterServer pid=98622)[0m Node  1  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/0')
+[36m(ParameterServer pid=98622)[0m Node 1 handle changed event
+[36m(ParameterServer pid=98622)[0m backup receive weights
+[36m(ParameterServer pid=98622)[0m after event callback
+[36m(ParameterServer pid=98578)[0m Time 1717310156: 	accuracy is 0.412	loss is 2.126
+[36m(ParameterServer pid=98578)[0m Time 1717310158: 	accuracy is 0.452	loss is 2.091
+[36m(ParameterServer pid=98578)[0m Time 1717310160: 	accuracy is 0.459	loss is 2.050
+[36m(ParameterServer pid=98632)[0m Node 2 starts storing weights[32m [repeated 2x across cluster][0m
+[36m(ParameterServer pid=98632)[0m Node  2  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/1')
+[36m(ParameterServer pid=98632)[0m Node 2 handle changed event
+[36m(ParameterServer pid=98632)[0m backup receive weights
+[36m(ParameterServer pid=98632)[0m after event callback
+[36m(ParameterServer pid=98578)[0m Time 1717310161: 	accuracy is 0.449	loss is 2.003
+[36m(ParameterServer pid=98578)[0m Time 1717310163: 	accuracy is 0.452	loss is 1.959
+Catching exception The actor died unexpectedly before finishing this task.
+	class_name: ParameterServer
+	actor_id: 512fc8f773d83a98c130133b01000000
+	pid: 98578
+	namespace: 50d1469a-4760-452e-b62c-bce7d5efcb0d
+	ip: 127.0.0.1
+The actor is dead because it was killed by `ray.kill`.
+block on node  /exp3/0
+[36m(kill_server pid=98641)[0m disrupt thread wakes up
+[36m(kill_server pid=98641)[0m killed server successfully
+*** Kill times is 1
+New primary runs
+[36m(ParameterServer pid=98622)[0m Node  1  handles event. Event is WatchedEvent(type='DELETED', state='CONNECTED', path='/exp3/0')
+[36m(ParameterServer pid=98622)[0m In handle DELTED
+[36m(ParameterServer pid=98622)[0m get a list of children
+[36m(ParameterServer pid=98622)[0m child is  1
+[36m(ParameterServer pid=98622)[0m get a list of children
+[36m(ParameterServer pid=98622)[0m child is  2
+[36m(ParameterServer pid=98622)[0m set head
+[36m(ParameterServer pid=98622)[0m New head is node  1
+[36m(ParameterServer pid=98622)[0m after event callback
+[36m(ParameterServer pid=98622)[0m Running synchronous parameter server training.
+[36m(ParameterServer pid=98632)[0m event is WatchedEvent(type='CHILD', state='CONNECTED', path='/exp3')
+[36m(ParameterServer pid=98622)[0m Time 1717310176: 	accuracy is 0.438	loss is 2.127
+[36m(ParameterServer pid=98622)[0m Time 1717310178: 	accuracy is 0.443	loss is 2.098
+[36m(ParameterServer pid=98622)[0m Time 1717310180: 	accuracy is 0.433	loss is 2.066
+[36m(ParameterServer pid=98622)[0m Time 1717310181: 	accuracy is 0.448	loss is 2.021
+[36m(ParameterServer pid=98622)[0m Time 1717310183: 	accuracy is 0.460	loss is 1.972
+[36m(ParameterServer pid=98622)[0m Time 1717310185: 	accuracy is 0.468	loss is 1.919
+[36m(ParameterServer pid=98622)[0m Time 1717310186: 	accuracy is 0.421	loss is 1.867
+[36m(ParameterServer pid=98622)[0m Time 1717310188: 	accuracy is 0.488	loss is 1.815
+[36m(ParameterServer pid=98622)[0m Time 1717310190: 	accuracy is 0.496	loss is 1.752
+[36m(ParameterServer pid=98622)[0m Time 1717310192: 	accuracy is 0.486	loss is 1.709
+[36m(ParameterServer pid=98622)[0m Node 1 starts storing weights
+[36m(ParameterServer pid=98632)[0m Node  2  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/1')
+[36m(ParameterServer pid=98632)[0m Node 2 handle changed event
+[36m(ParameterServer pid=98632)[0m backup receive weights
+[36m(ParameterServer pid=98632)[0m after event callback
+[36m(ParameterServer pid=98622)[0m Time 1717310193: 	accuracy is 0.501	loss is 1.657
+[36m(ParameterServer pid=98622)[0m Time 1717310195: 	accuracy is 0.530	loss is 1.619
+[36m(ParameterServer pid=98622)[0m Time 1717310197: 	accuracy is 0.526	loss is 1.556
+[36m(ParameterServer pid=98632)[0m Node 2 starts storing weights
+[36m(ParameterServer pid=98622)[0m Time 1717310199: 	accuracy is 0.537	loss is 1.477
+[36m(ParameterServer pid=98622)[0m Time 1717310201: 	accuracy is 0.540	loss is 1.431
+[36m(ParameterServer pid=98622)[0m Time 1717310202: 	accuracy is 0.579	loss is 1.353
+[36m(ParameterServer pid=98622)[0m Time 1717310204: 	accuracy is 0.573	loss is 1.322
+Catching exception The actor died unexpectedly before finishing this task.
+	class_name: ParameterServer
+	actor_id: 0d97607f91c18e6dc122928601000000
+	pid: 98622
+	namespace: 50d1469a-4760-452e-b62c-bce7d5efcb0d
+	ip: 127.0.0.1
+The actor is dead because it was killed by `ray.kill`.
+block on node  /exp3/1
+[33m(raylet)[0m A worker died or was killed while executing a task by an unexpected system error. To troubleshoot the problem, check the logs for the dead worker. RayTask ID: 4a99a61b0e281908f1bcefb3db49846813a76cfc01000000 Worker ID: 8a0032e9fc827362fbb53e437419d28ea5a81ca0c9df34561eae7503 Node ID: 783a9003cb42fa9d214a63a3cbb5beb8a622b8786df56eb38b5167e8 Worker IP address: 127.0.0.1 Worker port: 65249 Worker PID: 98642 Worker exit type: SYSTEM_ERROR Worker exit detail: Worker exits unexpectedly. Worker exits with an exit code 1. The process receives a SIGTERM.
+[36m(kill_server pid=98641)[0m disrupt thread wakes up
+[36m(kill_server pid=98641)[0m killed server successfully
+[36m(ParameterServer pid=98632)[0m event is WatchedEvent(type='CHILD', state='CONNECTED', path='/exp3')
+[36m(ParameterServer pid=98953)[0m NODE  3  is created
+*** Kill times is 0
+New primary runs
+[36m(ParameterServer pid=98632)[0m Node  2  handles event. Event is WatchedEvent(type='DELETED', state='CONNECTED', path='/exp3/1')
+[36m(ParameterServer pid=98632)[0m In handle DELTED
+[36m(ParameterServer pid=98632)[0m get a list of children
+[36m(ParameterServer pid=98632)[0m child is  2
+[36m(ParameterServer pid=98632)[0m get a list of children
+[36m(ParameterServer pid=98632)[0m child is  3
+[36m(ParameterServer pid=98632)[0m set head
+[36m(ParameterServer pid=98632)[0m New head is node  2
+[36m(ParameterServer pid=98632)[0m after event callback
+[36m(ParameterServer pid=98953)[0m event is WatchedEvent(type='CHILD', state='CONNECTED', path='/exp3')
+[36m(ParameterServer pid=98632)[0m Running synchronous parameter server training.
+[36m(ParameterServer pid=98632)[0m Time 1717310218: 	accuracy is 0.521	loss is 1.652
+[36m(ParameterServer pid=98632)[0m Time 1717310220: 	accuracy is 0.473	loss is 1.611
+[36m(ParameterServer pid=98632)[0m Time 1717310221: 	accuracy is 0.476	loss is 1.536
+[36m(ParameterServer pid=98632)[0m Time 1717310223: 	accuracy is 0.523	loss is 1.463
+[36m(ParameterServer pid=98632)[0m Time 1717310225: 	accuracy is 0.599	loss is 1.384
+[36m(ParameterServer pid=98632)[0m Time 1717310227: 	accuracy is 0.567	loss is 1.346
+[36m(ParameterServer pid=98632)[0m Time 1717310228: 	accuracy is 0.585	loss is 1.300
+[36m(ParameterServer pid=98632)[0m Time 1717310230: 	accuracy is 0.612	loss is 1.260
+[36m(ParameterServer pid=98632)[0m Time 1717310232: 	accuracy is 0.615	loss is 1.204
+[36m(ParameterServer pid=98632)[0m Time 1717310234: 	accuracy is 0.629	loss is 1.160
+[36m(ParameterServer pid=98632)[0m Node 2 starts storing weights
+[36m(ParameterServer pid=98632)[0m Node  2  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/3')
+[36m(ParameterServer pid=98632)[0m Node 2 handle changed event
+[36m(ParameterServer pid=98632)[0m after event callback
+[36m(ParameterServer pid=98953)[0m backup receive weights
+[36m(ParameterServer pid=98632)[0m Time 1717310235: 	accuracy is 0.613	loss is 1.155
+[36m(ParameterServer pid=98632)[0m Time 1717310237: 	accuracy is 0.640	loss is 1.154
+[36m(ParameterServer pid=98632)[0m Time 1717310239: 	accuracy is 0.630	loss is 1.118
+[36m(ParameterServer pid=98953)[0m Node 3 starts storing weights
+[36m(ParameterServer pid=98953)[0m Node  3  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/2')
+[36m(ParameterServer pid=98953)[0m Node 3 handle changed event
+[36m(ParameterServer pid=98953)[0m after event callback
+[36m(ParameterServer pid=98632)[0m Time 1717310241: 	accuracy is 0.641	loss is 1.097
+[36m(ParameterServer pid=98632)[0m Time 1717310242: 	accuracy is 0.590	loss is 1.123
+[36m(ParameterServer pid=98632)[0m Time 1717310244: 	accuracy is 0.651	loss is 1.054
+[36m(ParameterServer pid=98632)[0m Time 1717310246: 	accuracy is 0.631	loss is 1.052
+[36m(ParameterServer pid=98632)[0m Time 1717310247: 	accuracy is 0.631	loss is 1.036
+[36m(ParameterServer pid=98632)[0m event is WatchedEvent(type='CHILD', state='CONNECTED', path='/exp3')
+[36m(ParameterServer pid=98632)[0m New head is node  2
+[36m(ParameterServer pid=99140)[0m NODE  4  is created
+[36m(ParameterServer pid=98632)[0m Time 1717310249: 	accuracy is 0.630	loss is 1.036
+[36m(ParameterServer pid=98632)[0m Time 1717310251: 	accuracy is 0.643	loss is 1.021
+[36m(ParameterServer pid=98632)[0m Node 2 starts storing weights
+[36m(ParameterServer pid=98632)[0m Node  2  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/3')
+[36m(ParameterServer pid=98632)[0m Node 2 handle changed event
+[36m(ParameterServer pid=98632)[0m after event callback
+[36m(ParameterServer pid=98953)[0m backup receive weights
+[36m(ParameterServer pid=98632)[0m Time 1717310253: 	accuracy is 0.618	loss is 1.029
+[36m(ParameterServer pid=98953)[0m event is WatchedEvent(type='CHILD', state='CONNECTED', path='/exp3')
+[36m(ParameterServer pid=98632)[0m Time 1717310254: 	accuracy is 0.676	loss is 0.901
+[36m(ParameterServer pid=98632)[0m Time 1717310256: 	accuracy is 0.705	loss is 0.849
+[36m(ParameterServer pid=99140)[0m Node 4 starts storing weights[32m [repeated 2x across cluster][0m
+[36m(ParameterServer pid=99140)[0m Node  4  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/3')[32m [repeated 3x across cluster][0m
+[36m(ParameterServer pid=99140)[0m Node 4 handle changed event[32m [repeated 3x across cluster][0m
+[36m(ParameterServer pid=99140)[0m after event callback[32m [repeated 3x across cluster][0m
+[36m(ParameterServer pid=99140)[0m backup receive weights
+[36m(ParameterServer pid=98632)[0m Time 1717310258: 	accuracy is 0.642	loss is 0.955
+[36m(ParameterServer pid=98632)[0m Time 1717310260: 	accuracy is 0.706	loss is 0.828
+[36m(ParameterServer pid=98632)[0m Time 1717310261: 	accuracy is 0.690	loss is 0.829
+[36m(ParameterServer pid=98632)[0m Time 1717310263: 	accuracy is 0.683	loss is 0.839
+[36m(ParameterServer pid=98632)[0m Time 1717310265: 	accuracy is 0.696	loss is 0.850
+[36m(ParameterServer pid=98632)[0m Time 1717310267: 	accuracy is 0.715	loss is 0.778
+[36m(ParameterServer pid=98632)[0m Time 1717310268: 	accuracy is 0.673	loss is 0.847
+[36m(ParameterServer pid=98632)[0m Node 2 starts storing weights
+[36m(ParameterServer pid=98953)[0m Node 
+[36m(ParameterServer pid=98953)[0m  3  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/2')
+[36m(ParameterServer pid=98953)[0m Node 3 handle changed event
+[36m(ParameterServer pid=98953)[0m backup receive weights
+[36m(ParameterServer pid=98953)[0m after event callback
+[36m(ParameterServer pid=99140)[0m Node  4  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/3')
+[36m(ParameterServer pid=98632)[0m Time 1717310270: 	accuracy is 0.647	loss is 0.940
+[36m(ParameterServer pid=98632)[0m Time 1717310272: 	accuracy is 0.685	loss is 0.811
+[36m(ParameterServer pid=98632)[0m Time 1717310274: 	accuracy is 0.713	loss is 0.785
+[36m(ParameterServer pid=99140)[0m Node 4 starts storing weights[32m [repeated 2x across cluster][0m
+[36m(ParameterServer pid=99140)[0m Node 4 handle changed event
+[36m(ParameterServer pid=99140)[0m backup receive weights
+[36m(ParameterServer pid=99140)[0m after event callback
+[36m(ParameterServer pid=98632)[0m Time 1717310275: 	accuracy is 0.703	loss is 0.774
+[36m(ParameterServer pid=98632)[0m Time 1717310277: 	accuracy is 0.719	loss is 0.745
+[36m(ParameterServer pid=98632)[0m Time 1717310279: 	accuracy is 0.721	loss is 0.753
+[36m(ParameterServer pid=98632)[0m Time 1717310281: 	accuracy is 0.729	loss is 0.757
+[36m(ParameterServer pid=98632)[0m Time 1717310282: 	accuracy is 0.742	loss is 0.724
+[36m(ParameterServer pid=98632)[0m Time 1717310284: 	accuracy is 0.710	loss is 0.800
+[36m(ParameterServer pid=98632)[0m Time 1717310286: 	accuracy is 0.722	loss is 0.748
+[36m(ParameterServer pid=98632)[0m Node 2 starts storing weights
+[36m(ParameterServer pid=98953)[0m Node  3  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/2')
+[36m(ParameterServer pid=98953)[0m Node 3 handle changed event
+[36m(ParameterServer pid=98953)[0m backup receive weights
+[36m(ParameterServer pid=98953)[0m after event callback
+[36m(ParameterServer pid=98632)[0m Time 1717310288: 	accuracy is 0.698	loss is 0.765
+[36m(ParameterServer pid=98632)[0m Time 1717310289: 	accuracy is 0.751	loss is 0.702
+[36m(ParameterServer pid=98632)[0m Time 1717310291: 	accuracy is 0.730	loss is 0.717
+[36m(ParameterServer pid=99140)[0m Node 4 starts storing weights[32m [repeated 2x across cluster][0m
+[36m(ParameterServer pid=99140)[0m Node  4  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/3')
+[36m(ParameterServer pid=99140)[0m Node 4 handle changed event
+[36m(ParameterServer pid=99140)[0m backup receive weights
+[36m(ParameterServer pid=99140)[0m after event callback
+[36m(ParameterServer pid=98632)[0m Time 1717310293: 	accuracy is 0.734	loss is 0.708
+[36m(ParameterServer pid=98632)[0m Time 1717310295: 	accuracy is 0.744	loss is 0.700
+[36m(ParameterServer pid=98632)[0m Time 1717310296: 	accuracy is 0.720	loss is 0.723
+[36m(ParameterServer pid=98632)[0m Time 1717310298: 	accuracy is 0.745	loss is 0.697
+[36m(ParameterServer pid=98632)[0m Time 1717310300: 	accuracy is 0.727	loss is 0.699
+[36m(ParameterServer pid=98632)[0m Time 1717310302: 	accuracy is 0.741	loss is 0.688
+[36m(ParameterServer pid=98632)[0m Time 1717310303: 	accuracy is 0.706	loss is 0.767
+[36m(ParameterServer pid=98632)[0m Node 2 starts storing weights
+[36m(ParameterServer pid=98953)[0m Node  3  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/2')
+[36m(ParameterServer pid=98953)[0m Node 3 handle changed event
+[36m(ParameterServer pid=98953)[0m backup receive weights
+[36m(ParameterServer pid=98953)[0m after event callback
+[36m(ParameterServer pid=98632)[0m Time 1717310305: 	accuracy is 0.733	loss is 0.738
+[36m(ParameterServer pid=98632)[0m Time 1717310307: 	accuracy is 0.746	loss is 0.693
+[36m(ParameterServer pid=98632)[0m Time 1717310309: 	accuracy is 0.757	loss is 0.678
+[36m(ParameterServer pid=99140)[0m Node 4 starts storing weights[32m [repeated 2x across cluster][0m
+[36m(ParameterServer pid=99140)[0m Node  4  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/3')
+[36m(ParameterServer pid=99140)[0m Node 4 handle changed event
+[36m(ParameterServer pid=99140)[0m backup receive weights
+[36m(ParameterServer pid=99140)[0m after event callback
+[36m(ParameterServer pid=98632)[0m Time 1717310310: 	accuracy is 0.729	loss is 0.705
+[36m(ParameterServer pid=98632)[0m Time 1717310312: 	accuracy is 0.759	loss is 0.673
+[36m(ParameterServer pid=98632)[0m Time 1717310314: 	accuracy is 0.731	loss is 0.731
+[36m(ParameterServer pid=98632)[0m Time 1717310316: 	accuracy is 0.716	loss is 0.715
+[36m(ParameterServer pid=98632)[0m Time 1717310317: 	accuracy is 0.753	loss is 0.675
+[36m(ParameterServer pid=98632)[0m Time 1717310319: 	accuracy is 0.747	loss is 0.700
+[36m(ParameterServer pid=98632)[0m Time 1717310321: 	accuracy is 0.745	loss is 0.684
+[36m(ParameterServer pid=98632)[0m Node 2 starts storing weights
+[36m(ParameterServer pid=98953)[0m Node  3  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/2')
+[36m(ParameterServer pid=98953)[0m Node 3 handle changed event
+[36m(ParameterServer pid=98953)[0m backup receive weights
+[36m(ParameterServer pid=98953)[0m after event callback
+[36m(ParameterServer pid=98632)[0m Time 1717310323: 	accuracy is 0.732	loss is 0.702
+[36m(ParameterServer pid=98632)[0m Time 1717310324: 	accuracy is 0.744	loss is 0.669
+[36m(ParameterServer pid=98632)[0m Time 1717310326: 	accuracy is 0.731	loss is 0.694
+[36m(ParameterServer pid=99140)[0m Node 4 starts storing weights[32m [repeated 2x across cluster][0m
+[36m(ParameterServer pid=99140)[0m Node  4  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/3')
+[36m(ParameterServer pid=99140)[0m Node 4 handle changed event
+[36m(ParameterServer pid=99140)[0m backup receive weights
+[36m(ParameterServer pid=99140)[0m after event callback
+[36m(ParameterServer pid=98632)[0m Time 1717310328: 	accuracy is 0.758	loss is 0.654
+[36m(ParameterServer pid=98632)[0m Time 1717310330: 	accuracy is 0.724	loss is 0.733
+[36m(ParameterServer pid=98632)[0m Time 1717310331: 	accuracy is 0.744	loss is 0.710
+[36m(ParameterServer pid=98632)[0m Time 1717310333: 	accuracy is 0.757	loss is 0.649
+[36m(ParameterServer pid=98632)[0m Time 1717310335: 	accuracy is 0.741	loss is 0.673
+[36m(ParameterServer pid=98632)[0m Time 1717310337: 	accuracy is 0.749	loss is 0.662
+[36m(ParameterServer pid=98632)[0m Time 1717310338: 	accuracy is 0.698	loss is 0.743
+[36m(ParameterServer pid=98632)[0m Node 2 starts storing weights
+[36m(ParameterServer pid=98953)[0m Node  3  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/2')
+[36m(ParameterServer pid=98953)[0m Node 3 handle changed event
+[36m(ParameterServer pid=98953)[0m backup receive weights
+[36m(ParameterServer pid=98953)[0m after event callback
+[36m(ParameterServer pid=98632)[0m Time 1717310340: 	accuracy is 0.731	loss is 0.675
+[36m(ParameterServer pid=98632)[0m Time 1717310342: 	accuracy is 0.760	loss is 0.656
+[36m(ParameterServer pid=98632)[0m Time 1717310344: 	accuracy is 0.747	loss is 0.658
+[36m(ParameterServer pid=99140)[0m Node 4 starts storing weights[32m [repeated 2x across cluster][0m
+[36m(ParameterServer pid=99140)[0m Node  4  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/3')
+[36m(ParameterServer pid=99140)[0m Node 4 handle changed event
+[36m(ParameterServer pid=99140)[0m backup receive weights
+[36m(ParameterServer pid=99140)[0m after event callback
+[36m(ParameterServer pid=98632)[0m Time 1717310345: 	accuracy is 0.761	loss is 0.650
+[36m(ParameterServer pid=98632)[0m Time 1717310347: 	accuracy is 0.755	loss is 0.658
+[36m(ParameterServer pid=98632)[0m Time 1717310349: 	accuracy is 0.756	loss is 0.644
+Running experiment: ASYNC_CHAIN_REPLICATION with --kill_times 2
+2024-06-01 23:39:24,602	INFO worker.py:1740 -- Started a local Ray instance. View the dashboard at [1m[32mhttp://127.0.0.1:8265 [39m[22m
+2024-06-01 23:39:24,998	INFO worker.py:1582 -- Calling ray.init() again after it has already been called.
+Initializing Ray
+RayContext(dashboard_url='127.0.0.1:8265', python_version='3.11.7', ray_version='2.23.0', ray_commit='a0947ead5cd94b3d8ca5cdeb9422dccb12d03867')
+Starting ASYNC_CHAIN_REPLICATION experiment with model DEBUG.
+[36m(ParameterServer pid=99707)[0m NODE  0  is created
+[36m(ParameterServer pid=99707)[0m New head is node  0
+[36m(ParameterServer pid=99707)[0m event is WatchedEvent(type='CHILD', state='CONNECTED', path='/exp3')
+[36m(ParameterServer pid=99707)[0m New head is node  0
+[36m(ParameterServer pid=99707)[0m event is WatchedEvent(type='CHILD', state='CONNECTED', path='/exp3')
+[36m(ParameterServer pid=99707)[0m New head is node  0
+*** Kill times is 2
+New primary runs
+[36m(ParameterServer pid=99707)[0m Running Asynchronous Parameter Server Training.
+[36m(ParameterServer pid=99707)[0m Time 1717310387: 	accuracy is 0.157	loss is 2.302
+[36m(ParameterServer pid=99707)[0m Node 0 starts storing weights
+[36m(ParameterServer pid=99707)[0m Node  0  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/1')
+[36m(ParameterServer pid=99707)[0m Node 0 handle changed event
+[36m(ParameterServer pid=99707)[0m after event callback
+[36m(ParameterServer pid=99753)[0m NODE  2  is created[32m [repeated 2x across cluster] (Ray deduplicates logs by default. Set RAY_DEDUP_LOGS=0 to disable log deduplication, or see https://docs.ray.io/en/master/ray-observability/user-guides/configure-logging.html#log-deduplication for more options.)[0m
+[36m(ParameterServer pid=99743)[0m event is WatchedEvent(type='CHILD', state='CONNECTED', path='/exp3')
+[36m(ParameterServer pid=99743)[0m backup receive weights
+[36m(ParameterServer pid=99707)[0m Time 1717310389: 	accuracy is 0.190	loss is 2.296
+[36m(ParameterServer pid=99707)[0m Time 1717310391: 	accuracy is 0.238	loss is 2.288
+[36m(ParameterServer pid=99707)[0m Time 1717310393: 	accuracy is 0.241	loss is 2.279
+[36m(ParameterServer pid=99753)[0m Node 2 starts storing weights[32m [repeated 2x across cluster][0m
+[36m(ParameterServer pid=99753)[0m Node  2  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/1')[32m [repeated 3x across cluster][0m
+[36m(ParameterServer pid=99753)[0m Node 2 handle changed event[32m [repeated 3x across cluster][0m
+[36m(ParameterServer pid=99753)[0m after event callback[32m [repeated 3x across cluster][0m
+[36m(ParameterServer pid=99753)[0m backup receive weights
+[36m(ParameterServer pid=99707)[0m Time 1717310394: 	accuracy is 0.324	loss is 2.268
+[36m(ParameterServer pid=99707)[0m Time 1717310396: 	accuracy is 0.354	loss is 2.254
+[36m(ParameterServer pid=99707)[0m Time 1717310398: 	accuracy is 0.455	loss is 2.241
+[36m(ParameterServer pid=99707)[0m Time 1717310399: 	accuracy is 0.459	loss is 2.224
+[36m(ParameterServer pid=99707)[0m Time 1717310401: 	accuracy is 0.460	loss is 2.203
+[36m(ParameterServer pid=99707)[0m Time 1717310403: 	accuracy is 0.442	loss is 2.179
+[36m(ParameterServer pid=99707)[0m Time 1717310405: 	accuracy is 0.506	loss is 2.152
+[36m(ParameterServer pid=99707)[0m Node 0 starts storing weights
+[36m(ParameterServer pid=99743)[0m Node  1  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/0')
+[36m(ParameterServer pid=99743)[0m Node 1 handle changed event
+[36m(ParameterServer pid=99743)[0m backup receive weights
+[36m(ParameterServer pid=99743)[0m after event callback
+[36m(ParameterServer pid=99707)[0m Time 1717310406: 	accuracy is 0.474	loss is 2.113
+[36m(ParameterServer pid=99707)[0m Time 1717310408: 	accuracy is 0.510	loss is 2.064
+[36m(ParameterServer pid=99707)[0m Time 1717310410: 	accuracy is 0.483	loss is 2.006
+[36m(ParameterServer pid=99753)[0m Node 2 starts storing weights[32m [repeated 2x across cluster][0m
+[36m(ParameterServer pid=99753)[0m Node  2  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/1')
+[36m(ParameterServer pid=99753)[0m Node 2 handle changed event
+[36m(ParameterServer pid=99753)[0m backup receive weights
+[36m(ParameterServer pid=99753)[0m after event callback
+[36m(ParameterServer pid=99707)[0m Time 1717310412: 	accuracy is 0.496	loss is 1.932
+[36m(ParameterServer pid=99707)[0m Time 1717310413: 	accuracy is 0.534	loss is 1.851
+[36m(ParameterServer pid=99707)[0m Time 1717310415: 	accuracy is 0.527	loss is 1.748
+Catching exception The actor died unexpectedly before finishing this task.
+	class_name: ParameterServer
+	actor_id: 51df1307ef56f8f39477014f01000000
+	pid: 99707
+	namespace: fbbf1b4c-f12e-4ecb-94c8-dc82813ebab2
+	ip: 127.0.0.1
+The actor is dead because it was killed by `ray.kill`.
+block on node  /exp3/0
+[36m(kill_server pid=99762)[0m disrupt thread wakes up
+[36m(kill_server pid=99762)[0m killed server successfully
+*** Kill times is 1
+New primary runs
+[36m(ParameterServer pid=99743)[0m Node  1  handles event. Event is WatchedEvent(type='DELETED', state='CONNECTED', path='/exp3/0')
+[36m(ParameterServer pid=99743)[0m In handle DELTED
+[36m(ParameterServer pid=99753)[0m event is WatchedEvent(type='CHILD', state='CONNECTED', path='/exp3')
+[36m(ParameterServer pid=99743)[0m get a list of children
+[36m(ParameterServer pid=99743)[0m child is  1
+[36m(ParameterServer pid=99743)[0m get a list of children
+[36m(ParameterServer pid=99743)[0m child is  2
+[36m(ParameterServer pid=99743)[0m set head
+[36m(ParameterServer pid=99743)[0m New head is node  1
+[36m(ParameterServer pid=99743)[0m after event callback
+[36m(ParameterServer pid=99743)[0m Running Asynchronous Parameter Server Training.
+[36m(ParameterServer pid=99743)[0m Time 1717310426: 	accuracy is 0.502	loss is 2.116
+[36m(ParameterServer pid=99743)[0m Time 1717310428: 	accuracy is 0.586	loss is 2.072
+[36m(ParameterServer pid=99743)[0m Time 1717310429: 	accuracy is 0.507	loss is 2.011
+[36m(ParameterServer pid=99743)[0m Time 1717310431: 	accuracy is 0.505	loss is 1.938
+[36m(ParameterServer pid=99743)[0m Time 1717310433: 	accuracy is 0.473	loss is 1.864
+[36m(ParameterServer pid=99743)[0m Time 1717310435: 	accuracy is 0.542	loss is 1.761
+[36m(ParameterServer pid=99743)[0m Time 1717310436: 	accuracy is 0.564	loss is 1.654
+[36m(ParameterServer pid=99743)[0m Time 1717310438: 	accuracy is 0.591	loss is 1.547
+[36m(ParameterServer pid=99743)[0m Time 1717310440: 	accuracy is 0.580	loss is 1.453
+[36m(ParameterServer pid=99743)[0m Time 1717310442: 	accuracy is 0.538	loss is 1.362
+[36m(ParameterServer pid=99743)[0m Node 1 starts storing weights
+[36m(ParameterServer pid=99753)[0m Node  2  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/1')
+[36m(ParameterServer pid=99753)[0m Node 2 handle changed event
+[36m(ParameterServer pid=99753)[0m backup receive weights
+[36m(ParameterServer pid=99753)[0m after event callback
+[36m(ParameterServer pid=99743)[0m Time 1717310444: 	accuracy is 0.646	loss is 1.263
+[36m(ParameterServer pid=99743)[0m Time 1717310445: 	accuracy is 0.582	loss is 1.194
+[36m(ParameterServer pid=99743)[0m Time 1717310447: 	accuracy is 0.629	loss is 1.143
+[36m(ParameterServer pid=99753)[0m Node 2 starts storing weights
+[36m(ParameterServer pid=99743)[0m Time 1717310449: 	accuracy is 0.607	loss is 1.095
+[36m(ParameterServer pid=99743)[0m Time 1717310450: 	accuracy is 0.682	loss is 1.013
+[36m(ParameterServer pid=99743)[0m Time 1717310452: 	accuracy is 0.581	loss is 1.071
+[36m(ParameterServer pid=99743)[0m Time 1717310454: 	accuracy is 0.659	loss is 0.976
+Catching exception The actor died unexpectedly before finishing this task.
+	class_name: ParameterServer
+	actor_id: de69c526f3d07b70b20cf8c401000000
+	pid: 99743
+	namespace: fbbf1b4c-f12e-4ecb-94c8-dc82813ebab2
+	ip: 127.0.0.1
+The actor is dead because it was killed by `ray.kill`.
+block on node  /exp3/1
+[36m(kill_server pid=99762)[0m disrupt thread wakes up
+[36m(kill_server pid=99762)[0m killed server successfully
+[36m(ParameterServer pid=99753)[0m event is WatchedEvent(type='CHILD', state='CONNECTED', path='/exp3')
+[36m(ParameterServer pid=168)[0m NODE  3  is created
+*** Kill times is 0
+New primary runs
+[36m(ParameterServer pid=99753)[0m Node  2  handles event. Event is WatchedEvent(type='DELETED', state='CONNECTED', path='/exp3/1')
+[36m(ParameterServer pid=99753)[0m In handle DELTED
+[36m(ParameterServer pid=99753)[0m get a list of children
+[36m(ParameterServer pid=99753)[0m child is  2
+[36m(ParameterServer pid=99753)[0m get a list of children
+[36m(ParameterServer pid=99753)[0m child is  3
+[36m(ParameterServer pid=99753)[0m set head
+[36m(ParameterServer pid=99753)[0m New head is node  2
+[36m(ParameterServer pid=99753)[0m after event callback
+[36m(ParameterServer pid=99753)[0m Running Asynchronous Parameter Server Training.
+[36m(ParameterServer pid=168)[0m event is WatchedEvent(type='CHILD', state='CONNECTED', path='/exp3')
+[36m(ParameterServer pid=99753)[0m Time 1717310464: 	accuracy is 0.596	loss is 1.276
+[36m(ParameterServer pid=99753)[0m Time 1717310466: 	accuracy is 0.580	loss is 1.203
+[36m(ParameterServer pid=99753)[0m Time 1717310468: 	accuracy is 0.640	loss is 1.108
+[36m(ParameterServer pid=99753)[0m Time 1717310469: 	accuracy is 0.620	loss is 1.080
+[36m(ParameterServer pid=99753)[0m Time 1717310471: 	accuracy is 0.664	loss is 1.018
+[36m(ParameterServer pid=99753)[0m Time 1717310473: 	accuracy is 0.688	loss is 0.979
+[36m(ParameterServer pid=99753)[0m Time 1717310474: 	accuracy is 0.680	loss is 0.955
+[36m(ParameterServer pid=99753)[0m Time 1717310476: 	accuracy is 0.656	loss is 0.976
+[36m(ParameterServer pid=99753)[0m Time 1717310478: 	accuracy is 0.673	loss is 0.932
+[36m(ParameterServer pid=99753)[0m Time 1717310480: 	accuracy is 0.644	loss is 0.939
+[36m(ParameterServer pid=99753)[0m Node 2 starts storing weights
+[36m(ParameterServer pid=99753)[0m Node  2  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/3')
+[36m(ParameterServer pid=99753)[0m Node 2 handle changed event
+[36m(ParameterServer pid=99753)[0m after event callback
+[36m(ParameterServer pid=168)[0m backup receive weights
+[36m(ParameterServer pid=99753)[0m Time 1717310481: 	accuracy is 0.609	loss is 0.996
+[36m(ParameterServer pid=99753)[0m Time 1717310483: 	accuracy is 0.696	loss is 0.876
+[36m(ParameterServer pid=99753)[0m Time 1717310485: 	accuracy is 0.637	loss is 0.893
+[36m(ParameterServer pid=168)[0m Node 3 starts storing weights
+[36m(ParameterServer pid=168)[0m Node  3  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/2')
+[36m(ParameterServer pid=168)[0m Node 3 handle changed event
+[36m(ParameterServer pid=168)[0m after event callback
+[36m(ParameterServer pid=99753)[0m Time 1717310486: 	accuracy is 0.692	loss is 0.838
+[36m(ParameterServer pid=99753)[0m Time 1717310488: 	accuracy is 0.706	loss is 0.817
+[36m(ParameterServer pid=99753)[0m Time 1717310490: 	accuracy is 0.653	loss is 0.884
+[36m(ParameterServer pid=99753)[0m Time 1717310492: 	accuracy is 0.724	loss is 0.825
+[36m(ParameterServer pid=99753)[0m Time 1717310493: 	accuracy is 0.726	loss is 0.777
+[36m(ParameterServer pid=99753)[0m event is WatchedEvent(type='CHILD', state='CONNECTED', path='/exp3')
+[36m(ParameterServer pid=99753)[0m New head is node  2
+[36m(ParameterServer pid=345)[0m NODE  4  is created
+[36m(ParameterServer pid=99753)[0m Time 1717310495: 	accuracy is 0.682	loss is 0.815
+[36m(ParameterServer pid=99753)[0m Time 1717310497: 	accuracy is 0.703	loss is 0.795
+[36m(ParameterServer pid=99753)[0m Node 2 starts storing weights
+[36m(ParameterServer pid=99753)[0m Node  2  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/3')
+[36m(ParameterServer pid=99753)[0m Node 2 handle changed event
+[36m(ParameterServer pid=99753)[0m after event callback
+[36m(ParameterServer pid=168)[0m backup receive weights
+[36m(ParameterServer pid=99753)[0m Time 1717310499: 	accuracy is 0.718	loss is 0.782
+[36m(ParameterServer pid=168)[0m event is WatchedEvent(type='CHILD', state='CONNECTED', path='/exp3')
+[36m(ParameterServer pid=99753)[0m Time 1717310500: 	accuracy is 0.655	loss is 0.861
+[36m(ParameterServer pid=99753)[0m Time 1717310502: 	accuracy is 0.721	loss is 0.752
+[36m(ParameterServer pid=345)[0m Node 4 starts storing weights[32m [repeated 2x across cluster][0m
+[36m(ParameterServer pid=345)[0m Node  4  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/3')[32m [repeated 3x across cluster][0m
+[36m(ParameterServer pid=345)[0m Node 4 handle changed event[32m [repeated 3x across cluster][0m
+[36m(ParameterServer pid=345)[0m after event callback[32m [repeated 3x across cluster][0m
+[36m(ParameterServer pid=345)[0m backup receive weights
+[36m(ParameterServer pid=99753)[0m Time 1717310504: 	accuracy is 0.708	loss is 0.807
+[36m(ParameterServer pid=99753)[0m Time 1717310506: 	accuracy is 0.716	loss is 0.760
+[36m(ParameterServer pid=99753)[0m Time 1717310507: 	accuracy is 0.725	loss is 0.737
+[36m(ParameterServer pid=99753)[0m Time 1717310509: 	accuracy is 0.714	loss is 0.752
+[36m(ParameterServer pid=99753)[0m Time 1717310511: 	accuracy is 0.692	loss is 0.799
+[36m(ParameterServer pid=99753)[0m Time 1717310513: 	accuracy is 0.706	loss is 0.792
+[36m(ParameterServer pid=99753)[0m Time 1717310514: 	accuracy is 0.688	loss is 0.800
+[36m(ParameterServer pid=99753)[0m Node 2 starts storing weights
+[36m(ParameterServer pid=168)[0m Node  3  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/2')
+[36m(ParameterServer pid=168)[0m Node 3 handle changed event
+[36m(ParameterServer pid=168)[0m backup receive weights
+[36m(ParameterServer pid=168)[0m after event callback
+[36m(ParameterServer pid=99753)[0m Time 1717310516: 	accuracy is 0.726	loss is 0.747
+[36m(ParameterServer pid=99753)[0m Time 1717310518: 	accuracy is 0.697	loss is 0.786
+[36m(ParameterServer pid=99753)[0m Time 1717310519: 	accuracy is 0.734	loss is 0.730
+[36m(ParameterServer pid=345)[0m Node 4 starts storing weights[32m [repeated 2x across cluster][0m
+[36m(ParameterServer pid=345)[0m Node  4  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/3')
+[36m(ParameterServer pid=345)[0m Node 4 handle changed event
+[36m(ParameterServer pid=345)[0m backup receive weights
+[36m(ParameterServer pid=345)[0m after event callback
+[36m(ParameterServer pid=99753)[0m Time 1717310521: 	accuracy is 0.722	loss is 0.745
+[36m(ParameterServer pid=99753)[0m Time 1717310523: 	accuracy is 0.716	loss is 0.731
+[36m(ParameterServer pid=99753)[0m Time 1717310525: 	accuracy is 0.739	loss is 0.711
+[36m(ParameterServer pid=99753)[0m Time 1717310526: 	accuracy is 0.744	loss is 0.678
+[36m(ParameterServer pid=99753)[0m Time 1717310528: 	accuracy is 0.735	loss is 0.741
+[36m(ParameterServer pid=99753)[0m Time 1717310530: 	accuracy is 0.747	loss is 0.689
+[36m(ParameterServer pid=99753)[0m Time 1717310532: 	accuracy is 0.755	loss is 0.682
+[36m(ParameterServer pid=99753)[0m Node 2 starts storing weights
+[36m(ParameterServer pid=168)[0m Node  3  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/2')
+[36m(ParameterServer pid=168)[0m Node 3 handle changed event
+[36m(ParameterServer pid=168)[0m backup receive weights
+[36m(ParameterServer pid=168)[0m after event callback
+[36m(ParameterServer pid=99753)[0m Time 1717310533: 	accuracy is 0.755	loss is 0.683
+[36m(ParameterServer pid=99753)[0m Time 1717310535: 	accuracy is 0.752	loss is 0.687
+[36m(ParameterServer pid=99753)[0m Time 1717310537: 	accuracy is 0.720	loss is 0.714
+[36m(ParameterServer pid=345)[0m Node 4 starts storing weights[32m [repeated 2x across cluster][0m
+[36m(ParameterServer pid=345)[0m Node  4  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/3')
+[36m(ParameterServer pid=345)[0m Node 4 handle changed event
+[36m(ParameterServer pid=345)[0m backup receive weights
+[36m(ParameterServer pid=345)[0m after event callback
+[36m(ParameterServer pid=99753)[0m Time 1717310539: 	accuracy is 0.717	loss is 0.725
+[36m(ParameterServer pid=99753)[0m Time 1717310540: 	accuracy is 0.737	loss is 0.692
+[36m(ParameterServer pid=99753)[0m Time 1717310542: 	accuracy is 0.745	loss is 0.678
+[36m(ParameterServer pid=99753)[0m Time 1717310544: 	accuracy is 0.737	loss is 0.706
+[36m(ParameterServer pid=99753)[0m Time 1717310546: 	accuracy is 0.743	loss is 0.708
+[36m(ParameterServer pid=99753)[0m Time 1717310547: 	accuracy is 0.750	loss is 0.659
+[36m(ParameterServer pid=99753)[0m Time 1717310549: 	accuracy is 0.751	loss is 0.683
+[36m(ParameterServer pid=99753)[0m Node 2 starts storing weights
+[36m(ParameterServer pid=168)[0m Node  3  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/2')
+[36m(ParameterServer pid=168)[0m Node 3 handle changed event
+[36m(ParameterServer pid=168)[0m backup receive weights
+[36m(ParameterServer pid=168)[0m after event callback
+[36m(ParameterServer pid=99753)[0m Time 1717310551: 	accuracy is 0.763	loss is 0.662
+[36m(ParameterServer pid=99753)[0m Time 1717310552: 	accuracy is 0.680	loss is 0.780
+[36m(ParameterServer pid=99753)[0m Time 1717310554: 	accuracy is 0.757	loss is 0.653
+[36m(ParameterServer pid=345)[0m Node 4 starts storing weights[32m [repeated 2x across cluster][0m
+[36m(ParameterServer pid=345)[0m Node  4  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/3')
+[36m(ParameterServer pid=345)[0m Node 4 handle changed event
+[36m(ParameterServer pid=345)[0m backup receive weights
+[36m(ParameterServer pid=345)[0m after event callback
+[36m(ParameterServer pid=99753)[0m Time 1717310556: 	accuracy is 0.704	loss is 0.721
+[36m(ParameterServer pid=99753)[0m Time 1717310558: 	accuracy is 0.723	loss is 0.716
+[36m(ParameterServer pid=99753)[0m Time 1717310559: 	accuracy is 0.761	loss is 0.643
+[36m(ParameterServer pid=99753)[0m Time 1717310561: 	accuracy is 0.749	loss is 0.671
+[36m(ParameterServer pid=99753)[0m Time 1717310563: 	accuracy is 0.743	loss is 0.720
+[36m(ParameterServer pid=99753)[0m Time 1717310565: 	accuracy is 0.734	loss is 0.677
+[36m(ParameterServer pid=99753)[0m Time 1717310566: 	accuracy is 0.763	loss is 0.656
+[36m(ParameterServer pid=99753)[0m Node 2 starts storing weights
+[36m(ParameterServer pid=168)[0m Node  3  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/2')
+[36m(ParameterServer pid=168)[0m Node 3 handle changed event
+[36m(ParameterServer pid=168)[0m backup receive weights
+[36m(ParameterServer pid=168)[0m after event callback
+[36m(ParameterServer pid=99753)[0m Time 1717310568: 	accuracy is 0.745	loss is 0.687
+[36m(ParameterServer pid=99753)[0m Time 1717310570: 	accuracy is 0.742	loss is 0.694
+[36m(ParameterServer pid=99753)[0m Time 1717310572: 	accuracy is 0.768	loss is 0.643
+[36m(ParameterServer pid=345)[0m Node 4 starts storing weights[32m [repeated 2x across cluster][0m
+[36m(ParameterServer pid=345)[0m Node  4  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/3')
+[36m(ParameterServer pid=345)[0m Node 4 handle changed event
+[36m(ParameterServer pid=345)[0m backup receive weights
+[36m(ParameterServer pid=345)[0m after event callback
+[36m(ParameterServer pid=99753)[0m Time 1717310573: 	accuracy is 0.770	loss is 0.633
+[36m(ParameterServer pid=99753)[0m Time 1717310575: 	accuracy is 0.769	loss is 0.625
+[36m(ParameterServer pid=99753)[0m Time 1717310577: 	accuracy is 0.761	loss is 0.633
+[36m(ParameterServer pid=99753)[0m Time 1717310579: 	accuracy is 0.759	loss is 0.648
+[36m(ParameterServer pid=99753)[0m Time 1717310580: 	accuracy is 0.771	loss is 0.624
+[36m(ParameterServer pid=99753)[0m Time 1717310582: 	accuracy is 0.745	loss is 0.668
+[36m(ParameterServer pid=99753)[0m Time 1717310584: 	accuracy is 0.763	loss is 0.634
+[36m(ParameterServer pid=99753)[0m Node 2 starts storing weights
+[36m(ParameterServer pid=168)[0m Node  3  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/2')
+[36m(ParameterServer pid=168)[0m Node 3 handle changed event
+[36m(ParameterServer pid=168)[0m backup receive weights
+[36m(ParameterServer pid=168)[0m after event callback
+[36m(ParameterServer pid=99753)[0m Time 1717310586: 	accuracy is 0.769	loss is 0.622
+[36m(ParameterServer pid=99753)[0m Time 1717310587: 	accuracy is 0.759	loss is 0.623
+[36m(ParameterServer pid=99753)[0m Time 1717310589: 	accuracy is 0.751	loss is 0.636
+[36m(ParameterServer pid=345)[0m Node 4 starts storing weights[32m [repeated 2x across cluster][0m
+[36m(ParameterServer pid=345)[0m Node  4  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/3')
+[36m(ParameterServer pid=345)[0m Node 4 handle changed event
+[36m(ParameterServer pid=345)[0m backup receive weights
+[36m(ParameterServer pid=345)[0m after event callback
+[36m(ParameterServer pid=99753)[0m Time 1717310591: 	accuracy is 0.771	loss is 0.622
+[36m(ParameterServer pid=99753)[0m Time 1717310592: 	accuracy is 0.761	loss is 0.628
+[36m(ParameterServer pid=99753)[0m Time 1717310594: 	accuracy is 0.760	loss is 0.623
+[36m(ParameterServer pid=99753)[0m Time 1717310596: 	accuracy is 0.765	loss is 0.627
+[36m(ParameterServer pid=99753)[0m Time 1717310598: 	accuracy is 0.764	loss is 0.637
+[36m(ParameterServer pid=99753)[0m Time 1717310599: 	accuracy is 0.776	loss is 0.619
+[36m(ParameterServer pid=99753)[0m Time 1717310601: 	accuracy is 0.748	loss is 0.660
+[36m(ParameterServer pid=99753)[0m Node 2 starts storing weights
+[36m(ParameterServer pid=168)[0m Node  3  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/2')
+[36m(ParameterServer pid=168)[0m Node 3 handle changed event
+[36m(ParameterServer pid=168)[0m backup receive weights
+[36m(ParameterServer pid=168)[0m after event callback
+[36m(ParameterServer pid=345)[0m Node 4 starts storing weights[32m [repeated 2x across cluster][0m
+[36m(ParameterServer pid=345)[0m Node  4  handles event. Event is WatchedEvent(type='CHANGED', state='CONNECTED', path='/exp3/3')
+[36m(ParameterServer pid=345)[0m Node 4 handle changed event
+[36m(ParameterServer pid=345)[0m backup receive weights
+[36m(ParameterServer pid=345)[0m after event callback
+Running experiment: ASYNC_RELAXED_CONSISTENCY with --kill_times 2
+2024-06-01 23:43:37,468	INFO worker.py:1740 -- Started a local Ray instance. View the dashboard at [1m[32mhttp://127.0.0.1:8265 [39m[22m
+2024-06-01 23:43:37,855	INFO worker.py:1582 -- Calling ray.init() again after it has already been called.
+Initializing Ray
+RayContext(dashboard_url='127.0.0.1:8265', python_version='3.11.7', ray_version='2.23.0', ray_commit='a0947ead5cd94b3d8ca5cdeb9422dccb12d03867')
+Starting ASYNC_RELAXED_CONSISTENCY experiment with model DEBUG.
+Attempting to delete /base/weights node if it exists
+*** Kill times is 2
+[36m(ParamServerTaskActor pid=1441)[0m Parameter Server is starting
+[36m(compute_gradients_relaxed_consistency pid=1477)[0m Worker 0 is starting at Epoch 0
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310638: 	accuracy is 0.119	loss is 2.299
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310639: 	accuracy is 0.264	loss is 2.271
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310640: 	accuracy is 0.350	loss is 2.242
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310641: 	accuracy is 0.420	loss is 2.203
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310643: 	accuracy is 0.312	loss is 2.150
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310644: 	accuracy is 0.478	loss is 2.076
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310645: 	accuracy is 0.281	loss is 1.973
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310646: 	accuracy is 0.362	loss is 1.940
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310647: 	accuracy is 0.256	loss is 1.946
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310649: 	accuracy is 0.273	loss is 2.043
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310650: 	accuracy is 0.203	loss is 1.991
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310651: 	accuracy is 0.441	loss is 1.792
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310652: 	accuracy is 0.486	loss is 1.612
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310654: 	accuracy is 0.365	loss is 1.715
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310655: 	accuracy is 0.380	loss is 1.774
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310656: 	accuracy is 0.318	loss is 1.730
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310657: 	accuracy is 0.425	loss is 1.663
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310658: 	accuracy is 0.441	loss is 1.557
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310660: 	accuracy is 0.572	loss is 1.442
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310661: 	accuracy is 0.446	loss is 1.383
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310662: 	accuracy is 0.423	loss is 2.123
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310663: 	accuracy is 0.385	loss is 1.875
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310664: 	accuracy is 0.507	loss is 1.695
+[36m(ParamServerTaskActor pid=1441)[0m Time 1717310666: 	accuracy is 0.535	loss is 1.550
+[36m(kill_server pid=1478)[0m disrupt thread wakes up
+[36m(kill_server pid=1478)[0m killed server successfully
+*** Kill times is 1
+[36m(ParamServerTaskActor pid=1741)[0m Parameter Server is starting
+[36m(ParamServerTaskActor pid=1741)[0m Applying 232 gradients
+[36m(ParamServerTaskActor pid=1741)[0m Time 1717310691: 	accuracy is 0.589	loss is 1.411
+[36m(ParamServerTaskActor pid=1741)[0m Time 1717310693: 	accuracy is 0.601	loss is 1.416
+[36m(ParamServerTaskActor pid=1741)[0m Time 1717310694: 	accuracy is 0.528	loss is 1.514
+[36m(ParamServerTaskActor pid=1741)[0m Time 1717310695: 	accuracy is 0.529	loss is 1.495
+[36m(ParamServerTaskActor pid=1741)[0m Time 1717310697: 	accuracy is 0.578	loss is 1.381
+[36m(ParamServerTaskActor pid=1741)[0m Time 1717310698: 	accuracy is 0.567	loss is 1.341
+[36m(ParamServerTaskActor pid=1741)[0m Time 1717310699: 	accuracy is 0.514	loss is 1.401
+[36m(ParamServerTaskActor pid=1741)[0m Time 1717310701: 	accuracy is 0.588	loss is 1.391
+[36m(ParamServerTaskActor pid=1741)[0m Time 1717310702: 	accuracy is 0.559	loss is 1.366
+[36m(ParamServerTaskActor pid=1741)[0m Time 1717310703: 	accuracy is 0.548	loss is 1.347
+[36m(ParamServerTaskActor pid=1741)[0m Time 1717310705: 	accuracy is 0.506	loss is 1.590
+[36m(ParamServerTaskActor pid=1741)[0m Time 1717310706: 	accuracy is 0.554	loss is 1.434
+[36m(ParamServerTaskActor pid=1741)[0m Time 1717310707: 	accuracy is 0.558	loss is 1.312
+[36m(ParamServerTaskActor pid=1741)[0m Time 1717310709: 	accuracy is 0.603	loss is 1.192
+[36m(ParamServerTaskActor pid=1741)[0m Time 1717310710: 	accuracy is 0.640	loss is 1.104
+[36m(ParamServerTaskActor pid=1741)[0m Time 1717310711: 	accuracy is 0.662	loss is 1.035
+[36m(ParamServerTaskActor pid=1741)[0m Time 1717310713: 	accuracy is 0.645	loss is 1.086
+[36m(ParamServerTaskActor pid=1741)[0m Time 1717310714: 	accuracy is 0.543	loss is 1.476
+[36m(ParamServerTaskActor pid=1741)[0m Time 1717310715: 	accuracy is 0.629	loss is 1.245
+[36m(compute_gradients_relaxed_consistency pid=1477)[0m Starting Epoch 1
+[36m(kill_server pid=1478)[0m disrupt thread wakes up
+[36m(kill_server pid=1478)[0m killed server successfully
+[36m(ParamServerTaskActor pid=1963)[0m Parameter Server is starting
+[36m(ParamServerTaskActor pid=1963)[0m Applying 237 gradients
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310743: 	accuracy is 0.689	loss is 0.923
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310744: 	accuracy is 0.707	loss is 0.904
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310746: 	accuracy is 0.686	loss is 0.909
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310747: 	accuracy is 0.654	loss is 0.977
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310748: 	accuracy is 0.693	loss is 0.981
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310750: 	accuracy is 0.705	loss is 0.930
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310751: 	accuracy is 0.702	loss is 0.909
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310752: 	accuracy is 0.709	loss is 0.850
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310753: 	accuracy is 0.714	loss is 0.838
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310755: 	accuracy is 0.710	loss is 0.828
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310756: 	accuracy is 0.703	loss is 0.882
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310757: 	accuracy is 0.673	loss is 0.923
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310758: 	accuracy is 0.625	loss is 1.055
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310760: 	accuracy is 0.634	loss is 1.139
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310761: 	accuracy is 0.701	loss is 0.866
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310762: 	accuracy is 0.715	loss is 0.838
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310764: 	accuracy is 0.703	loss is 0.840
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310765: 	accuracy is 0.707	loss is 0.897
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310766: 	accuracy is 0.688	loss is 0.858
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310767: 	accuracy is 0.673	loss is 0.982
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310769: 	accuracy is 0.701	loss is 0.870
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310770: 	accuracy is 0.731	loss is 0.809
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310771: 	accuracy is 0.722	loss is 0.827
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310773: 	accuracy is 0.725	loss is 0.841
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310774: 	accuracy is 0.720	loss is 0.832
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310775: 	accuracy is 0.683	loss is 0.897
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310776: 	accuracy is 0.720	loss is 0.803
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310778: 	accuracy is 0.728	loss is 0.794
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310779: 	accuracy is 0.726	loss is 0.801
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310780: 	accuracy is 0.729	loss is 0.778
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310781: 	accuracy is 0.726	loss is 0.783
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310783: 	accuracy is 0.727	loss is 0.801
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310784: 	accuracy is 0.727	loss is 0.809
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310785: 	accuracy is 0.729	loss is 0.772
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310786: 	accuracy is 0.713	loss is 0.800
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310788: 	accuracy is 0.733	loss is 0.763
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310789: 	accuracy is 0.735	loss is 0.768
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310790: 	accuracy is 0.726	loss is 0.781
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310791: 	accuracy is 0.704	loss is 0.862
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310793: 	accuracy is 0.676	loss is 0.937
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310794: 	accuracy is 0.713	loss is 0.830
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310795: 	accuracy is 0.738	loss is 0.754
+[36m(compute_gradients_relaxed_consistency pid=1477)[0m Starting Epoch 2
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310797: 	accuracy is 0.735	loss is 0.769
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310798: 	accuracy is 0.730	loss is 0.794
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310799: 	accuracy is 0.742	loss is 0.750
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310801: 	accuracy is 0.748	loss is 0.770
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310802: 	accuracy is 0.728	loss is 0.817
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310803: 	accuracy is 0.658	loss is 0.935
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310805: 	accuracy is 0.748	loss is 0.746
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310806: 	accuracy is 0.750	loss is 0.733
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310807: 	accuracy is 0.737	loss is 0.752
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310808: 	accuracy is 0.705	loss is 0.797
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310810: 	accuracy is 0.730	loss is 0.836
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310811: 	accuracy is 0.733	loss is 0.782
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310812: 	accuracy is 0.738	loss is 0.752
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310814: 	accuracy is 0.750	loss is 0.778
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310815: 	accuracy is 0.743	loss is 0.746
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310816: 	accuracy is 0.755	loss is 0.765
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310817: 	accuracy is 0.753	loss is 0.723
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310819: 	accuracy is 0.752	loss is 0.752
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310820: 	accuracy is 0.737	loss is 0.787
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310821: 	accuracy is 0.742	loss is 0.818
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310823: 	accuracy is 0.751	loss is 0.748
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310824: 	accuracy is 0.737	loss is 0.743
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310825: 	accuracy is 0.737	loss is 0.760
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310827: 	accuracy is 0.760	loss is 0.710
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310828: 	accuracy is 0.751	loss is 0.722
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310829: 	accuracy is 0.744	loss is 0.724
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310830: 	accuracy is 0.742	loss is 0.723
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310832: 	accuracy is 0.738	loss is 0.752
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310833: 	accuracy is 0.701	loss is 0.826
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310834: 	accuracy is 0.751	loss is 0.766
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310836: 	accuracy is 0.731	loss is 0.777
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310837: 	accuracy is 0.738	loss is 0.779
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310838: 	accuracy is 0.768	loss is 0.695
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310839: 	accuracy is 0.761	loss is 0.701
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310841: 	accuracy is 0.766	loss is 0.706
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310842: 	accuracy is 0.749	loss is 0.749
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310843: 	accuracy is 0.769	loss is 0.685
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310845: 	accuracy is 0.762	loss is 0.696
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310846: 	accuracy is 0.743	loss is 0.700
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310847: 	accuracy is 0.741	loss is 0.745
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310848: 	accuracy is 0.681	loss is 0.842
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310850: 	accuracy is 0.758	loss is 0.738
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310851: 	accuracy is 0.759	loss is 0.724
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310852: 	accuracy is 0.752	loss is 0.744
+[36m(ParamServerTaskActor pid=1963)[0m Time 1717310854: 	accuracy is 0.745	loss is 0.725
+2024-06-01 23:47:35,047	ERROR worker.py:406 -- Unhandled error (suppress with 'RAY_IGNORE_UNHANDLED_ERRORS=1'): [36mray::compute_gradients_relaxed_consistency()[39m (pid=1477, ip=127.0.0.1)
+  File "/Users/sujeethjinesh/Desktop/CS244B/workers/worker_task.py", line 129, in compute_gradients_relaxed_consistency
+    weights = get_weights()
+              ^^^^^^^^^^^^^
+  File "/Users/sujeethjinesh/Desktop/CS244B/workers/worker_task.py", line 55, in get_weights
+    return ray.get(unpickled_w_string)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+           ^^^^^^^^^^^^^^^^^^^
+           ^^^^^^^^^^^^^^^^^^^^^
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ray.exceptions.OwnerDiedError: Failed to retrieve object 00149dd7ec40f9f8d2f172d743307e51d37643c80100000002e1f505. To see information about where this ObjectRef was created in Python, set the environment variable RAY_record_ref_creation_sites=1 during `ray start` and `ray.init()`.
+
+The object's owner has exited. This is the Python worker that first created the ObjectRef via `.remote()` or `ray.put()`. Check cluster logs (`/tmp/ray/session_latest/logs/*412701d5121d4217b32793db19c5d3bad3adf34baa125109340e8d06*` at IP address 127.0.0.1) for more information about the Python worker failure.
+[36m(compute_gradients_relaxed_consistency pid=1477)[0m Local object store memory usage:
+[36m(compute_gradients_relaxed_consistency pid=1477)[0m 
+[36m(compute_gradients_relaxed_consistency pid=1477)[0m (global lru) capacity: 2147483648
+[36m(compute_gradients_relaxed_consistency pid=1477)[0m (global lru) used: 6.97393%
+[36m(compute_gradients_relaxed_consistency pid=1477)[0m (global lru) num objects: 46
+[36m(compute_gradients_relaxed_consistency pid=1477)[0m (global lru) num evictions: 74
+[36m(compute_gradients_relaxed_consistency pid=1477)[0m (global lru) bytes evicted: 240930434
+[36m(compute_gradients_relaxed_consistency pid=1477)[0m 
